@@ -98,7 +98,6 @@ NORETURN void Fatal(const char* msg, ...) {
 #endif
 }
 
-
 }  // anonymous namespace
 
 void ScopedTempDir::CreateAndEnter(const std::string& name) {

@@ -129,8 +129,8 @@ bool Scheduler::IsFileGeneratedByWriteRuntimeDeps(
   return false;
 }
 
-std::multimap<SourceFile, const Target*>
-    Scheduler::GetUnknownGeneratedInputs() const {
+std::multimap<SourceFile, const Target*> Scheduler::GetUnknownGeneratedInputs()
+    const {
   base::AutoLock lock(lock_);
 
   // Remove all unknown inputs that were written files. These are OK as inputs

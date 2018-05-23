@@ -596,18 +596,18 @@ TEST_F(TargetTest, LinkAndDepOutputs) {
 
   const char kLinkPattern[] =
       "{{root_out_dir}}/{{target_output_name}}{{output_extension}}";
-  SubstitutionPattern link_output = SubstitutionPattern::MakeForTest(
-      kLinkPattern);
+  SubstitutionPattern link_output =
+      SubstitutionPattern::MakeForTest(kLinkPattern);
   solink_tool->set_link_output(link_output);
 
   const char kDependPattern[] =
       "{{root_out_dir}}/{{target_output_name}}{{output_extension}}.TOC";
-  SubstitutionPattern depend_output = SubstitutionPattern::MakeForTest(
-      kDependPattern);
+  SubstitutionPattern depend_output =
+      SubstitutionPattern::MakeForTest(kDependPattern);
   solink_tool->set_depend_output(depend_output);
 
-  solink_tool->set_outputs(SubstitutionList::MakeForTest(
-      kLinkPattern, kDependPattern));
+  solink_tool->set_outputs(
+      SubstitutionList::MakeForTest(kLinkPattern, kDependPattern));
 
   toolchain.SetTool(Toolchain::TYPE_SOLINK, std::move(solink_tool));
 
@@ -641,8 +641,7 @@ TEST_F(TargetTest, RuntimeOuputs) {
       "{{root_out_dir}}/{{target_output_name}}{{output_extension}}.lib";
   const char kDllPattern[] =
       "{{root_out_dir}}/{{target_output_name}}{{output_extension}}";
-  const char kPdbPattern[] =
-      "{{root_out_dir}}/{{target_output_name}}.pdb";
+  const char kPdbPattern[] = "{{root_out_dir}}/{{target_output_name}}.pdb";
   SubstitutionPattern pdb_pattern =
       SubstitutionPattern::MakeForTest(kPdbPattern);
 
@@ -650,8 +649,8 @@ TEST_F(TargetTest, RuntimeOuputs) {
       SubstitutionList::MakeForTest(kLibPattern, kDllPattern, kPdbPattern));
 
   // Say we only want the DLL and symbol file treaded as runtime outputs.
-  solink_tool->set_runtime_outputs(SubstitutionList::MakeForTest(
-      kDllPattern, kPdbPattern));
+  solink_tool->set_runtime_outputs(
+      SubstitutionList::MakeForTest(kDllPattern, kPdbPattern));
 
   toolchain.SetTool(Toolchain::TYPE_SOLINK, std::move(solink_tool));
 
@@ -932,9 +931,9 @@ TEST_F(TargetTest, AssertNoDeps) {
   // B depends on A and has an assert_no_deps for a random dir.
   TestTarget b(setup, "//b", Target::SHARED_LIBRARY);
   b.private_deps().push_back(LabelTargetPair(&a));
-  b.assert_no_deps().push_back(LabelPattern(
-      LabelPattern::RECURSIVE_DIRECTORY, SourceDir("//disallowed/"),
-      std::string(), Label()));
+  b.assert_no_deps().push_back(LabelPattern(LabelPattern::RECURSIVE_DIRECTORY,
+                                            SourceDir("//disallowed/"),
+                                            std::string(), Label()));
   ASSERT_TRUE(b.OnResolved(&err));
 
   LabelPattern disallow_a(LabelPattern::RECURSIVE_DIRECTORY, SourceDir("//a/"),

@@ -14,9 +14,9 @@
 #include "base/strings/string_piece.h"
 #include "base/synchronization/condition_variable.h"
 #include "base/synchronization/lock.h"
+#include "test/test.h"
 #include "tools/gn/err.h"
 #include "tools/gn/source_dir.h"
-#include "test/test.h"
 
 class BuildSettings;
 class InputFile;
@@ -69,8 +69,7 @@ class HeaderChecker : public base::RefCountedThreadSafe<HeaderChecker> {
   FRIEND_TEST(HeaderCheckerTest, PublicFirst);
   FRIEND_TEST(HeaderCheckerTest, CheckIncludeAllowCircular);
   FRIEND_TEST(HeaderCheckerTest, SourceFileForInclude);
-  FRIEND_TEST(HeaderCheckerTest,
-                           SourceFileForInclude_FileNotFound);
+  FRIEND_TEST(HeaderCheckerTest, SourceFileForInclude_FileNotFound);
   FRIEND_TEST(HeaderCheckerTest, Friend);
 
   ~HeaderChecker();
@@ -78,10 +77,7 @@ class HeaderChecker : public base::RefCountedThreadSafe<HeaderChecker> {
   struct TargetInfo {
     TargetInfo() : target(nullptr), is_public(false), is_generated(false) {}
     TargetInfo(const Target* t, bool is_pub, bool is_gen)
-        : target(t),
-          is_public(is_pub),
-          is_generated(is_gen) {
-    }
+        : target(t), is_public(is_pub), is_generated(is_gen) {}
 
     const Target* target;
 

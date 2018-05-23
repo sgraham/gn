@@ -28,6 +28,7 @@ namespace testing {
 class Test {
   bool failed_;
   int assertion_failures_;
+
  public:
   Test() : failed_(false), assertion_failures_(0) {}
   virtual ~Test() {}
@@ -40,7 +41,7 @@ class Test {
   void AddAssertionFailure() { assertion_failures_++; }
   bool Check(bool condition, const char* file, int line, const char* error);
 };
-}
+}  // namespace testing
 
 void RegisterTest(testing::Test* (*)(), const char*);
 
@@ -80,22 +81,46 @@ extern testing::Test* g_current_test;
 #define EXPECT_STREQ(a, b) \
   g_current_test->Check(strcmp(a, b) == 0, __FILE__, __LINE__, #a " streq " #b)
 
-#define ASSERT_EQ(a, b) \
-  if (!EXPECT_EQ(a, b)) { g_current_test->AddAssertionFailure(); return; }
-#define ASSERT_NE(a, b) \
-  if (!EXPECT_NE(a, b)) { g_current_test->AddAssertionFailure(); return; }
-#define ASSERT_GT(a, b) \
-  if (!EXPECT_GT(a, b)) { g_current_test->AddAssertionFailure(); return; }
-#define ASSERT_LT(a, b) \
-  if (!EXPECT_LT(a, b)) { g_current_test->AddAssertionFailure(); return; }
-#define ASSERT_GE(a, b) \
-  if (!EXPECT_GE(a, b)) { g_current_test->AddAssertionFailure(); return; }
-#define ASSERT_LE(a, b) \
-  if (!EXPECT_LE(a, b)) { g_current_test->AddAssertionFailure(); return; }
-#define ASSERT_TRUE(a)  \
-  if (!EXPECT_TRUE(a))  { g_current_test->AddAssertionFailure(); return; }
-#define ASSERT_FALSE(a) \
-  if (!EXPECT_FALSE(a)) { g_current_test->AddAssertionFailure(); return; }
+#define ASSERT_EQ(a, b)                    \
+  if (!EXPECT_EQ(a, b)) {                  \
+    g_current_test->AddAssertionFailure(); \
+    return;                                \
+  }
+#define ASSERT_NE(a, b)                    \
+  if (!EXPECT_NE(a, b)) {                  \
+    g_current_test->AddAssertionFailure(); \
+    return;                                \
+  }
+#define ASSERT_GT(a, b)                    \
+  if (!EXPECT_GT(a, b)) {                  \
+    g_current_test->AddAssertionFailure(); \
+    return;                                \
+  }
+#define ASSERT_LT(a, b)                    \
+  if (!EXPECT_LT(a, b)) {                  \
+    g_current_test->AddAssertionFailure(); \
+    return;                                \
+  }
+#define ASSERT_GE(a, b)                    \
+  if (!EXPECT_GE(a, b)) {                  \
+    g_current_test->AddAssertionFailure(); \
+    return;                                \
+  }
+#define ASSERT_LE(a, b)                    \
+  if (!EXPECT_LE(a, b)) {                  \
+    g_current_test->AddAssertionFailure(); \
+    return;                                \
+  }
+#define ASSERT_TRUE(a)                     \
+  if (!EXPECT_TRUE(a)) {                   \
+    g_current_test->AddAssertionFailure(); \
+    return;                                \
+  }
+#define ASSERT_FALSE(a)                    \
+  if (!EXPECT_FALSE(a)) {                  \
+    g_current_test->AddAssertionFailure(); \
+    return;                                \
+  }
 #define ASSERT_NO_FATAL_FAILURE(a)                           \
   {                                                          \
     int fail_count = g_current_test->AssertionFailures();    \
@@ -118,4 +143,4 @@ struct ScopedTempDir {
   std::string temp_dir_name_;
 };
 
-#endif // NINJA_TEST_H_
+#endif  // NINJA_TEST_H_

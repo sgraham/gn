@@ -11,10 +11,10 @@
 #include <vector>
 
 #include "base/macros.h"
+#include "test/test.h"
 #include "tools/gn/ninja_writer.h"
 #include "tools/gn/path_output.h"
 #include "tools/gn/toolchain.h"
-#include "test/test.h"
 
 struct EscapeOptions;
 class Settings;

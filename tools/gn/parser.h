@@ -12,9 +12,9 @@
 #include <vector>
 
 #include "base/macros.h"
+#include "test/test.h"
 #include "tools/gn/err.h"
 #include "tools/gn/parse_tree.h"
-#include "test/test.h"
 
 class Parser;
 typedef std::unique_ptr<ParseNode> (Parser::*PrefixFunc)(const Token& token);

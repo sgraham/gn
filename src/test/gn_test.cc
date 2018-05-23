@@ -20,8 +20,8 @@
 #ifdef _WIN32
 #include "getopt.h"
 #elif defined(_AIX)
-#include "getopt.h"
 #include <unistd.h>
+#include "getopt.h"
 #else
 #include <getopt.h>
 #endif
@@ -32,7 +32,7 @@
 
 struct RegisteredTest {
   testing::Test* (*factory)();
-  const char *name;
+  const char* name;
   bool should_run;
 };
 // This can't be a vector because tests call RegisterTest from static
@@ -52,29 +52,34 @@ namespace {
 
 void Usage() {
   fprintf(stderr,
-"usage: gn_unittests [options]\n"
-"\n"
-"options:\n"
-"  --gtest_filter=POSTIVE_PATTERN[-NEGATIVE_PATTERN]\n"
-"      Run tests whose names match the positive but not the negative pattern.\n"
-"      '*' matches any substring. (gtest's ':', '?' are not implemented).\n");
+          "usage: gn_unittests [options]\n"
+          "\n"
+          "options:\n"
+          "  --gtest_filter=POSTIVE_PATTERN[-NEGATIVE_PATTERN]\n"
+          "      Run tests whose names match the positive but not the negative "
+          "pattern.\n"
+          "      '*' matches any substring. (gtest's ':', '?' are not "
+          "implemented).\n");
 }
 
 bool PatternMatchesString(const char* pattern, const char* str) {
   switch (*pattern) {
     case '\0':
-    case '-': return *str == '\0';
-    case '*': return (*str != '\0' && PatternMatchesString(pattern, str + 1)) ||
-                     PatternMatchesString(pattern + 1, str);
-    default:  return *pattern == *str &&
-                     PatternMatchesString(pattern + 1, str + 1);
+    case '-':
+      return *str == '\0';
+    case '*':
+      return (*str != '\0' && PatternMatchesString(pattern, str + 1)) ||
+             PatternMatchesString(pattern + 1, str);
+    default:
+      return *pattern == *str && PatternMatchesString(pattern + 1, str + 1);
   }
 }
 
 bool TestMatchesFilter(const char* test, const char* filter) {
   // Split --gtest_filter at '-' into positive and negative filters.
   const char* const dash = strchr(filter, '-');
-  const char* pos = dash == filter ? "*" : filter; //Treat '-test1' as '*-test1'
+  const char* pos =
+      dash == filter ? "*" : filter;  // Treat '-test1' as '*-test1'
   const char* neg = dash ? dash + 1 : "";
   return PatternMatchesString(pos, test) && !PatternMatchesString(neg, test);
 }
@@ -82,21 +87,20 @@ bool TestMatchesFilter(const char* test, const char* filter) {
 bool ReadFlags(int* argc, char*** argv, const char** test_filter) {
   enum { OPT_GTEST_FILTER = 1 };
   const option kLongOptions[] = {
-    { "gtest_filter", required_argument, NULL, OPT_GTEST_FILTER },
-    { NULL, 0, NULL, 0 }
-  };
+      {"gtest_filter", required_argument, NULL, OPT_GTEST_FILTER},
+      {NULL, 0, NULL, 0}};
 
   int opt;
   while ((opt = getopt_long(*argc, *argv, "h", kLongOptions, NULL)) != -1) {
     switch (opt) {
-    case OPT_GTEST_FILTER:
-      if (strchr(optarg, '?') == NULL && strchr(optarg, ':') == NULL) {
-        *test_filter = optarg;
-        break;
-      }  // else fall through.
-    default:
-      Usage();
-      return false;
+      case OPT_GTEST_FILTER:
+        if (strchr(optarg, '?') == NULL && strchr(optarg, ':') == NULL) {
+          *test_filter = optarg;
+          break;
+        }  // else fall through.
+      default:
+        Usage();
+        return false;
     }
   }
   *argv += optind;
@@ -106,7 +110,9 @@ bool ReadFlags(int* argc, char*** argv, const char** test_filter) {
 
 }  // namespace
 
-bool testing::Test::Check(bool condition, const char* file, int line,
+bool testing::Test::Check(bool condition,
+                          const char* file,
+                          int line,
                           const char* error) {
   if (!condition) {
     printf("\n*** Failure in %s:%d\n%s\n", file, line, error);
@@ -115,7 +121,7 @@ bool testing::Test::Check(bool condition, const char* file, int line,
   return condition;
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   base::CommandLine::Init(argc, argv);
 
   int tests_started = 0;
@@ -133,7 +139,8 @@ int main(int argc, char **argv) {
   const char* suffix = "\x1B[K";
   bool passed = true;
   for (int i = 0; i < ntests; i++) {
-    if (!tests[i].should_run) continue;
+    if (!tests[i].should_run)
+      continue;
 
     ++tests_started;
     testing::Test* test = tests[i].factory();

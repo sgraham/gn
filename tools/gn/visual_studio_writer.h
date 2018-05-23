@@ -10,8 +10,8 @@
 #include <string>
 #include <vector>
 
-#include "test/test.h"
 #include "base/macros.h"
+#include "test/test.h"
 #include "tools/gn/path_output.h"
 
 namespace base {
@@ -51,8 +51,7 @@ class VisualStudioWriter {
 
  private:
   FRIEND_TEST(VisualStudioWriterTest, ResolveSolutionFolders);
-  FRIEND_TEST(VisualStudioWriterTest,
-                           ResolveSolutionFolders_AbsPath);
+  FRIEND_TEST(VisualStudioWriterTest, ResolveSolutionFolders_AbsPath);
 
   // Solution project or folder.
   struct SolutionEntry {

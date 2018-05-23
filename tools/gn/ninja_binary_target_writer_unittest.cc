@@ -52,7 +52,7 @@ TEST_F(NinjaBinaryTargetWriterTest, SourceSet) {
         "build obj/foo/bar.input2.o: cxx ../../foo/input2.cc\n"
         "\n"
         "build obj/foo/bar.stamp: stamp obj/foo/bar.input1.o "
-            "obj/foo/bar.input2.o ../../foo/input3.o ../../foo/input4.obj\n";
+        "obj/foo/bar.input2.o ../../foo/input3.o ../../foo/input4.obj\n";
     std::string out_str = out.str();
     EXPECT_EQ(expected, out_str);
   }
@@ -81,8 +81,8 @@ TEST_F(NinjaBinaryTargetWriterTest, SourceSet) {
         // specified, with the target's first, followed by the source set's, in
         // order.
         "build ./libshlib.so: solink obj/foo/bar.input1.o "
-            "obj/foo/bar.input2.o ../../foo/input3.o ../../foo/input4.obj "
-            "|| obj/foo/bar.stamp\n"
+        "obj/foo/bar.input2.o ../../foo/input3.o ../../foo/input4.obj "
+        "|| obj/foo/bar.stamp\n"
         "  ldflags =\n"
         "  libs =\n"
         "  output_extension = .so\n"
@@ -140,8 +140,8 @@ TEST_F(NinjaBinaryTargetWriterTest, SourceSet) {
         // specified, with the target's first, followed by the source set's, in
         // order.
         "build obj/foo/libstlib.a: alink obj/foo/bar.input1.o "
-            "obj/foo/bar.input2.o ../../foo/input3.o ../../foo/input4.obj "
-            "|| obj/foo/bar.stamp\n"
+        "obj/foo/bar.input2.o ../../foo/input3.o ../../foo/input4.obj "
+        "|| obj/foo/bar.stamp\n"
         "  arflags =\n"
         "  output_extension = \n"
         "  output_dir = \n";
@@ -219,7 +219,7 @@ TEST_F(NinjaBinaryTargetWriterTest, CompleteStaticLibrary) {
         "build obj/foo/libbar.input1.o: cxx ../../foo/input1.cc\n"
         "\n"
         "build obj/foo/libbar.a: alink obj/foo/libbar.input1.o "
-            "obj/foo/libbaz.input2.o || obj/foo/libbaz.a\n"
+        "obj/foo/libbaz.input2.o || obj/foo/libbaz.a\n"
         "  arflags = --asdf\n"
         "  output_extension = \n"
         "  output_dir = \n";
@@ -248,7 +248,7 @@ TEST_F(NinjaBinaryTargetWriterTest, CompleteStaticLibrary) {
         "build obj/foo/libbar.input1.o: cxx ../../foo/input1.cc\n"
         "\n"
         "build obj/foo/libbar.a: alink obj/foo/libbar.input1.o "
-            "|| obj/foo/libbaz.a\n"
+        "|| obj/foo/libbaz.a\n"
         "  arflags = --asdf\n"
         "  output_extension = \n"
         "  output_dir = \n";
@@ -295,15 +295,15 @@ TEST_F(NinjaBinaryTargetWriterTest, OutputExtensionAndInputDeps) {
       "target_output_name = libshlib\n"
       "\n"
       "build obj/foo/libshlib.input1.o: cxx ../../foo/input1.cc"
-        " || obj/foo/action.stamp\n"
+      " || obj/foo/action.stamp\n"
       "build obj/foo/libshlib.input2.o: cxx ../../foo/input2.cc"
-        " || obj/foo/action.stamp\n"
+      " || obj/foo/action.stamp\n"
       "\n"
       "build ./libshlib.so.6: solink obj/foo/libshlib.input1.o "
       // The order-only dependency here is stricly unnecessary since the
       // sources list this as an order-only dep. See discussion in the code
       // that writes this.
-          "obj/foo/libshlib.input2.o || obj/foo/action.stamp\n"
+      "obj/foo/libshlib.input2.o || obj/foo/action.stamp\n"
       "  ldflags =\n"
       "  libs =\n"
       "  output_extension = .so.6\n"
@@ -508,7 +508,7 @@ TEST_F(NinjaBinaryTargetWriterTest, EmptyOutputExtension) {
       "build obj/foo/shlib.input2.o: cxx ../../foo/input2.cc\n"
       "\n"
       "build ./shlib: solink obj/foo/shlib.input1.o "
-          "obj/foo/shlib.input2.o\n"
+      "obj/foo/shlib.input2.o\n"
       "  ldflags =\n"
       "  libs =\n"
       "  output_extension = \n"
@@ -558,7 +558,7 @@ TEST_F(NinjaBinaryTargetWriterTest, SourceSetDataDeps) {
       "build obj/foo/inter.inter.o: cxx ../../foo/inter.cc\n"
       "\n"
       "build obj/foo/inter.stamp: stamp obj/foo/inter.inter.o || "
-          "./data_target\n";
+      "./data_target\n";
   EXPECT_EQ(inter_expected, inter_out.str());
 
   // Final target.
@@ -590,7 +590,7 @@ TEST_F(NinjaBinaryTargetWriterTest, SourceSetDataDeps) {
       "build obj/foo/exe.final.o: cxx ../../foo/final.cc\n"
       "\n"
       "build ./exe: link obj/foo/exe.final.o obj/foo/inter.inter.o || "
-          "obj/foo/inter.stamp\n"
+      "obj/foo/inter.stamp\n"
       "  ldflags =\n"
       "  libs =\n"
       "  output_extension = \n"
@@ -759,13 +759,13 @@ TEST_F(NinjaBinaryTargetWriterTest, WinPrecompiledHeaders) {
         "target_output_name = no_pch_target\n"
         "\n"
         "build withpch/obj/foo/no_pch_target.input1.o: "
-               "withpch_cxx ../../foo/input1.cc\n"
+        "withpch_cxx ../../foo/input1.cc\n"
         "build withpch/obj/foo/no_pch_target.input2.o: "
-               "withpch_cc ../../foo/input2.c\n"
+        "withpch_cc ../../foo/input2.c\n"
         "\n"
         "build withpch/obj/foo/no_pch_target.stamp: "
-               "withpch_stamp withpch/obj/foo/no_pch_target.input1.o "
-               "withpch/obj/foo/no_pch_target.input2.o\n";
+        "withpch_stamp withpch/obj/foo/no_pch_target.input1.o "
+        "withpch/obj/foo/no_pch_target.input2.o\n";
     EXPECT_EQ(no_pch_expected, out.str());
   }
 
@@ -792,35 +792,35 @@ TEST_F(NinjaBinaryTargetWriterTest, WinPrecompiledHeaders) {
         "cflags =\n"
         // It should output language-specific pch files.
         "cflags_c = /Fpwithpch/obj/foo/pch_target_c.pch "
-                    "/Yubuild/precompile.h\n"
+        "/Yubuild/precompile.h\n"
         "cflags_cc = /Fpwithpch/obj/foo/pch_target_cc.pch "
-                     "/Yubuild/precompile.h\n"
+        "/Yubuild/precompile.h\n"
         "target_output_name = pch_target\n"
         "\n"
         // Compile the precompiled source files with /Yc.
         "build withpch/obj/build/pch_target.precompile.c.o: "
-               "withpch_cc ../../build/precompile.cc\n"
+        "withpch_cc ../../build/precompile.cc\n"
         "  cflags_c = ${cflags_c} /Ycbuild/precompile.h\n"
         "\n"
         "build withpch/obj/build/pch_target.precompile.cc.o: "
-               "withpch_cxx ../../build/precompile.cc\n"
+        "withpch_cxx ../../build/precompile.cc\n"
         "  cflags_cc = ${cflags_cc} /Ycbuild/precompile.h\n"
         "\n"
         "build withpch/obj/foo/pch_target.input1.o: "
-               "withpch_cxx ../../foo/input1.cc | "
-               // Explicit dependency on the PCH build step.
-               "withpch/obj/build/pch_target.precompile.cc.o\n"
+        "withpch_cxx ../../foo/input1.cc | "
+        // Explicit dependency on the PCH build step.
+        "withpch/obj/build/pch_target.precompile.cc.o\n"
         "build withpch/obj/foo/pch_target.input2.o: "
-               "withpch_cc ../../foo/input2.c | "
-               // Explicit dependency on the PCH build step.
-               "withpch/obj/build/pch_target.precompile.c.o\n"
+        "withpch_cc ../../foo/input2.c | "
+        // Explicit dependency on the PCH build step.
+        "withpch/obj/build/pch_target.precompile.c.o\n"
         "\n"
         "build withpch/obj/foo/pch_target.stamp: withpch_stamp "
-               "withpch/obj/foo/pch_target.input1.o "
-               "withpch/obj/foo/pch_target.input2.o "
-               // The precompiled object files were added to the outputs.
-               "withpch/obj/build/pch_target.precompile.c.o "
-               "withpch/obj/build/pch_target.precompile.cc.o\n";
+        "withpch/obj/foo/pch_target.input1.o "
+        "withpch/obj/foo/pch_target.input2.o "
+        // The precompiled object files were added to the outputs.
+        "withpch/obj/build/pch_target.precompile.c.o "
+        "withpch/obj/build/pch_target.precompile.cc.o\n";
     EXPECT_EQ(pch_win_expected, out.str());
   }
 }
@@ -887,13 +887,13 @@ TEST_F(NinjaBinaryTargetWriterTest, GCCPrecompiledHeaders) {
         "target_output_name = no_pch_target\n"
         "\n"
         "build withpch/obj/foo/no_pch_target.input1.o: "
-               "withpch_cxx ../../foo/input1.cc\n"
+        "withpch_cxx ../../foo/input1.cc\n"
         "build withpch/obj/foo/no_pch_target.input2.o: "
-               "withpch_cc ../../foo/input2.c\n"
+        "withpch_cc ../../foo/input2.c\n"
         "\n"
         "build withpch/obj/foo/no_pch_target.stamp: "
-               "withpch_stamp withpch/obj/foo/no_pch_target.input1.o "
-               "withpch/obj/foo/no_pch_target.input2.o\n";
+        "withpch_stamp withpch/obj/foo/no_pch_target.input1.o "
+        "withpch/obj/foo/no_pch_target.input2.o\n";
     EXPECT_EQ(no_pch_expected, out.str());
   }
 
@@ -919,31 +919,31 @@ TEST_F(NinjaBinaryTargetWriterTest, GCCPrecompiledHeaders) {
         "include_dirs =\n"
         "cflags =\n"
         "cflags_c = -std=c99 "
-                    "-include withpch/obj/build/pch_target.precompile.h-c\n"
+        "-include withpch/obj/build/pch_target.precompile.h-c\n"
         "cflags_cc = -include withpch/obj/build/pch_target.precompile.h-cc\n"
         "target_output_name = pch_target\n"
         "\n"
         // Compile the precompiled sources with -x <lang>.
         "build withpch/obj/build/pch_target.precompile.h-c.gch: "
-               "withpch_cc ../../build/precompile.h\n"
+        "withpch_cc ../../build/precompile.h\n"
         "  cflags_c = -std=c99 -x c-header\n"
         "\n"
         "build withpch/obj/build/pch_target.precompile.h-cc.gch: "
-               "withpch_cxx ../../build/precompile.h\n"
+        "withpch_cxx ../../build/precompile.h\n"
         "  cflags_cc = -x c++-header\n"
         "\n"
         "build withpch/obj/foo/pch_target.input1.o: "
-               "withpch_cxx ../../foo/input1.cc | "
-               // Explicit dependency on the PCH build step.
-               "withpch/obj/build/pch_target.precompile.h-cc.gch\n"
+        "withpch_cxx ../../foo/input1.cc | "
+        // Explicit dependency on the PCH build step.
+        "withpch/obj/build/pch_target.precompile.h-cc.gch\n"
         "build withpch/obj/foo/pch_target.input2.o: "
-               "withpch_cc ../../foo/input2.c | "
-               // Explicit dependency on the PCH build step.
-               "withpch/obj/build/pch_target.precompile.h-c.gch\n"
+        "withpch_cc ../../foo/input2.c | "
+        // Explicit dependency on the PCH build step.
+        "withpch/obj/build/pch_target.precompile.h-c.gch\n"
         "\n"
         "build withpch/obj/foo/pch_target.stamp: "
-               "withpch_stamp withpch/obj/foo/pch_target.input1.o "
-               "withpch/obj/foo/pch_target.input2.o\n";
+        "withpch_stamp withpch/obj/foo/pch_target.input1.o "
+        "withpch/obj/foo/pch_target.input2.o\n";
     EXPECT_EQ(pch_gcc_expected, out.str());
   }
 }
@@ -997,12 +997,12 @@ TEST_F(NinjaBinaryTargetWriterTest, InputFiles) {
         "target_output_name = bar\n"
         "\n"
         "build obj/foo/bar.input1.o: cxx ../../foo/input1.cc"
-          " | ../../foo/input.data\n"
+        " | ../../foo/input.data\n"
         "build obj/foo/bar.input2.o: cxx ../../foo/input2.cc"
-          " | ../../foo/input.data\n"
+        " | ../../foo/input.data\n"
         "\n"
         "build obj/foo/bar.stamp: stamp obj/foo/bar.input1.o "
-            "obj/foo/bar.input2.o\n";
+        "obj/foo/bar.input2.o\n";
 
     EXPECT_EQ(expected, out.str());
   }
@@ -1063,14 +1063,14 @@ TEST_F(NinjaBinaryTargetWriterTest, InputFiles) {
         "target_output_name = bar\n"
         "\n"
         "build obj/foo/bar.inputs.stamp: stamp"
-          " ../../foo/input1.data ../../foo/input2.data\n"
+        " ../../foo/input1.data ../../foo/input2.data\n"
         "build obj/foo/bar.input1.o: cxx ../../foo/input1.cc"
-          " | obj/foo/bar.inputs.stamp\n"
+        " | obj/foo/bar.inputs.stamp\n"
         "build obj/foo/bar.input2.o: cxx ../../foo/input2.cc"
-          " | obj/foo/bar.inputs.stamp\n"
+        " | obj/foo/bar.inputs.stamp\n"
         "\n"
         "build obj/foo/bar.stamp: stamp obj/foo/bar.input1.o "
-            "obj/foo/bar.input2.o\n";
+        "obj/foo/bar.input2.o\n";
 
     EXPECT_EQ(expected, out.str());
   }
@@ -1111,14 +1111,14 @@ TEST_F(NinjaBinaryTargetWriterTest, InputFiles) {
         "target_output_name = bar\n"
         "\n"
         "build obj/foo/bar.inputs.stamp: stamp"
-          " ../../foo/input1.data ../../foo/input2.data ../../foo/input3.data\n"
+        " ../../foo/input1.data ../../foo/input2.data ../../foo/input3.data\n"
         "build obj/foo/bar.input1.o: cxx ../../foo/input1.cc"
-          " | obj/foo/bar.inputs.stamp\n"
+        " | obj/foo/bar.inputs.stamp\n"
         "build obj/foo/bar.input2.o: cxx ../../foo/input2.cc"
-          " | obj/foo/bar.inputs.stamp\n"
+        " | obj/foo/bar.inputs.stamp\n"
         "\n"
         "build obj/foo/bar.stamp: stamp obj/foo/bar.input1.o "
-            "obj/foo/bar.input2.o\n";
+        "obj/foo/bar.input2.o\n";
 
     EXPECT_EQ(expected, out.str());
   }
