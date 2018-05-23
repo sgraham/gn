@@ -344,10 +344,6 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
       executables['gn_unittests']['sources'].append(
         os.path.relpath(full_path, SRC_ROOT))
 
-  static_libraries['dynamic_annotations']['sources'].extend([
-      'base/third_party/dynamic_annotations/dynamic_annotations.c',
-      'base/third_party/superfasthash/superfasthash.c',
-  ])
   static_libraries['base']['sources'].extend([
       'base/allocator/allocator_check.cc',
       'base/allocator/allocator_extension.cc',
