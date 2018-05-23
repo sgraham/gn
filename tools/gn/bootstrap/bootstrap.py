@@ -220,10 +220,6 @@ def build_gn_with_ninja_manually(tempdir, options, windows_x64_toolchain):
     write_compiled_message(root_gen_dir,
         'base/trace_event/etw_manifest/chrome_events_win.man')
 
-  write_buildflag_header_manually(
-      root_gen_dir, 'base/android/library_loader.h',
-      {'SUPPORTS_CODE_ORDERING': 'false'})
-
   write_gn_ninja(os.path.join(tempdir, 'build.ninja'),
                  root_gen_dir, options, windows_x64_toolchain)
   cmd = ['ninja', '-C', tempdir, '-w', 'dupbuild=err']
