@@ -14,7 +14,7 @@
 #include "base/logging.h"
 #include "base/process/internal_linux.h"
 #include "base/strings/string_number_conversions.h"
-#include "build/build_config.h"
+#include "build_config.h"
 
 #if defined(USE_TCMALLOC)
 #include "third_party/tcmalloc/chromium/src/config.h"

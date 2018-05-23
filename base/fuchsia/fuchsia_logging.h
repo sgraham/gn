@@ -10,7 +10,7 @@
 #include "base/base_export.h"
 #include "base/logging.h"
 #include "base/macros.h"
-#include "build/build_config.h"
+#include "build_config.h"
 
 // Use the ZX_LOG family of macros along with a zx_status_t containing a Zircon
 // error. The error value will be decoded so that logged messages explain the

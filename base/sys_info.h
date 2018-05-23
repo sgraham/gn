@@ -14,7 +14,7 @@
 #include "base/base_export.h"
 #include "base/files/file_path.h"
 #include "base/time/time.h"
-#include "build/build_config.h"
+#include "build_config.h"
 
 namespace base {
 
