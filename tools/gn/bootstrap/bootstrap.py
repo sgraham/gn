@@ -191,10 +191,6 @@ def build_gn_with_ninja_manually(tempdir, options, windows_x64_toolchain):
   write_buildflag_header_manually(root_gen_dir, 'base/allocator/buildflags.h',
       {'USE_ALLOCATOR_SHIM': 'true' if is_linux else 'false'})
 
-  write_buildflag_header_manually(root_gen_dir,
-                                  'base/memory/protected_memory_buildflags.h',
-                                  { 'USE_LLD': 'false' })
-
   write_buildflag_header_manually(root_gen_dir, 'base/cfi_buildflags.h',
       {
           'CFI_CAST_CHECK': 'false',
@@ -226,7 +222,7 @@ def build_gn_with_ninja_manually(tempdir, options, windows_x64_toolchain):
 
   write_buildflag_header_manually(
       root_gen_dir, 'base/android/library_loader.h',
-      {'USE_LLD': 'false', 'SUPPORTS_CODE_ORDERING': 'false'})
+      {'SUPPORTS_CODE_ORDERING': 'false'})
 
   write_gn_ninja(os.path.join(tempdir, 'build.ninja'),
                  root_gen_dir, options, windows_x64_toolchain)
