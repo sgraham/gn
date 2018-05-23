@@ -144,16 +144,6 @@ def main(argv):
     return 1
   return 0
 
-def write_compiled_message(root_gen_dir, source):
-  path = os.path.join(root_gen_dir, os.path.dirname(source))
-  mkdir_p(path)
-  check_call([
-      'mc.exe',
-      '-r', path, '-h', path,
-      '-u', '-um',
-      os.path.join(SRC_ROOT, source),
-  ])
-
 def build_gn_with_ninja_manually(tempdir, options, windows_x64_toolchain):
   root_gen_dir = os.path.join(tempdir, 'gen')
   mkdir_p(root_gen_dir)
