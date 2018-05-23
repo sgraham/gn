@@ -3,16 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# This file isn't officially supported by the Chromium project. It's maintained
-# on a best-effort basis by volunteers, so some things may be broken from time
-# to time. If you encounter errors, it's most often due to files in base that
-# have been added or moved since somebody last tried this script. Generally
-# such errors are easy to diagnose.
-
 """Bootstraps gn.
-
-It is done by first building it manually in a temporary directory, then building
-it with its own BUILD.gn to the final destination.
 """
 
 import contextlib
@@ -46,6 +37,7 @@ def check_output(cmd, cwd=GN_ROOT, **kwargs):
 
   return subprocess.check_output(cmd, cwd=cwd, **kwargs)
 
+
 def mkdir_p(path):
   try:
     os.makedirs(path)
@@ -54,23 +46,9 @@ def mkdir_p(path):
       pass
     else: raise
 
-@contextlib.contextmanager
-def scoped_tempdir():
-  path = tempfile.mkdtemp()
-  try:
-    yield path
-  finally:
-    shutil.rmtree(path)
-
 
 def run_build(tempdir, options):
-  if options.build_path:
-    build_rel = options.build_path
-  elif options.debug:
-    build_rel = os.path.join('out', 'Debug')
-  else:
-    build_rel = os.path.join('out', 'Release')
-  build_root = os.path.join(SRC_ROOT, build_rel)
+  build_root = os.path.join(SRC_ROOT, 'out')
 
   windows_x64_toolchain = None
   if is_win:
