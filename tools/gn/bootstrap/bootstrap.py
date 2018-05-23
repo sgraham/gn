@@ -117,8 +117,6 @@ def main(argv):
                     help='Do a debug build. Defaults to release build.')
   parser.add_option('-o', '--output',
                     help='place output in PATH', metavar='PATH')
-  parser.add_option('-s', '--no-rebuild', action='store_true',
-                    help='Do not rebuild GN with GN.')
   parser.add_option('--gn-gen-args', help='Args to pass to gn gen --args')
   parser.add_option('--build-path', help='The directory in which to build gn, '
                     'relative to the src directory. (eg. out/Release)'
