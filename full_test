@@ -3,7 +3,7 @@
 set -e
 
 rm -rf out
-./tools/gn/bootstrap/bootstrap.py
+./bootstrap/bootstrap.py
 out/gn_unittests
 
 # Check in-tree vs. ours. Uses:
@@ -11,7 +11,7 @@ out/gn_unittests
 # - out/lin/gn as built in-tree binary
 
 pushd /work/cr/src
-rm -rf out/COMP
+rm -rf out/COMP out/a out/b
 out/lin/gn gen out/COMP
 mv out/COMP out/a
 rm -rf out/COMP

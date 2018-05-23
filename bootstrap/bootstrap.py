@@ -18,7 +18,7 @@ import sys
 import tempfile
 
 BOOTSTRAP_DIR = os.path.dirname(os.path.abspath(__file__))
-GN_ROOT = os.path.dirname(BOOTSTRAP_DIR)
+GN_ROOT = os.path.join(os.path.dirname(BOOTSTRAP_DIR), 'tools', 'gn')
 SRC_ROOT = os.path.dirname(os.path.dirname(GN_ROOT))
 
 is_win = sys.platform.startswith('win')
@@ -167,7 +167,7 @@ def write_generic_ninja(path, static_libraries, executables,
   else:
     template_filename = 'build.ninja.template'
 
-  with open(os.path.join(GN_ROOT, 'bootstrap', template_filename)) as f:
+  with open(os.path.join(BOOTSTRAP_DIR, template_filename)) as f:
     ninja_template = f.read()
 
   if is_win:

@@ -5,10 +5,10 @@ src/test/test.* forked from Ninja https://github.com/ninja-build/ninja.
 base/ to be removed over time.
 
 Build with:
-  ./tools/gn/bootstrap/bootstrap.py
+  ./bootstrap/bootstrap.py
   out/gn_unittests
 
 Binary in out/gn.
 
-If you have a Chromium tree handy, you can use the hacky `test` script in the
-root to diff generation vs. the existing in-tree copy of gn.
+If you have a Chromium tree handy, you can use the hacky `full_test` script in
+the root to diff generation vs. the existing in-tree copy of gn.
