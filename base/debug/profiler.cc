@@ -17,52 +17,9 @@
 #include "base/win/pe_image.h"
 #endif  // defined(OS_WIN)
 
-// TODO(peria): Enable profiling on Windows.
-#if BUILDFLAG(ENABLE_PROFILING) && !defined(NO_TCMALLOC) && !defined(OS_WIN)
-#include "third_party/tcmalloc/chromium/src/gperftools/profiler.h"
-#endif
-
 namespace base {
 namespace debug {
 
-// TODO(peria): Enable profiling on Windows.
-#if BUILDFLAG(ENABLE_PROFILING) && !defined(NO_TCMALLOC) && !defined(OS_WIN)
-
-static int profile_count = 0;
-
-void StartProfiling(const std::string& name) {
-  ++profile_count;
-  std::string full_name(name);
-  std::string pid = IntToString(GetCurrentProcId());
-  std::string count = IntToString(profile_count);
-  ReplaceSubstringsAfterOffset(&full_name, 0, "{pid}", pid);
-  ReplaceSubstringsAfterOffset(&full_name, 0, "{count}", count);
-  ProfilerStart(full_name.c_str());
-}
-
-void StopProfiling() {
-  ProfilerFlush();
-  ProfilerStop();
-}
-
-void FlushProfiling() {
-  ProfilerFlush();
-}
-
-bool BeingProfiled() {
-  return ProfilingIsEnabledForAllThreads();
-}
-
-void RestartProfilingAfterFork() {
-  ProfilerRegisterThread();
-}
-
-bool IsProfilingSupported() {
-  return true;
-}
-
-#else
-
 void StartProfiling(const std::string& name) {
 }
 
@@ -82,8 +39,6 @@ void RestartProfilingAfterFork() {
 bool IsProfilingSupported() {
   return false;
 }
-
-#endif
 
 #if !defined(OS_WIN)
 

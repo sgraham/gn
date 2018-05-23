@@ -194,7 +194,6 @@ def build_gn_with_ninja_manually(tempdir, options, windows_x64_toolchain):
   write_buildflag_header_manually(root_gen_dir,
                                   'base/debug/debugging_buildflags.h',
       {
-          'ENABLE_PROFILING': 'false',
           'CAN_UNWIND_WITH_FRAME_POINTERS': 'false',
           'UNSAFE_DEVELOPER_BUILD': 'false',
           'CAN_UNWIND_WITH_CFI_TABLE': 'false',
