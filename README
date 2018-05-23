@@ -10,5 +10,9 @@ Build with:
 
 Binary in out/gn.
 
-If you have a Chromium tree handy, you can use the hacky `full_test` script in
-the root to diff generation vs. the existing in-tree copy of gn.
+If you have a Chromium tree handy, checkout 556eead9ce1e, then use:
+
+  ./full_test /path/to/cr out/lin/gn
+  
+where `out/lin/gn` is the relative path in the Chromium tree to the gn binary.
+This will show the diff of generation to make sure nothing has changed.

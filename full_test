@@ -2,20 +2,28 @@
 
 set -e
 
+if [ $# -ne 2 ]
+then
+  echo "Usage: full_test /chromium/tree/at/556eead9ce1e rel_gn_path"
+  exit 65
+fi
+
+
 rm -rf out
 ./build/build.py
 out/gn_unittests
 
 # Check in-tree vs. ours. Uses:
-# - Chromium tree at 556eead9ce1e in /work/cr/src.
-# - out/lin/gn as built in-tree binary
+# - Chromium tree at 556eead9ce1e in $1
+# - relative path to $1 built gn binary in $2
 
-pushd /work/cr/src
+SELF_DIR=$PWD
+pushd $1
 rm -rf out/COMP out/a out/b
-out/lin/gn gen out/COMP
+$2 gen out/COMP
 mv out/COMP out/a
 rm -rf out/COMP
-/work/gn/out/gn gen out/COMP
+$SELF_DIR/out/gn gen out/COMP
 mv out/COMP out/b
 # only diff should be regen line
 diff -r out/a out/b
