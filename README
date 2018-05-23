@@ -4,5 +4,6 @@ Dependencies to be removed over time.
 
 Build with:
   ./tools/gn/bootstrap/bootstrap.py
+  out/gn_unittests
 
 Binary in out/gn.
