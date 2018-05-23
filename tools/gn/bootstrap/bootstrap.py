@@ -77,7 +77,6 @@ def run_build(tempdir, options):
     windows_x64_toolchain = windows_prepare_toolchain(tempdir)
     os.environ["PATH"] = windows_x64_toolchain["paths"]
 
-  print 'Building gn manually in a temporary directory for bootstrapping...'
   build_gn_with_ninja_manually(tempdir, options, windows_x64_toolchain)
   temp_gn = os.path.join(tempdir, 'gn')
   out_gn = os.path.join(build_root, 'gn')
@@ -86,12 +85,8 @@ def run_build(tempdir, options):
     temp_gn += '.exe'
     out_gn += '.exe'
 
-  if options.no_rebuild:
-    mkdir_p(build_root)
-    shutil.copy2(temp_gn, out_gn)
-  else:
-    print 'Building gn using itself to %s...' % build_rel
-    build_gn_with_gn(temp_gn, build_root, options)
+  mkdir_p(build_root)
+  shutil.copy2(temp_gn, out_gn)
 
   if options.output:
     # Preserve the executable permission bit.
@@ -146,9 +141,6 @@ def main(argv):
                     help='place output in PATH', metavar='PATH')
   parser.add_option('-s', '--no-rebuild', action='store_true',
                     help='Do not rebuild GN with GN.')
-  parser.add_option('--no-clean', action='store_true',
-                    help='Re-used build directory instead of using new '
-                         'temporary location each time')
   parser.add_option('--gn-gen-args', help='Args to pass to gn gen --args')
   parser.add_option('--build-path', help='The directory in which to build gn, '
                     'relative to the src directory. (eg. out/Release)'
@@ -164,17 +156,13 @@ def main(argv):
   logging.basicConfig(level=logging.DEBUG if options.verbose else logging.ERROR)
 
   try:
-    if options.no_clean:
-      out_bootstrap_dir = SRC_ROOT
-      if options.build_path and os.path.isabs(options.build_path):
-        out_bootstrap_dir = os.path.dirname(options.build_path)
-      build_dir = os.path.join(out_bootstrap_dir, 'out_bootstrap')
-      if not os.path.exists(build_dir):
-        os.makedirs(build_dir)
-      return run_build(build_dir, options)
-    else:
-      with scoped_tempdir() as tempdir:
-        return run_build(tempdir, options)
+    out_bootstrap_dir = SRC_ROOT
+    if options.build_path and os.path.isabs(options.build_path):
+      out_bootstrap_dir = os.path.dirname(options.build_path)
+    build_dir = os.path.join(out_bootstrap_dir, 'out_bootstrap')
+    if not os.path.exists(build_dir):
+      os.makedirs(build_dir)
+    return run_build(build_dir, options)
   except subprocess.CalledProcessError as e:
     print >> sys.stderr, str(e)
     return 1
@@ -994,31 +982,6 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
 
   write_generic_ninja(path, static_libraries, executables, cc, cxx, ar, ld,
                       cflags, cflags_cc, ldflags, include_dirs, libs)
-
-def build_gn_with_gn(temp_gn, build_dir, options):
-  gn_gen_args = options.gn_gen_args or ''
-  if not options.debug:
-    gn_gen_args += ' is_debug=false'
-  cmd = [temp_gn, 'gen', build_dir, '--args=%s' % gn_gen_args,
-          "--root="+SRC_ROOT
-         ]
-  check_call(cmd)
-
-  cmd = ['ninja', '-C', build_dir, '-w', 'dupbuild=err']
-  if options.verbose:
-    cmd.append('-v')
-  cmd.append('gn')
-  check_call(cmd)
-
-  # build.ninja currently refers back to gn from the temporary directory.
-  # Regenerate the build files using the gn we just built so that the reference
-  # gets updated to "./gn".
-  cmd = [os.path.join(build_dir, 'gn'), 'gen', build_dir,
-         '--args=%s' % gn_gen_args]
-  check_call(cmd)
-
-  if not options.debug and not is_win:
-    check_call(['strip', os.path.join(build_dir, 'gn')])
 
 
 if __name__ == '__main__':
