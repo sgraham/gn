@@ -4,3 +4,5 @@ Dependencies to be removed over time.
 
 Build with:
   ./tools/gn/bootstrap/bootstrap.py --no-rebuild
+
+Binary in out/Release/gn.
