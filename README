@@ -1,6 +1,8 @@
-Forked from Chromium src.git at 556eead9ce1e.
+GN forked from Chromium src.git at 556eead9ce1e.
 
-Dependencies to be removed over time.
+src/test/test.* forked from Ninja https://github.com/ninja-build/ninja.
+
+base/ to be removed over time.
 
 Build with:
   ./tools/gn/bootstrap/bootstrap.py
