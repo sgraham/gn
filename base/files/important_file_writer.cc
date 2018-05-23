@@ -19,8 +19,6 @@
 #include "base/files/file_util.h"
 #include "base/logging.h"
 #include "base/macros.h"
-#include "base/metrics/histogram_functions.h"
-#include "base/metrics/histogram_macros.h"
 #include "base/numerics/safe_conversions.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_util.h"
@@ -50,53 +48,6 @@ enum TempFileFailure {
   TEMP_FILE_FAILURE_MAX
 };
 
-// Helper function to write samples to a histogram with a dynamically assigned
-// histogram name.  Works with different error code types convertible to int
-// which is the actual argument type of UmaHistogramExactLinear.
-template <typename SampleType>
-void UmaHistogramExactLinearWithSuffix(const char* histogram_name,
-                                       StringPiece histogram_suffix,
-                                       SampleType add_sample,
-                                       SampleType max_sample) {
-  static_assert(std::is_convertible<SampleType, int>::value,
-                "SampleType should be convertible to int");
-  DCHECK(histogram_name);
-  std::string histogram_full_name(histogram_name);
-  if (!histogram_suffix.empty()) {
-    histogram_full_name.append(".");
-    histogram_full_name.append(histogram_suffix.data(),
-                               histogram_suffix.length());
-  }
-  UmaHistogramExactLinear(histogram_full_name, static_cast<int>(add_sample),
-                          static_cast<int>(max_sample));
-}
-
-// Helper function to write samples to a histogram with a dynamically assigned
-// histogram name.  Works with short timings from 1 ms up to 10 seconds (50
-// buckets) which is the actual argument type of UmaHistogramTimes.
-void UmaHistogramTimesWithSuffix(const char* histogram_name,
-                                 StringPiece histogram_suffix,
-                                 TimeDelta sample) {
-  DCHECK(histogram_name);
-  std::string histogram_full_name(histogram_name);
-  if (!histogram_suffix.empty()) {
-    histogram_full_name.append(".");
-    histogram_full_name.append(histogram_suffix.data(),
-                               histogram_suffix.length());
-  }
-  UmaHistogramTimes(histogram_full_name, sample);
-}
-
-void LogFailure(const FilePath& path,
-                StringPiece histogram_suffix,
-                TempFileFailure failure_code,
-                StringPiece message) {
-  UmaHistogramExactLinearWithSuffix("ImportantFile.TempFileFailures",
-                                    histogram_suffix, failure_code,
-                                    TEMP_FILE_FAILURE_MAX);
-  DPLOG(WARNING) << "temp file failure: " << path.value() << " : " << message;
-}
-
 // Helper function to call WriteFileAtomically() with a
 // std::unique_ptr<std::string>.
 void WriteScopedStringToFileAtomically(
@@ -111,10 +62,6 @@ void WriteScopedStringToFileAtomically(
   TimeTicks start_time = TimeTicks::Now();
   bool result =
       ImportantFileWriter::WriteFileAtomically(path, *data, histogram_suffix);
-  if (result) {
-    UmaHistogramTimesWithSuffix("ImportantFile.TimeToWrite", histogram_suffix,
-                                TimeTicks::Now() - start_time);
-  }
 
   if (!after_write_callback.is_null())
     after_write_callback.Run(result);
@@ -122,11 +69,7 @@ void WriteScopedStringToFileAtomically(
 
 void DeleteTmpFile(const FilePath& tmp_file_path,
                    StringPiece histogram_suffix) {
-  if (!DeleteFile(tmp_file_path, false)) {
-    UmaHistogramExactLinearWithSuffix(
-        "ImportantFile.FileDeleteError", histogram_suffix,
-        -base::File::GetLastFileError(), -base::File::FILE_ERROR_MAX);
-  }
+  DeleteFile(tmp_file_path, false);
 }
 
 }  // namespace
@@ -155,21 +98,11 @@ bool ImportantFileWriter::WriteFileAtomically(const FilePath& path,
   // is securely created.
   FilePath tmp_file_path;
   if (!CreateTemporaryFileInDir(path.DirName(), &tmp_file_path)) {
-    UmaHistogramExactLinearWithSuffix(
-        "ImportantFile.FileCreateError", histogram_suffix,
-        -base::File::GetLastFileError(), -base::File::FILE_ERROR_MAX);
-    LogFailure(path, histogram_suffix, FAILED_CREATING,
-               "could not create temporary file");
     return false;
   }
 
   File tmp_file(tmp_file_path, File::FLAG_OPEN | File::FLAG_WRITE);
   if (!tmp_file.IsValid()) {
-    UmaHistogramExactLinearWithSuffix(
-        "ImportantFile.FileOpenError", histogram_suffix,
-        -tmp_file.error_details(), -base::File::FILE_ERROR_MAX);
-    LogFailure(path, histogram_suffix, FAILED_OPENING,
-               "could not open temporary file");
     DeleteFile(tmp_file_path, false);
     return false;
   }
@@ -177,34 +110,21 @@ bool ImportantFileWriter::WriteFileAtomically(const FilePath& path,
   // If this fails in the wild, something really bad is going on.
   const int data_length = checked_cast<int32_t>(data.length());
   int bytes_written = tmp_file.Write(0, data.data(), data_length);
-  if (bytes_written < data_length) {
-    UmaHistogramExactLinearWithSuffix(
-        "ImportantFile.FileWriteError", histogram_suffix,
-        -base::File::GetLastFileError(), -base::File::FILE_ERROR_MAX);
-  }
   bool flush_success = tmp_file.Flush();
   tmp_file.Close();
 
   if (bytes_written < data_length) {
-    LogFailure(path, histogram_suffix, FAILED_WRITING,
-               "error writing, bytes_written=" + IntToString(bytes_written));
     DeleteTmpFile(tmp_file_path, histogram_suffix);
     return false;
   }
 
   if (!flush_success) {
-    LogFailure(path, histogram_suffix, FAILED_FLUSHING, "error flushing");
     DeleteTmpFile(tmp_file_path, histogram_suffix);
     return false;
   }
 
   base::File::Error replace_file_error = base::File::FILE_OK;
   if (!ReplaceFile(tmp_file_path, path, &replace_file_error)) {
-    UmaHistogramExactLinearWithSuffix("ImportantFile.FileRenameError",
-                                      histogram_suffix, -replace_file_error,
-                                      -base::File::FILE_ERROR_MAX);
-    LogFailure(path, histogram_suffix, FAILED_RENAMING,
-               "could not rename temporary file");
     DeleteTmpFile(tmp_file_path, histogram_suffix);
     return false;
   }

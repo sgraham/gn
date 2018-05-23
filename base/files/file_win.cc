@@ -8,7 +8,6 @@
 #include <stdint.h>
 
 #include "base/logging.h"
-#include "base/metrics/histogram_functions.h"
 #include "base/threading/thread_restrictions.h"
 
 #include <windows.h>

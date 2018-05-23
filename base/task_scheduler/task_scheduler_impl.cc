@@ -9,7 +9,6 @@
 
 #include "base/compiler_specific.h"
 #include "base/message_loop/message_loop.h"
-#include "base/metrics/field_trial_params.h"
 #include "base/strings/string_util.h"
 #include "base/task_scheduler/delayed_task_manager.h"
 #include "base/task_scheduler/environment_config.h"
@@ -64,13 +63,6 @@ TaskSchedulerImpl::~TaskSchedulerImpl() {
 void TaskSchedulerImpl::Start(
     const TaskScheduler::InitParams& init_params,
     SchedulerWorkerObserver* scheduler_worker_observer) {
-  // This is set in Start() and not in the constructor because variation params
-  // are usually not ready when TaskSchedulerImpl is instantiated in a process.
-  if (base::GetFieldTrialParamValue("BrowserScheduler",
-                                    "AllTasksUserBlocking") == "true") {
-    all_tasks_user_blocking_.Set();
-  }
-
   // Start the service thread. On platforms that support it (POSIX except NaCL
   // SFI), the service thread runs a MessageLoopForIO which is used to support
   // FileDescriptorWatcher in the scope in which tasks run.
@@ -173,14 +165,6 @@ TaskSchedulerImpl::CreateCOMSTATaskRunnerWithTraits(
       SetUserBlockingPriorityIfNeeded(traits), thread_mode);
 }
 #endif  // defined(OS_WIN)
-
-std::vector<const HistogramBase*> TaskSchedulerImpl::GetHistograms() const {
-  std::vector<const HistogramBase*> histograms;
-  for (const auto& worker_pool : worker_pools_)
-    worker_pool->GetHistograms(&histograms);
-
-  return histograms;
-}
 
 int TaskSchedulerImpl::GetMaxConcurrentNonBlockedTasksWithTraitsDeprecated(
     const TaskTraits& traits) const {

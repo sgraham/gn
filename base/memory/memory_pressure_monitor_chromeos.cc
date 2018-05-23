@@ -7,7 +7,6 @@
 #include <fcntl.h>
 #include <sys/select.h>
 
-#include "base/metrics/histogram_macros.h"
 #include "base/posix/eintr_wrapper.h"
 #include "base/process/process_metrics.h"
 #include "base/single_thread_task_runner.h"

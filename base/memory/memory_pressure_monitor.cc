@@ -5,7 +5,6 @@
 #include "base/memory/memory_pressure_monitor.h"
 
 #include "base/logging.h"
-#include "base/metrics/histogram_macros.h"
 
 namespace base {
 namespace {

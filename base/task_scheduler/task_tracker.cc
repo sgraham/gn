@@ -13,7 +13,6 @@
 #include "base/command_line.h"
 #include "base/json/json_writer.h"
 #include "base/memory/ptr_util.h"
-#include "base/metrics/histogram_macros.h"
 #include "base/sequence_token.h"
 #include "base/strings/string_util.h"
 #include "base/synchronization/condition_variable.h"
@@ -38,40 +37,6 @@ constexpr char kSingleThreadExecutionMode[] = "single thread";
 // revealing its implementation details.
 constexpr char kQueueFunctionName[] = "TaskScheduler PostTask";
 constexpr char kRunFunctionName[] = "TaskScheduler RunTask";
-
-// Constructs a histogram to track latency which is logging to
-// "TaskScheduler.{histogram_name}.{histogram_label}.{task_type_suffix}".
-HistogramBase* GetLatencyHistogram(StringPiece histogram_name,
-                                   StringPiece histogram_label,
-                                   StringPiece task_type_suffix) {
-  DCHECK(!histogram_name.empty());
-  DCHECK(!histogram_label.empty());
-  DCHECK(!task_type_suffix.empty());
-  // Mimics the UMA_HISTOGRAM_HIGH_RESOLUTION_CUSTOM_TIMES macro. The minimums
-  // and maximums were chosen to place the 1ms mark at around the 70% range
-  // coverage for buckets giving us good info for tasks that have a latency
-  // below 1ms (most of them) and enough info to assess how bad the latency is
-  // for tasks that exceed this threshold.
-  const std::string histogram = JoinString(
-      {"TaskScheduler", histogram_name, histogram_label, task_type_suffix},
-      ".");
-  return Histogram::FactoryMicrosecondsTimeGet(
-      histogram, TimeDelta::FromMicroseconds(1),
-      TimeDelta::FromMilliseconds(20), 50,
-      HistogramBase::kUmaTargetedHistogramFlag);
-}
-
-// Upper bound for the
-// TaskScheduler.BlockShutdownTasksPostedDuringShutdown histogram.
-constexpr HistogramBase::Sample kMaxBlockShutdownTasksPostedDuringShutdown =
-    1000;
-
-void RecordNumBlockShutdownTasksPostedDuringShutdown(
-    HistogramBase::Sample value) {
-  UMA_HISTOGRAM_CUSTOM_COUNTS(
-      "TaskScheduler.BlockShutdownTasksPostedDuringShutdown", value, 1,
-      kMaxBlockShutdownTasksPostedDuringShutdown, 50);
-}
 
 // Returns the maximum number of TaskPriority::BACKGROUND sequences that can be
 // scheduled concurrently based on command line flags.
@@ -217,49 +182,7 @@ TaskTracker::TaskTracker(StringPiece histogram_label,
       shutdown_lock_(&flush_lock_),
       max_num_scheduled_background_sequences_(
           max_num_scheduled_background_sequences),
-      task_latency_histograms_{
-          {GetLatencyHistogram("TaskLatencyMicroseconds",
-                               histogram_label,
-                               "BackgroundTaskPriority"),
-           GetLatencyHistogram("TaskLatencyMicroseconds",
-                               histogram_label,
-                               "BackgroundTaskPriority_MayBlock")},
-          {GetLatencyHistogram("TaskLatencyMicroseconds",
-                               histogram_label,
-                               "UserVisibleTaskPriority"),
-           GetLatencyHistogram("TaskLatencyMicroseconds",
-                               histogram_label,
-                               "UserVisibleTaskPriority_MayBlock")},
-          {GetLatencyHistogram("TaskLatencyMicroseconds",
-                               histogram_label,
-                               "UserBlockingTaskPriority"),
-           GetLatencyHistogram("TaskLatencyMicroseconds",
-                               histogram_label,
-                               "UserBlockingTaskPriority_MayBlock")}},
-      heartbeat_latency_histograms_{
-          {GetLatencyHistogram("HeartbeatLatencyMicroseconds",
-                               histogram_label,
-                               "BackgroundTaskPriority"),
-           GetLatencyHistogram("HeartbeatLatencyMicroseconds",
-                               histogram_label,
-                               "BackgroundTaskPriority_MayBlock")},
-          {GetLatencyHistogram("HeartbeatLatencyMicroseconds",
-                               histogram_label,
-                               "UserVisibleTaskPriority"),
-           GetLatencyHistogram("HeartbeatLatencyMicroseconds",
-                               histogram_label,
-                               "UserVisibleTaskPriority_MayBlock")},
-          {GetLatencyHistogram("HeartbeatLatencyMicroseconds",
-                               histogram_label,
-                               "UserBlockingTaskPriority"),
-           GetLatencyHistogram("HeartbeatLatencyMicroseconds",
-                               histogram_label,
-                               "UserBlockingTaskPriority_MayBlock")}},
       tracked_ref_factory_(this) {
-  // Confirm that all |task_latency_histograms_| have been initialized above.
-  DCHECK(*(&task_latency_histograms_[static_cast<int>(TaskPriority::HIGHEST) +
-                                     1][0] -
-           1));
 }
 
 TaskTracker::~TaskTracker() = default;
@@ -401,31 +324,9 @@ void TaskTracker::SetHasShutdownStartedForTesting() {
   state_->StartShutdown();
 }
 
-void TaskTracker::RecordLatencyHistogram(
-    LatencyHistogramType latency_histogram_type,
-    TaskTraits task_traits,
-    TimeTicks posted_time) const {
-  const TimeDelta task_latency = TimeTicks::Now() - posted_time;
-
-  DCHECK(latency_histogram_type == LatencyHistogramType::TASK_LATENCY ||
-         latency_histogram_type == LatencyHistogramType::HEARTBEAT_LATENCY);
-  auto& histograms =
-      latency_histogram_type == LatencyHistogramType::TASK_LATENCY
-          ? task_latency_histograms_
-          : heartbeat_latency_histograms_;
-  histograms[static_cast<int>(task_traits.priority())]
-            [task_traits.may_block() || task_traits.with_base_sync_primitives()
-                 ? 1
-                 : 0]
-                ->AddTimeMicrosecondsGranularity(task_latency);
-}
-
 void TaskTracker::RunOrSkipTask(Task task,
                                 Sequence* sequence,
                                 bool can_run_task) {
-  RecordLatencyHistogram(LatencyHistogramType::TASK_LATENCY, task.traits,
-                         task.sequenced_time);
-
   const bool previous_singleton_allowed =
       ThreadRestrictions::SetSingletonAllowed(
           task.traits.shutdown_behavior() !=
@@ -479,7 +380,6 @@ void TaskTracker::PerformShutdown() {
 
     // This method can only be called once.
     DCHECK(!shutdown_event_);
-    DCHECK(!num_block_shutdown_tasks_posted_during_shutdown_);
     DCHECK(!state_->HasShutdownStarted());
 
     shutdown_event_.reset(
@@ -513,20 +413,6 @@ void TaskTracker::PerformShutdown() {
   {
     base::ThreadRestrictions::ScopedAllowWait allow_wait;
     shutdown_event_->Wait();
-  }
-
-  {
-    AutoSchedulerLock auto_lock(shutdown_lock_);
-
-    // Record TaskScheduler.BlockShutdownTasksPostedDuringShutdown if less than
-    // |kMaxBlockShutdownTasksPostedDuringShutdown| BLOCK_SHUTDOWN tasks were
-    // posted during shutdown. Otherwise, the histogram has already been
-    // recorded in BeforePostTask().
-    if (num_block_shutdown_tasks_posted_during_shutdown_ <
-        kMaxBlockShutdownTasksPostedDuringShutdown) {
-      RecordNumBlockShutdownTasksPostedDuringShutdown(
-          num_block_shutdown_tasks_posted_during_shutdown_);
-    }
   }
 }
 
@@ -616,18 +502,6 @@ bool TaskTracker::BeforePostTask(TaskShutdownBehavior shutdown_behavior) {
 #endif
         state_->DecrementNumTasksBlockingShutdown();
         return false;
-      }
-
-      ++num_block_shutdown_tasks_posted_during_shutdown_;
-
-      if (num_block_shutdown_tasks_posted_during_shutdown_ ==
-          kMaxBlockShutdownTasksPostedDuringShutdown) {
-        // Record the TaskScheduler.BlockShutdownTasksPostedDuringShutdown
-        // histogram as soon as its upper bound is hit. That way, a value will
-        // be recorded even if an infinite number of BLOCK_SHUTDOWN tasks are
-        // posted, preventing shutdown to complete.
-        RecordNumBlockShutdownTasksPostedDuringShutdown(
-            num_block_shutdown_tasks_posted_during_shutdown_);
       }
     }
 

@@ -11,8 +11,6 @@
 #include "base/allocator/partition_allocator/page_allocator.h"
 #include "base/logging.h"
 #include "base/memory/shared_memory_tracker.h"
-#include "base/metrics/histogram_functions.h"
-#include "base/metrics/histogram_macros.h"
 #include "base/rand_util.h"
 #include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"

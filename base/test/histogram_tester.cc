@@ -6,8 +6,6 @@
 
 #include <stddef.h>
 
-#include "base/metrics/histogram.h"
-#include "base/metrics/histogram_samples.h"
 #include "base/metrics/metrics_hashes.h"
 #include "base/metrics/sample_map.h"
 #include "base/metrics/statistics_recorder.h"

@@ -35,7 +35,6 @@
 
 namespace base {
 
-class HistogramBase;
 class Thread;
 
 namespace internal {
@@ -79,7 +78,6 @@ class BASE_EXPORT TaskSchedulerImpl : public TaskScheduler {
       const TaskTraits& traits,
       SingleThreadTaskRunnerThreadMode thread_mode) override;
 #endif  // defined(OS_WIN)
-  std::vector<const HistogramBase*> GetHistograms() const override;
   int GetMaxConcurrentNonBlockedTasksWithTraitsDeprecated(
       const TaskTraits& traits) const override;
   void Shutdown() override;

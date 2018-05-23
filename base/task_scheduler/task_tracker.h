@@ -15,7 +15,6 @@
 #include "base/debug/task_annotator.h"
 #include "base/logging.h"
 #include "base/macros.h"
-#include "base/metrics/histogram_base.h"
 #include "base/strings/string_piece.h"
 #include "base/synchronization/waitable_event.h"
 #include "base/task_scheduler/can_schedule_sequence_observer.h"
@@ -330,20 +329,6 @@ class BASE_EXPORT TaskTracker {
 
   // Number of currently scheduled background sequences.
   int num_scheduled_background_sequences_ = 0;
-
-  // TaskScheduler.TaskLatencyMicroseconds.* and
-  // TaskScheduler.HeartbeatLatencyMicroseconds.* histograms. The first index is
-  // a TaskPriority. The second index is 0 for non-blocking tasks, 1 for
-  // blocking tasks. Intentionally leaked.
-  // TODO(scheduler-dev): Consider using STATIC_HISTOGRAM_POINTER_GROUP for
-  // these.
-  static constexpr int kNumTaskPriorities =
-      static_cast<int>(TaskPriority::HIGHEST) + 1;
-  HistogramBase* const task_latency_histograms_[kNumTaskPriorities][2];
-  HistogramBase* const heartbeat_latency_histograms_[kNumTaskPriorities][2];
-
-  // Number of BLOCK_SHUTDOWN tasks posted during shutdown.
-  HistogramBase::Sample num_block_shutdown_tasks_posted_during_shutdown_ = 0;
 
   // Ensures all state (e.g. dangling cleaned up workers) is coalesced before
   // destroying the TaskTracker (e.g. in test environments).

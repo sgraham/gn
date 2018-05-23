@@ -10,7 +10,6 @@
 #include <algorithm>
 #include <utility>
 
-#include "base/debug/activity_tracker.h"
 #include "base/logging.h"
 #include "base/numerics/safe_conversions.h"
 #include "base/threading/scoped_blocking_call.h"
@@ -55,8 +54,6 @@ bool WaitableEvent::IsSignaled() {
 void WaitableEvent::Wait() {
   internal::AssertBaseSyncPrimitivesAllowed();
   ScopedBlockingCall scoped_blocking_call(BlockingType::MAY_BLOCK);
-  // Record the event that this thread is blocking upon (for hang diagnosis).
-  base::debug::ScopedEventWaitActivity event_activity(this);
 
   DWORD result = WaitForSingleObject(handle_.Get(), INFINITE);
   // It is most unexpected that this should ever fail.  Help consumers learn
@@ -108,8 +105,6 @@ bool WaitableEvent::TimedWait(const TimeDelta& wait_delta) {
     return IsSignaled();
 
   internal::AssertBaseSyncPrimitivesAllowed();
-  // Record the event that this thread is blocking upon (for hang diagnosis).
-  base::debug::ScopedEventWaitActivity event_activity(this);
 
   TimeTicks now(TimeTicks::Now());
   // TimeTicks takes care of overflow including the cases when wait_delta
@@ -138,8 +133,6 @@ size_t WaitableEvent::WaitMany(WaitableEvent** events, size_t count) {
 
   internal::AssertBaseSyncPrimitivesAllowed();
   ScopedBlockingCall scoped_blocking_call(BlockingType::MAY_BLOCK);
-  // Record an event (the first) that this thread is blocking upon.
-  base::debug::ScopedEventWaitActivity event_activity(events[0]);
 
   HANDLE handles[MAXIMUM_WAIT_OBJECTS];
   CHECK_LE(count, static_cast<size_t>(MAXIMUM_WAIT_OBJECTS))
