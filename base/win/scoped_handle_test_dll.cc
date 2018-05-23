@@ -6,7 +6,6 @@
 
 #include <vector>
 
-#include "base/win/base_win_buildflags.h"
 #include "base/win/current_module.h"
 #include "base/win/scoped_handle.h"
 #include "base/win/scoped_handle_verifier.h"
@@ -102,17 +101,10 @@ bool InternalRunLocationTest() {
 
   HMODULE main_module = ::GetModuleHandle(NULL);
 
-#if BUILDFLAG(SINGLE_MODULE_MODE_HANDLE_VERIFIER)
-  // In a component build ActiveVerifier will always be created inside base.dll
-  // as the code always lives there.
-  if (verifier_module == my_module || verifier_module == main_module)
-    return false;
-#else
   // In a non-component build, ActiveVerifier should always be created in the
   // version of base linked with the main executable.
   if (verifier_module == my_module || verifier_module != main_module)
     return false;
-#endif
   return true;
 }
 

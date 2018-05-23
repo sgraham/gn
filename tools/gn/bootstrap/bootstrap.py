@@ -213,10 +213,6 @@ def build_gn_with_ninja_manually(tempdir, options, windows_x64_toolchain):
     ])
 
   if is_win:
-    write_buildflag_header_manually(root_gen_dir,
-                                    'base/win/base_win_buildflags.h',
-        {'SINGLE_MODULE_MODE_HANDLE_VERIFIER': 'true'})
-
     write_compiled_message(root_gen_dir,
         'base/trace_event/etw_manifest/chrome_events_win.man')
 
