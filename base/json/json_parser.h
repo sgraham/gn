@@ -13,7 +13,6 @@
 
 #include "base/base_export.h"
 #include "base/compiler_specific.h"
-#include "base/gtest_prod_util.h"
 #include "base/json/json_reader.h"
 #include "base/macros.h"
 #include "base/optional.h"
@@ -238,16 +237,6 @@ class BASE_EXPORT JSONParser {
   int error_column_;
 
   friend class JSONParserTest;
-  FRIEND_TEST_ALL_PREFIXES(JSONParserTest, NextChar);
-  FRIEND_TEST_ALL_PREFIXES(JSONParserTest, ConsumeDictionary);
-  FRIEND_TEST_ALL_PREFIXES(JSONParserTest, ConsumeList);
-  FRIEND_TEST_ALL_PREFIXES(JSONParserTest, ConsumeString);
-  FRIEND_TEST_ALL_PREFIXES(JSONParserTest, ConsumeLiterals);
-  FRIEND_TEST_ALL_PREFIXES(JSONParserTest, ConsumeNumbers);
-  FRIEND_TEST_ALL_PREFIXES(JSONParserTest, ErrorMessages);
-  FRIEND_TEST_ALL_PREFIXES(JSONParserTest, ReplaceInvalidCharacters);
-  FRIEND_TEST_ALL_PREFIXES(JSONParserTest, ReplaceInvalidUTF16EscapeSequence);
-
   DISALLOW_COPY_AND_ASSIGN(JSONParser);
 };
 

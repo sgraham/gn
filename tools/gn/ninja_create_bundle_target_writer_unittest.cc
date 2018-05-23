@@ -8,7 +8,7 @@
 #include <memory>
 #include <sstream>
 
-#include "testing/gtest/include/gtest/gtest.h"
+#include "test/test.h"
 #include "tools/gn/target.h"
 #include "tools/gn/test_with_scope.h"
 
@@ -49,7 +49,7 @@ TEST(NinjaCreateBundleTargetWriter, Run) {
   TestWithScope setup;
 
   std::unique_ptr<Target> action = NewAction(setup);
-  ASSERT_TRUE(action->OnResolved(&err)) << err.message();
+  ASSERT_TRUE(action->OnResolved(&err));
 
   Target bundle_data(setup.settings(), Label(SourceDir("//foo/"), "data"));
   bundle_data.set_output_type(Target::BUNDLE_DATA);
@@ -98,7 +98,7 @@ TEST(NinjaCreateBundleTargetWriter, InSubDirectory) {
   TestWithScope setup;
 
   std::unique_ptr<Target> action = NewAction(setup);
-  ASSERT_TRUE(action->OnResolved(&err)) << err.message();
+  ASSERT_TRUE(action->OnResolved(&err));
 
   Target bundle_data(setup.settings(), Label(SourceDir("//foo/"), "data"));
   bundle_data.set_output_type(Target::BUNDLE_DATA);
@@ -147,7 +147,7 @@ TEST(NinjaCreateBundleTargetWriter, JustPartialInfoPlist) {
   TestWithScope setup;
 
   std::unique_ptr<Target> action = NewAction(setup);
-  ASSERT_TRUE(action->OnResolved(&err)) << err.message();
+  ASSERT_TRUE(action->OnResolved(&err));
 
   Target create_bundle(
       setup.settings(),
@@ -182,7 +182,7 @@ TEST(NinjaCreateBundleTargetWriter, AssetCatalog) {
   TestWithScope setup;
 
   std::unique_ptr<Target> action = NewAction(setup);
-  ASSERT_TRUE(action->OnResolved(&err)) << err.message();
+  ASSERT_TRUE(action->OnResolved(&err));
 
   Target bundle_data(setup.settings(), Label(SourceDir("//foo/"), "data"));
   bundle_data.set_output_type(Target::BUNDLE_DATA);
@@ -266,7 +266,7 @@ TEST(NinjaCreateBundleTargetWriter, Complex) {
   TestWithScope setup;
 
   std::unique_ptr<Target> action = NewAction(setup);
-  ASSERT_TRUE(action->OnResolved(&err)) << err.message();
+  ASSERT_TRUE(action->OnResolved(&err));
 
   Target bundle_data0(setup.settings(),
                       Label(SourceDir("//qux/"), "info_plist"));
@@ -382,7 +382,7 @@ TEST(NinjaCreateBundleTargetWriter, CodeSigning) {
   TestWithScope setup;
 
   std::unique_ptr<Target> action = NewAction(setup);
-  ASSERT_TRUE(action->OnResolved(&err)) << err.message();
+  ASSERT_TRUE(action->OnResolved(&err));
 
   Target executable(setup.settings(), Label(SourceDir("//baz/"), "quz"));
   executable.set_output_type(Target::EXECUTABLE);

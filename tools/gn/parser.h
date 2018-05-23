@@ -11,10 +11,10 @@
 #include <memory>
 #include <vector>
 
-#include "base/gtest_prod_util.h"
 #include "base/macros.h"
 #include "tools/gn/err.h"
 #include "tools/gn/parse_tree.h"
+#include "test/test.h"
 
 class Parser;
 typedef std::unique_ptr<ParseNode> (Parser::*PrefixFunc)(const Token& token);
@@ -134,14 +134,14 @@ class Parser {
   // Current index into the tokens.
   size_t cur_;
 
-  FRIEND_TEST_ALL_PREFIXES(Parser, BinaryOp);
-  FRIEND_TEST_ALL_PREFIXES(Parser, Block);
-  FRIEND_TEST_ALL_PREFIXES(Parser, Condition);
-  FRIEND_TEST_ALL_PREFIXES(Parser, Expression);
-  FRIEND_TEST_ALL_PREFIXES(Parser, FunctionCall);
-  FRIEND_TEST_ALL_PREFIXES(Parser, List);
-  FRIEND_TEST_ALL_PREFIXES(Parser, ParenExpression);
-  FRIEND_TEST_ALL_PREFIXES(Parser, UnaryOp);
+  FRIEND_TEST(Parser, BinaryOp);
+  FRIEND_TEST(Parser, Block);
+  FRIEND_TEST(Parser, Condition);
+  FRIEND_TEST(Parser, Expression);
+  FRIEND_TEST(Parser, FunctionCall);
+  FRIEND_TEST(Parser, List);
+  FRIEND_TEST(Parser, ParenExpression);
+  FRIEND_TEST(Parser, UnaryOp);
 
   DISALLOW_COPY_AND_ASSIGN(Parser);
 };

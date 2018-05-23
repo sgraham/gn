@@ -6,7 +6,7 @@
 
 #include "base/macros.h"
 #include "build/build_config.h"
-#include "testing/gtest/include/gtest/gtest.h"
+#include "test/test.h"
 #include "tools/gn/err.h"
 #include "tools/gn/label.h"
 #include "tools/gn/value.h"
@@ -82,14 +82,12 @@ TEST(Label, Resolve) {
     v.string_value() = cur.str;
     Label result =
         Label::Resolve(SourceDir(cur.cur_dir), default_toolchain, v, &err);
-    EXPECT_EQ(cur.success, !err.has_error()) << i << " " << cur.str;
+    EXPECT_EQ(cur.success, !err.has_error());
     if (!err.has_error() && cur.success) {
-      EXPECT_EQ(cur.expected_dir, result.dir().value()) << i << " " << cur.str;
-      EXPECT_EQ(cur.expected_name, result.name()) << i << " " << cur.str;
-      EXPECT_EQ(cur.expected_toolchain_dir, result.toolchain_dir().value())
-          << i << " " << cur.str;
-      EXPECT_EQ(cur.expected_toolchain_name, result.toolchain_name())
-          << i << " " << cur.str;
+      EXPECT_EQ(cur.expected_dir, result.dir().value());
+      EXPECT_EQ(cur.expected_name, result.name());
+      EXPECT_EQ(cur.expected_toolchain_dir, result.toolchain_dir().value());
+      EXPECT_EQ(cur.expected_toolchain_name, result.toolchain_name());
     }
   }
 }

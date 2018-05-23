@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "testing/gtest/include/gtest/gtest.h"
+#include "test/test.h"
 #include "tools/gn/functions.h"
 #include "tools/gn/scheduler.h"
 #include "tools/gn/test_with_scheduler.h"
@@ -26,7 +26,7 @@ TEST_F(FunctionToolchain, RuntimeOutputs) {
 
     Err err;
     input.parsed()->Execute(setup.scope(), &err);
-    ASSERT_FALSE(err.has_error()) << err.message();
+    ASSERT_FALSE(err.has_error());
 
     // It should have generated a toolchain.
     ASSERT_EQ(1u, setup.items().size());
@@ -55,6 +55,6 @@ TEST_F(FunctionToolchain, RuntimeOutputs) {
 
     Err err;
     input.parsed()->Execute(setup.scope(), &err);
-    ASSERT_TRUE(err.has_error()) << err.message();
+    ASSERT_TRUE(err.has_error());
   }
 }

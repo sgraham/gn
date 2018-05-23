@@ -20,7 +20,6 @@
 
 #include "base/base_export.h"
 #include "base/callback.h"
-#include "base/gtest_prod_util.h"
 #include "base/lazy_instance.h"
 #include "base/macros.h"
 #include "base/memory/weak_ptr.h"
@@ -243,7 +242,6 @@ class BASE_EXPORT StatisticsRecorder {
           RangesMap;
 
   friend class StatisticsRecorderTest;
-  FRIEND_TEST_ALL_PREFIXES(StatisticsRecorderTest, IterationTest);
 
   // Initializes the global recorder if it doesn't already exist. Safe to call
   // multiple times.

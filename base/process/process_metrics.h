@@ -15,7 +15,6 @@
 #include <string>
 
 #include "base/base_export.h"
-#include "base/gtest_prod_util.h"
 #include "base/macros.h"
 #include "base/process/process_handle.h"
 #include "base/time/time.h"
@@ -488,7 +487,6 @@ class SystemMetrics {
   std::unique_ptr<Value> ToValue() const;
 
  private:
-  FRIEND_TEST_ALL_PREFIXES(SystemMetricsTest, SystemMetrics);
 
   size_t committed_memory_;
 #if defined(OS_LINUX) || defined(OS_ANDROID)

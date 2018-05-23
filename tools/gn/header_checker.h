@@ -9,7 +9,6 @@
 #include <vector>
 
 #include "base/atomic_ref_count.h"
-#include "base/gtest_prod_util.h"
 #include "base/macros.h"
 #include "base/memory/ref_counted.h"
 #include "base/strings/string_piece.h"
@@ -17,6 +16,7 @@
 #include "base/synchronization/lock.h"
 #include "tools/gn/err.h"
 #include "tools/gn/source_dir.h"
+#include "test/test.h"
 
 class BuildSettings;
 class InputFile;
@@ -64,14 +64,14 @@ class HeaderChecker : public base::RefCountedThreadSafe<HeaderChecker> {
 
  private:
   friend class base::RefCountedThreadSafe<HeaderChecker>;
-  FRIEND_TEST_ALL_PREFIXES(HeaderCheckerTest, IsDependencyOf);
-  FRIEND_TEST_ALL_PREFIXES(HeaderCheckerTest, CheckInclude);
-  FRIEND_TEST_ALL_PREFIXES(HeaderCheckerTest, PublicFirst);
-  FRIEND_TEST_ALL_PREFIXES(HeaderCheckerTest, CheckIncludeAllowCircular);
-  FRIEND_TEST_ALL_PREFIXES(HeaderCheckerTest, SourceFileForInclude);
-  FRIEND_TEST_ALL_PREFIXES(HeaderCheckerTest,
+  FRIEND_TEST(HeaderCheckerTest, IsDependencyOf);
+  FRIEND_TEST(HeaderCheckerTest, CheckInclude);
+  FRIEND_TEST(HeaderCheckerTest, PublicFirst);
+  FRIEND_TEST(HeaderCheckerTest, CheckIncludeAllowCircular);
+  FRIEND_TEST(HeaderCheckerTest, SourceFileForInclude);
+  FRIEND_TEST(HeaderCheckerTest,
                            SourceFileForInclude_FileNotFound);
-  FRIEND_TEST_ALL_PREFIXES(HeaderCheckerTest, Friend);
+  FRIEND_TEST(HeaderCheckerTest, Friend);
 
   ~HeaderChecker();
 

@@ -10,11 +10,11 @@
 #include <string>
 #include <vector>
 
-#include "base/gtest_prod_util.h"
 #include "base/macros.h"
 #include "tools/gn/ninja_writer.h"
 #include "tools/gn/path_output.h"
 #include "tools/gn/toolchain.h"
+#include "test/test.h"
 
 struct EscapeOptions;
 class Settings;
@@ -30,7 +30,7 @@ class NinjaToolchainWriter {
       const std::vector<NinjaWriter::TargetRulePair>& rules);
 
  private:
-  FRIEND_TEST_ALL_PREFIXES(NinjaToolchainWriter, WriteToolRule);
+  FRIEND_TEST(NinjaToolchainWriter, WriteToolRule);
 
   NinjaToolchainWriter(const Settings* settings,
                        const Toolchain* toolchain,

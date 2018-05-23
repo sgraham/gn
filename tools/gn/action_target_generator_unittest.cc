@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "testing/gtest/include/gtest/gtest.h"
+#include "test/test.h"
 #include "tools/gn/scheduler.h"
 #include "tools/gn/test_with_scheduler.h"
 #include "tools/gn/test_with_scope.h"
@@ -27,7 +27,7 @@ TEST_F(ActionTargetGenerator, ActionOutputSubstitutions) {
   // This should run fine.
   Err err;
   input_good.parsed()->Execute(setup.scope(), &err);
-  ASSERT_FALSE(err.has_error()) << err.message();
+  ASSERT_FALSE(err.has_error());
 
   // Same thing with a pattern in the output should fail.
   TestParseInput input_bad(
@@ -76,7 +76,7 @@ TEST_F(ActionTargetGenerator, ActionForeachSubstitutions) {
          })");
   ASSERT_FALSE(input_resp_file.has_error());
   input_resp_file.parsed()->Execute(setup.scope(), &err);
-  ASSERT_FALSE(err.has_error()) << err.message();
+  ASSERT_FALSE(err.has_error());
 
   // Defining a response file but not referencing it should fail.
   err = Err();
@@ -90,7 +90,7 @@ TEST_F(ActionTargetGenerator, ActionForeachSubstitutions) {
          })");
   ASSERT_FALSE(input_missing_rsp_args.has_error());
   input_missing_rsp_args.parsed()->Execute(setup.scope(), &err);
-  ASSERT_TRUE(err.has_error()) << err.message();
+  ASSERT_TRUE(err.has_error());
 
   // Bad substitutions in args.
   err = Err();
@@ -104,7 +104,7 @@ TEST_F(ActionTargetGenerator, ActionForeachSubstitutions) {
          })");
   ASSERT_FALSE(input_bad_args.has_error());
   input_bad_args.parsed()->Execute(setup.scope(), &err);
-  ASSERT_TRUE(err.has_error()) << err.message();
+  ASSERT_TRUE(err.has_error());
 
   // Bad substitutions in response file contents.
   err = Err();
@@ -118,5 +118,5 @@ TEST_F(ActionTargetGenerator, ActionForeachSubstitutions) {
          })");
   ASSERT_FALSE(input_bad_rsp.has_error());
   input_bad_rsp.parsed()->Execute(setup.scope(), &err);
-  ASSERT_TRUE(err.has_error()) << err.message();
+  ASSERT_TRUE(err.has_error());
 }

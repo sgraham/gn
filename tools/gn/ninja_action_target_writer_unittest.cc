@@ -6,7 +6,7 @@
 #include <sstream>
 
 #include "build/build_config.h"
-#include "testing/gtest/include/gtest/gtest.h"
+#include "test/test.h"
 #include "tools/gn/ninja_action_target_writer.h"
 #include "tools/gn/pool.h"
 #include "tools/gn/substitution_list.h"
@@ -461,7 +461,7 @@ TEST(NinjaActionTargetWriter, NoTransitiveHardDeps) {
   bar.SetToolchain(setup.toolchain());
   bar.action_values().outputs() =
       SubstitutionList::MakeForTest("//out/Debug/bar.out");
-  ASSERT_TRUE(bar.OnResolved(&err)) << err.message();
+  ASSERT_TRUE(bar.OnResolved(&err));
 
   {
     std::ostringstream out;

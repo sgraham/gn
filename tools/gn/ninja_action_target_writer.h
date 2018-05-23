@@ -7,8 +7,8 @@
 
 #include <vector>
 
-#include "base/gtest_prod_util.h"
 #include "base/macros.h"
+#include "test/test.h"
 #include "tools/gn/ninja_target_writer.h"
 
 class OutputFile;
@@ -22,12 +22,9 @@ class NinjaActionTargetWriter : public NinjaTargetWriter {
   void Run() override;
 
  private:
-  FRIEND_TEST_ALL_PREFIXES(NinjaActionTargetWriter,
-                           WriteOutputFilesForBuildLine);
-  FRIEND_TEST_ALL_PREFIXES(NinjaActionTargetWriter,
-                           WriteOutputFilesForBuildLineWithDepfile);
-  FRIEND_TEST_ALL_PREFIXES(NinjaActionTargetWriter,
-                           WriteArgsSubstitutions);
+  FRIEND_TEST(NinjaActionTargetWriter, WriteOutputFilesForBuildLine);
+  FRIEND_TEST(NinjaActionTargetWriter, WriteOutputFilesForBuildLineWithDepfile);
+  FRIEND_TEST(NinjaActionTargetWriter, WriteArgsSubstitutions);
 
   // Writes the Ninja rule for invoking the script.
   //

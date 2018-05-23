@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "testing/gtest/include/gtest/gtest.h"
+#include "test/test.h"
 #include "tools/gn/test_with_scope.h"
 
 TEST(FunctionForeach, CollisionOnLoopVar) {
@@ -19,7 +19,7 @@ TEST(FunctionForeach, CollisionOnLoopVar) {
 
   Err err;
   input.parsed()->Execute(setup.scope(), &err);
-  ASSERT_FALSE(err.has_error()) << err.message();
+  ASSERT_FALSE(err.has_error());
 
   EXPECT_EQ("5 1\n6 2\n7 3\n8 6\n", setup.print_output());
 }
@@ -34,7 +34,7 @@ TEST(FunctionForeach, UniqueLoopVar) {
 
   Err err;
   input_good.parsed()->Execute(setup.scope(), &err);
-  ASSERT_FALSE(err.has_error()) << err.message();
+  ASSERT_FALSE(err.has_error());
 
   EXPECT_EQ("1\n2\n3\n", setup.print_output());
   setup.print_output().clear();
@@ -64,7 +64,7 @@ TEST(FunctionForeach, MarksIdentAsUsed) {
 
   Err err;
   input_good.parsed()->Execute(setup.scope(), &err);
-  ASSERT_FALSE(err.has_error()) << err.message();
+  ASSERT_FALSE(err.has_error());
 
   EXPECT_EQ("1\n2\n", setup.print_output());
   setup.print_output().clear();
@@ -90,7 +90,7 @@ TEST(FunctionForeach, ListModification) {
 
   Err err;
   input_grow.parsed()->Execute(setup.scope(), &err);
-  ASSERT_FALSE(err.has_error()) << err.message();
+  ASSERT_FALSE(err.has_error());
 
   // The result of the loop should have been unaffected by the mutations of
   // the list variable inside the loop, but the modifications made to it

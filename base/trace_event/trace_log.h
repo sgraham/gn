@@ -15,7 +15,6 @@
 
 #include "base/atomicops.h"
 #include "base/containers/stack.h"
-#include "base/gtest_prod_util.h"
 #include "base/macros.h"
 #include "base/time/time_override.h"
 #include "base/trace_event/memory_dump_provider.h"
@@ -355,18 +354,6 @@ class BASE_EXPORT TraceLog : public MemoryDumpProvider {
 
  private:
   typedef unsigned int InternalTraceOptions;
-
-  FRIEND_TEST_ALL_PREFIXES(TraceEventTestFixture,
-                           TraceBufferRingBufferGetReturnChunk);
-  FRIEND_TEST_ALL_PREFIXES(TraceEventTestFixture,
-                           TraceBufferRingBufferHalfIteration);
-  FRIEND_TEST_ALL_PREFIXES(TraceEventTestFixture,
-                           TraceBufferRingBufferFullIteration);
-  FRIEND_TEST_ALL_PREFIXES(TraceEventTestFixture, TraceBufferVectorReportFull);
-  FRIEND_TEST_ALL_PREFIXES(TraceEventTestFixture,
-                           ConvertTraceConfigToInternalOptions);
-  FRIEND_TEST_ALL_PREFIXES(TraceEventTestFixture,
-                           TraceRecordAsMuchAsPossibleMode);
 
   friend class base::NoDestructor<TraceLog>;
 

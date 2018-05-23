@@ -8,7 +8,7 @@
 #include <sstream>
 #include <utility>
 
-#include "testing/gtest/include/gtest/gtest.h"
+#include "test/test.h"
 #include "tools/gn/config.h"
 #include "tools/gn/scheduler.h"
 #include "tools/gn/target.h"
@@ -409,7 +409,7 @@ TEST_F(NinjaBinaryTargetWriterTest, NoHardDepsToNoPublicHeaderTarget) {
   executable.sources().push_back(SourceFile("//foo/main.cc"));
   executable.private_deps().push_back(LabelTargetPair(&gen_lib));
   executable.SetToolchain(setup.toolchain());
-  ASSERT_TRUE(executable.OnResolved(&err)) << err.message();
+  ASSERT_TRUE(executable.OnResolved(&err));
 
   std::ostringstream final_out;
   NinjaBinaryTargetWriter final_writer(&executable, final_out);
@@ -536,7 +536,7 @@ TEST_F(NinjaBinaryTargetWriterTest, SourceSetDataDeps) {
   inter.data_deps().push_back(LabelTargetPair(&data));
   inter.SetToolchain(setup.toolchain());
   inter.sources().push_back(SourceFile("//foo/inter.cc"));
-  ASSERT_TRUE(inter.OnResolved(&err)) << err.message();
+  ASSERT_TRUE(inter.OnResolved(&err));
 
   // Write out the intermediate target.
   std::ostringstream inter_out;
@@ -641,7 +641,7 @@ TEST_F(NinjaBinaryTargetWriterTest, LoadableModule) {
   loadable_module.visibility().SetPublic();
   loadable_module.SetToolchain(setup.toolchain());
   loadable_module.sources().push_back(SourceFile("//foo/sources.cc"));
-  ASSERT_TRUE(loadable_module.OnResolved(&err)) << err.message();
+  ASSERT_TRUE(loadable_module.OnResolved(&err));
 
   std::ostringstream out;
   NinjaBinaryTargetWriter writer(&loadable_module, out);
@@ -671,7 +671,7 @@ TEST_F(NinjaBinaryTargetWriterTest, LoadableModule) {
   exe.public_deps().push_back(LabelTargetPair(&loadable_module));
   exe.SetToolchain(setup.toolchain());
   exe.sources().push_back(SourceFile("//foo/final.cc"));
-  ASSERT_TRUE(exe.OnResolved(&err)) << err.message();
+  ASSERT_TRUE(exe.OnResolved(&err));
 
   std::ostringstream final_out;
   NinjaBinaryTargetWriter final_writer(&exe, final_out);

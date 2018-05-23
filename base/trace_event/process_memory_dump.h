@@ -244,9 +244,6 @@ class BASE_EXPORT ProcessMemoryDump {
   const MemoryDumpArgs& dump_args() const { return dump_args_; }
 
  private:
-  FRIEND_TEST_ALL_PREFIXES(ProcessMemoryDumpTest, BackgroundModeTest);
-  FRIEND_TEST_ALL_PREFIXES(ProcessMemoryDumpTest, SharedMemoryOwnershipTest);
-  FRIEND_TEST_ALL_PREFIXES(ProcessMemoryDumpTest, GuidsTest);
 
   MemoryAllocatorDump* AddAllocatorDumpInternal(
       std::unique_ptr<MemoryAllocatorDump> mad);

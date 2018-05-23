@@ -8,7 +8,6 @@
 #include <memory>
 
 #include "base/atomic_ref_count.h"
-#include "base/gtest_prod_util.h"
 #include "base/logging.h"
 #include "base/macros.h"
 #include "base/memory/ptr_util.h"
@@ -148,7 +147,6 @@ class TrackedRefFactory {
 
  private:
   friend class TrackedRef<T>;
-  FRIEND_TEST_ALL_PREFIXES(TrackedRefTest, CopyAndMoveSemantics);
 
   T* const ptr_;
 

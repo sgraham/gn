@@ -25,7 +25,6 @@
 #include "base/base_export.h"
 #include "base/callback.h"
 #include "base/compiler_specific.h"
-#include "base/gtest_prod_util.h"
 #include "base/location.h"
 #include "base/memory/shared_memory.h"
 #include "base/metrics/persistent_memory_allocator.h"
@@ -484,7 +483,6 @@ class BASE_EXPORT ActivityUserData {
                    size_t size);
 
  private:
-  FRIEND_TEST_ALL_PREFIXES(ActivityTrackerTest, UserDataTest);
 
   enum : size_t { kMemoryAlignment = sizeof(uint64_t) };
 

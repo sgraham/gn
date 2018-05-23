@@ -4,7 +4,7 @@
 
 #include <stddef.h>
 
-#include "testing/gtest/include/gtest/gtest.h"
+#include "test/test.h"
 #include "tools/gn/c_include_iterator.h"
 #include "tools/gn/input_file.h"
 #include "tools/gn/location.h"
@@ -46,21 +46,21 @@ TEST(CIncludeIterator, Basic) {
   LocationRange range;
   EXPECT_TRUE(iter.GetNextIncludeString(&contents, &range));
   EXPECT_EQ("foo/bar.h", contents);
-  EXPECT_TRUE(RangeIs(range, 3, 11, 20)) << range.begin().Describe(true);
+  EXPECT_TRUE(RangeIs(range, 3, 11, 20));
 
   EXPECT_TRUE(iter.GetNextIncludeString(&contents, &range));
   EXPECT_EQ("foo/baz.h", contents);
-  EXPECT_TRUE(RangeIs(range, 7, 12, 21)) << range.begin().Describe(true);
+  EXPECT_TRUE(RangeIs(range, 7, 12, 21));
 
   EXPECT_TRUE(iter.GetNextIncludeString(&contents, &range));
   EXPECT_EQ("la/deda.h", contents);
-  EXPECT_TRUE(RangeIs(range, 8, 11, 20)) << range.begin().Describe(true);
+  EXPECT_TRUE(RangeIs(range, 8, 11, 20));
 
   // The line annotated with "nogncheck" should be skipped.
 
   EXPECT_TRUE(iter.GetNextIncludeString(&contents, &range));
   EXPECT_EQ("weird_mac_import.h", contents);
-  EXPECT_TRUE(RangeIs(range, 10, 10, 28)) << range.begin().Describe(true);
+  EXPECT_TRUE(RangeIs(range, 10, 10, 28));
 
   EXPECT_FALSE(iter.GetNextIncludeString(&contents, &range));
 }

@@ -4,7 +4,7 @@
 
 #include "tools/gn/input_conversion.h"
 
-#include "testing/gtest/include/gtest/gtest.h"
+#include "test/test.h"
 #include "tools/gn/err.h"
 #include "tools/gn/input_file.h"
 #include "tools/gn/parse_tree.h"
@@ -255,7 +255,7 @@ TEST_F(InputConversionTest, ValueError) {
     std::string input(test);
     Value result = ConvertInputToValue(settings(), input, nullptr,
                                        Value(nullptr, "value"), &err);
-    EXPECT_TRUE(err.has_error()) << test;
+    EXPECT_TRUE(err.has_error());
   }
 }
 

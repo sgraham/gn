@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "testing/gtest/include/gtest/gtest.h"
+#include "test/test.h"
 #include "tools/gn/scheduler.h"
 #include "tools/gn/scope.h"
 #include "tools/gn/test_with_scheduler.h"
@@ -25,7 +25,7 @@ TEST_F(FunctionsTarget, CheckUnused) {
   ASSERT_FALSE(good_input.has_error());
   Err err;
   good_input.parsed()->Execute(setup.scope(), &err);
-  ASSERT_FALSE(err.has_error()) << err.message();
+  ASSERT_FALSE(err.has_error());
 
   // Test a source set with an unused variable.
   TestParseInput source_set_input(
@@ -54,7 +54,7 @@ TEST_F(FunctionsTarget, CheckNotNeeded) {
   ASSERT_FALSE(nonscoped_input.has_error());
   Err err;
   nonscoped_input.parsed()->Execute(setup.scope(), &err);
-  ASSERT_FALSE(err.has_error()) << err.message();
+  ASSERT_FALSE(err.has_error());
 
   TestParseInput scoped_input(
       "source_set(\"foo\") {\n"
@@ -64,7 +64,7 @@ TEST_F(FunctionsTarget, CheckNotNeeded) {
   ASSERT_FALSE(scoped_input.has_error());
   err = Err();
   scoped_input.parsed()->Execute(setup.scope(), &err);
-  ASSERT_FALSE(err.has_error()) << err.message();
+  ASSERT_FALSE(err.has_error());
 
   TestParseInput exclusion_input(
       "source_set(\"foo\") {\n"
@@ -75,7 +75,7 @@ TEST_F(FunctionsTarget, CheckNotNeeded) {
   ASSERT_FALSE(exclusion_input.has_error());
   err = Err();
   exclusion_input.parsed()->Execute(setup.scope(), &err);
-  ASSERT_TRUE(err.has_error()) << err.message();
+  ASSERT_TRUE(err.has_error());
   EXPECT_EQ("Assignment had no effect.", err.message());
 
   TestParseInput error_input(
@@ -120,5 +120,5 @@ TEST_F(FunctionsTarget, TemplateDefaults) {
   ASSERT_FALSE(good_input.has_error());
   Err err;
   good_input.parsed()->Execute(setup.scope(), &err);
-  ASSERT_FALSE(err.has_error()) << err.message();
+  ASSERT_FALSE(err.has_error());
 }

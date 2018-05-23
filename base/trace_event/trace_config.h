@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "base/base_export.h"
-#include "base/gtest_prod_util.h"
 #include "base/strings/string_piece.h"
 #include "base/trace_event/memory_dump_request_args.h"
 #include "base/trace_event/trace_config_category_filter.h"
@@ -244,9 +243,6 @@ class BASE_EXPORT TraceConfig {
   }
 
  private:
-  FRIEND_TEST_ALL_PREFIXES(TraceConfigTest, TraceConfigFromValidLegacyFormat);
-  FRIEND_TEST_ALL_PREFIXES(TraceConfigTest,
-                           TraceConfigFromInvalidLegacyStrings);
 
   // The default trace config, used when none is provided.
   // Allows all non-disabled-by-default categories through, except if they end

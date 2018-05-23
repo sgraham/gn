@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "testing/gtest/include/gtest/gtest.h"
+#include "test/test.h"
 #include "tools/gn/test_with_scope.h"
 
 // Checks that variables used inside template definitions aren't reported
@@ -14,11 +14,11 @@ TEST(FunctionTemplate, MarkUsed) {
       "template(\"templ\") {\n"
       "  print(a)\n"
       "}\n");
-  ASSERT_FALSE(input.has_error()) << input.parse_err().message();
+  ASSERT_FALSE(input.has_error());
 
   Err err;
   input.parsed()->Execute(setup.scope(), &err);
-  ASSERT_FALSE(err.has_error()) << err.message();
+  ASSERT_FALSE(err.has_error());
 
   // Normally the loader calls CheckForUnusedVars() when it loads a file
   // since normal blocks don't do this check. To avoid having to make this

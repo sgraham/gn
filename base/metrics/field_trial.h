@@ -68,7 +68,6 @@
 #include "base/command_line.h"
 #include "base/feature_list.h"
 #include "base/files/file.h"
-#include "base/gtest_prod_util.h"
 #include "base/macros.h"
 #include "base/memory/ref_counted.h"
 #include "base/memory/shared_memory.h"
@@ -251,30 +250,6 @@ class BASE_EXPORT FieldTrial : public RefCounted<FieldTrial> {
       double entropy_value);
 
  private:
-  // Allow tests to access our innards for testing purposes.
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialTest, Registration);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialTest, AbsoluteProbabilities);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialTest, RemainingProbability);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialTest, FiftyFiftyProbability);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialTest, MiddleProbabilities);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialTest, OneWinner);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialTest, DisableProbability);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialTest, ActiveGroups);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialTest, AllGroups);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialTest, ActiveGroupsNotFinalized);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialTest, Save);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialTest, SaveAll);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialTest, DuplicateRestore);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialTest, SetForcedTurnFeatureOff);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialTest, SetForcedTurnFeatureOn);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialTest, SetForcedChangeDefault_Default);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialTest, SetForcedChangeDefault_NonDefault);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialTest, FloatBoundariesGiveEqualGroupSizes);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialTest, DoesNotSurpassTotalProbability);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialListTest,
-                           DoNotAddSimulatedFieldTrialsToAllocator);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialListTest, ClearParamsFromSharedMemory);
-
   friend class base::FieldTrialList;
 
   friend class RefCounted<FieldTrial>;
@@ -672,15 +647,6 @@ class BASE_EXPORT FieldTrialList {
 
  private:
   // Allow tests to access our innards for testing purposes.
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialListTest, InstantiateAllocator);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialListTest, AddTrialsToAllocator);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialListTest,
-                           DoNotAddSimulatedFieldTrialsToAllocator);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialListTest, AssociateFieldTrialParams);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialListTest, ClearParamsFromSharedMemory);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialListTest,
-                           SerializeSharedMemoryHandleMetadata);
-  FRIEND_TEST_ALL_PREFIXES(FieldTrialListTest, CheckReadOnlySharedMemoryHandle);
 
   // Serialization is used to pass information about the handle to child
   // processes. It passes a reference to the relevant OS resource, and it passes

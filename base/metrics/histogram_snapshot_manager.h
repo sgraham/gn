@@ -12,7 +12,6 @@
 #include <string>
 #include <vector>
 
-#include "base/gtest_prod_util.h"
 #include "base/macros.h"
 #include "base/metrics/histogram_base.h"
 
@@ -52,8 +51,6 @@ class BASE_EXPORT HistogramSnapshotManager final {
   void PrepareFinalDelta(const HistogramBase* histogram);
 
  private:
-  FRIEND_TEST_ALL_PREFIXES(HistogramSnapshotManagerTest, CheckMerge);
-
   // During a snapshot, samples are acquired and aggregated. This structure
   // contains all the information for a given histogram that persists between
   // collections.

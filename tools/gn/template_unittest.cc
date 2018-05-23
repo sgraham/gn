@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 #include "base/strings/string_number_conversions.h"
-#include "testing/gtest/include/gtest/gtest.h"
+#include "test/test.h"
 #include "tools/gn/test_with_scope.h"
 
 TEST(Template, Basic) {
@@ -20,7 +20,7 @@ TEST(Template, Basic) {
 
   Err err;
   input.parsed()->Execute(setup.scope(), &err);
-  ASSERT_FALSE(err.has_error()) << err.message();
+  ASSERT_FALSE(err.has_error());
 
   EXPECT_EQ("lala\n42\n", setup.print_output());
 }

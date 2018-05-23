@@ -14,7 +14,6 @@
 #include "base/atomicops.h"
 #include "base/base_export.h"
 #include "base/files/file_path.h"
-#include "base/gtest_prod_util.h"
 #include "base/macros.h"
 #include "base/strings/string_piece.h"
 
@@ -681,7 +680,6 @@ class BASE_EXPORT PersistentMemoryAllocator {
   HistogramBase* errors_histogram_;  // Histogram recording errors.
 
   friend class PersistentMemoryAllocatorTest;
-  FRIEND_TEST_ALL_PREFIXES(PersistentMemoryAllocatorTest, AllocateAndIterate);
   DISALLOW_COPY_AND_ASSIGN(PersistentMemoryAllocator);
 };
 

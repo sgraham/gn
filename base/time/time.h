@@ -83,7 +83,6 @@
 #endif
 
 #if defined(OS_WIN)
-#include "base/gtest_prod_util.h"
 #include "base/win/windows_types.h"
 #endif
 
@@ -979,8 +978,6 @@ class BASE_EXPORT ThreadTicks : public time_internal::TimeBase<ThreadTicks> {
   constexpr explicit ThreadTicks(int64_t us) : TimeBase(us) {}
 
 #if defined(OS_WIN)
-  FRIEND_TEST_ALL_PREFIXES(TimeTicks, TSCTicksPerSecond);
-
   // Returns the frequency of the TSC in ticks per second, or 0 if it hasn't
   // been measured yet. Needs to be guarded with a call to IsSupported().
   // This method is declared here rather than in the anonymous namespace to

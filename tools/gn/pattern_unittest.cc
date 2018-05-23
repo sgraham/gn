@@ -5,7 +5,7 @@
 #include <stddef.h>
 
 #include "base/macros.h"
-#include "testing/gtest/include/gtest/gtest.h"
+#include "test/test.h"
 #include "tools/gn/pattern.h"
 
 namespace {
@@ -58,7 +58,6 @@ TEST(Pattern, Matches) {
     const Case& c = pattern_cases[i];
     Pattern pattern(c.pattern);
     bool result = pattern.MatchesString(c.candidate);
-    EXPECT_EQ(c.expected_match, result) << i << ": \"" << c.pattern
-        << "\", \"" << c.candidate << "\"";
+    EXPECT_EQ(c.expected_match, result);
   }
 }

@@ -11,7 +11,6 @@
 #include <vector>
 
 #include "base/base_export.h"
-#include "base/gtest_prod_util.h"
 #include "base/macros.h"
 #include "base/metrics/persistent_memory_allocator.h"
 #include "base/strings/string_piece.h"
@@ -208,12 +207,6 @@ class BASE_EXPORT FeatureList {
   static void RestoreInstanceForTesting(std::unique_ptr<FeatureList> instance);
 
  private:
-  FRIEND_TEST_ALL_PREFIXES(FeatureListTest, CheckFeatureIdentity);
-  FRIEND_TEST_ALL_PREFIXES(FeatureListTest,
-                           StoreAndRetrieveFeaturesFromSharedMemory);
-  FRIEND_TEST_ALL_PREFIXES(FeatureListTest,
-                           StoreAndRetrieveAssociatedFeaturesFromSharedMemory);
-
   struct OverrideEntry {
     // The overridden enable (on/off) state of the feature.
     const OverrideState overridden_state;

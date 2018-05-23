@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#include "base/gtest_prod_util.h"
+#include "test/test.h"
 #include "base/macros.h"
 #include "tools/gn/path_output.h"
 
@@ -50,8 +50,8 @@ class VisualStudioWriter {
                                Err* err);
 
  private:
-  FRIEND_TEST_ALL_PREFIXES(VisualStudioWriterTest, ResolveSolutionFolders);
-  FRIEND_TEST_ALL_PREFIXES(VisualStudioWriterTest,
+  FRIEND_TEST(VisualStudioWriterTest, ResolveSolutionFolders);
+  FRIEND_TEST(VisualStudioWriterTest,
                            ResolveSolutionFolders_AbsPath);
 
   // Solution project or folder.

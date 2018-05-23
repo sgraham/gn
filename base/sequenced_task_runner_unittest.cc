@@ -7,7 +7,6 @@
 #include <utility>
 
 #include "base/bind.h"
-#include "base/gtest_prod_util.h"
 #include "base/message_loop/message_loop.h"
 #include "base/run_loop.h"
 #include "base/threading/thread.h"
@@ -25,8 +24,6 @@ class FlagOnDelete {
 
  private:
   friend class DeleteHelper<FlagOnDelete>;
-  FRIEND_TEST_ALL_PREFIXES(SequencedTaskRunnerTest,
-                           OnTaskRunnerDeleterTargetStoppedEarly);
 
   ~FlagOnDelete() {
     EXPECT_FALSE(*deleted_);

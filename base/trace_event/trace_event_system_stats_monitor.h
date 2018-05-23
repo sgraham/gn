@@ -6,7 +6,6 @@
 #define BASE_TRACE_EVENT_TRACE_EVENT_SYSTEM_STATS_MONITOR_H_
 
 #include "base/base_export.h"
-#include "base/gtest_prod_util.h"
 #include "base/macros.h"
 #include "base/memory/ref_counted.h"
 #include "base/memory/weak_ptr.h"
@@ -44,8 +43,6 @@ class BASE_EXPORT TraceEventSystemStatsMonitor
   void DumpSystemStats();
 
  private:
-  FRIEND_TEST_ALL_PREFIXES(TraceSystemStatsMonitorTest,
-                           TraceEventSystemStatsMonitor);
 
   bool IsTimerRunningForTest() const;
 

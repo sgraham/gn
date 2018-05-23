@@ -9,7 +9,6 @@
 
 #include "base/base_export.h"
 #include "base/base_paths.h"
-#include "base/gtest_prod_util.h"
 #include "build/build_config.h"
 
 namespace base {
@@ -81,7 +80,6 @@ class BASE_EXPORT PathService {
 
  private:
   friend class ScopedPathOverride;
-  FRIEND_TEST_ALL_PREFIXES(PathServiceTest, RemoveOverride);
 
   // Removes an override for a special directory or file. Returns true if there
   // was an override to remove or false if none was present.

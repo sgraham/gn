@@ -47,28 +47,13 @@ def mkdir_p(path):
     else: raise
 
 
-def run_build(tempdir, options):
-  build_root = os.path.join(SRC_ROOT, 'out')
-
+def run_build(build_root, options):
   windows_x64_toolchain = None
   if is_win:
-    windows_x64_toolchain = windows_prepare_toolchain(tempdir)
+    windows_x64_toolchain = windows_prepare_toolchain(build_root)
     os.environ["PATH"] = windows_x64_toolchain["paths"]
 
-  build_gn_with_ninja_manually(tempdir, options, windows_x64_toolchain)
-  temp_gn = os.path.join(tempdir, 'gn')
-  out_gn = os.path.join(build_root, 'gn')
-
-  if is_win:
-    temp_gn += '.exe'
-    out_gn += '.exe'
-
-  mkdir_p(build_root)
-  shutil.copy2(temp_gn, out_gn)
-
-  if options.output:
-    # Preserve the executable permission bit.
-    shutil.copy2(out_gn, options.output)
+  build_gn_with_ninja_manually(build_root, options, windows_x64_toolchain)
 
 def windows_target_build_arch():
     # Target build architecture set by vcvarsall.bat
@@ -119,9 +104,7 @@ def main(argv):
                     help='place output in PATH', metavar='PATH')
   parser.add_option('--gn-gen-args', help='Args to pass to gn gen --args')
   parser.add_option('--build-path', help='The directory in which to build gn, '
-                    'relative to the src directory. (eg. out/Release)'
-                    'In the no-clean mode an absolute path will also force '
-                    'the out_bootstrap to be located in the parent directory')
+                    'relative to the src directory. (eg. out/)')
   parser.add_option('-v', '--verbose', action='store_true',
                     help='Log more details')
   options, args = parser.parse_args(argv)
@@ -135,7 +118,7 @@ def main(argv):
     out_bootstrap_dir = SRC_ROOT
     if options.build_path and os.path.isabs(options.build_path):
       out_bootstrap_dir = os.path.dirname(options.build_path)
-    build_dir = os.path.join(out_bootstrap_dir, 'out_bootstrap')
+    build_dir = os.path.join(out_bootstrap_dir, 'out')
     if not os.path.exists(build_dir):
       os.makedirs(build_dir)
     return run_build(build_dir, options)
@@ -156,8 +139,10 @@ def build_gn_with_ninja_manually(tempdir, options, windows_x64_toolchain):
 
   if is_win:
     cmd.append('gn.exe')
+    cmd.append('gn_unittests.exe')
   else:
     cmd.append('gn')
+    cmd.append('gn_unittests')
 
   check_call(cmd)
 
@@ -270,7 +255,7 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
   cflags = os.environ.get('CFLAGS', '').split()
   cflags_cc = os.environ.get('CXXFLAGS', '').split()
   ldflags = os.environ.get('LDFLAGS', '').split()
-  include_dirs = [root_gen_dir, SRC_ROOT]
+  include_dirs = [root_gen_dir, SRC_ROOT, os.path.join(SRC_ROOT, 'src')]
   libs = []
 
   # //base/allocator/allocator_extension.cc needs this macro defined,
@@ -335,6 +320,16 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
   executables = {
       'gn': {'sources': ['tools/gn/gn_main.cc'],
              'tool': 'cxx', 'include_dirs': [], 'libs': []},
+      'gn_unittests': {'sources': [
+                          'base/task_scheduler/lazy_task_runner.cc',
+                          'base/test/scoped_task_environment.cc',
+                          'base/test/test_mock_time_task_runner.cc',
+                          'base/test/test_pending_task.cc',
+                          'src/test/gn_test.cc',
+                          'src/test/test.cc',
+                          'tools/gn/test_with_scheduler.cc',
+                        ],
+             'tool': 'cxx', 'include_dirs': [], 'libs': ['gn_lib']},
   }
 
   for name in os.listdir(GN_ROOT):
@@ -350,6 +345,12 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
       continue
     full_path = os.path.join(GN_ROOT, name)
     static_libraries['gn_lib']['sources'].append(
+        os.path.relpath(full_path, SRC_ROOT))
+
+  for name in os.listdir(os.path.join(GN_ROOT)):
+    if name.endswith('_unittest.cc'):
+      full_path = os.path.join(GN_ROOT, name)
+      executables['gn_unittests']['sources'].append(
         os.path.relpath(full_path, SRC_ROOT))
 
   static_libraries['dynamic_annotations']['sources'].extend([
@@ -384,6 +385,7 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
       'base/files/important_file_writer.cc',
       'base/files/memory_mapped_file.cc',
       'base/files/scoped_file.cc',
+      'base/files/scoped_temp_dir.cc',
       'base/hash.cc',
       'base/json/json_parser.cc',
       'base/json/json_reader.cc',
@@ -787,6 +789,7 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
 
   # we just build static libraries that GN needs
   executables['gn']['libs'].extend(static_libraries.keys())
+  executables['gn_unittests']['libs'].extend(static_libraries.keys())
 
   write_generic_ninja(path, static_libraries, executables, cc, cxx, ar, ld,
                       cflags, cflags_cc, ldflags, include_dirs, libs)

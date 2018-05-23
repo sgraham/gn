@@ -16,7 +16,6 @@
 
 #include "base/atomicops.h"
 #include "base/compiler_specific.h"
-#include "base/gtest_prod_util.h"
 #include "base/macros.h"
 #include "base/metrics/bucket_ranges.h"
 #include "base/metrics/histogram_base.h"
@@ -89,9 +88,6 @@ class BASE_EXPORT SampleVectorBase : public HistogramSamples {
 
  private:
   friend class SampleVectorTest;
-  FRIEND_TEST_ALL_PREFIXES(HistogramTest, CorruptSampleCounts);
-  FRIEND_TEST_ALL_PREFIXES(SharedHistogramTest, CorruptSampleCounts);
-
   // |counts_| is actually a pointer to a HistogramBase::AtomicCount array but
   // is held as an AtomicWord for concurrency reasons. When combined with the
   // single_sample held in the metadata, there are four possible states:

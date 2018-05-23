@@ -8,7 +8,6 @@
 #include <utility>
 
 #include "base/compiler_specific.h"
-#include "base/gtest_prod_util.h"
 #include "base/macros.h"
 #include "base/unguessable_token.h"
 #include "build/build_config.h"
@@ -193,10 +192,6 @@ class BASE_EXPORT PlatformSharedMemoryRegion {
   Mode GetMode() const { return mode_; }
 
  private:
-  FRIEND_TEST_ALL_PREFIXES(PlatformSharedMemoryRegionTest,
-                           CreateReadOnlyRegionDeathTest);
-  FRIEND_TEST_ALL_PREFIXES(PlatformSharedMemoryRegionTest,
-                           CheckPlatformHandlePermissionsCorrespondToMode);
   static PlatformSharedMemoryRegion Create(Mode mode, size_t size);
 
   static bool CheckPlatformHandlePermissionsCorrespondToMode(

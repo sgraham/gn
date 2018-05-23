@@ -12,7 +12,6 @@
 
 #include "base/base_export.h"
 #include "base/files/memory_mapped_file.h"
-#include "base/gtest_prod_util.h"
 #include "base/threading/thread_local_storage.h"
 
 namespace base {
@@ -51,9 +50,6 @@ class BASE_EXPORT CFIBacktraceAndroid {
   size_t Unwind(const void** out_trace, size_t max_depth);
 
  private:
-  FRIEND_TEST_ALL_PREFIXES(CFIBacktraceAndroidTest, TestCFICache);
-  FRIEND_TEST_ALL_PREFIXES(CFIBacktraceAndroidTest, TestFindCFIRow);
-  FRIEND_TEST_ALL_PREFIXES(CFIBacktraceAndroidTest, TestUnwinding);
 
   // The CFI information that correspond to an instruction.
   struct CFIRow {
@@ -85,7 +81,6 @@ class BASE_EXPORT CFIBacktraceAndroid {
     bool Find(uintptr_t address, CFIRow* cfi);
 
    private:
-    FRIEND_TEST_ALL_PREFIXES(CFIBacktraceAndroidTest, TestCFICache);
 
     // Size is the highest prime which fits the cache in a single system page,
     // usually 4KiB. A prime is chosen to make sure addresses are hashed evenly.

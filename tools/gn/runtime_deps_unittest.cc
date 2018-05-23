@@ -5,7 +5,7 @@
 #include <stddef.h>
 
 #include "base/stl_util.h"
-#include "testing/gtest/include/gtest/gtest.h"
+#include "test/test.h"
 #include "tools/gn/runtime_deps.h"
 #include "tools/gn/scheduler.h"
 #include "tools/gn/target.h"
@@ -26,17 +26,6 @@ void InitTargetWithType(TestWithScope& setup,
 std::pair<OutputFile, const Target*> MakePair(const char* str,
                                               const Target* t) {
   return std::pair<OutputFile, const Target*>(OutputFile(str), t);
-}
-
-std::string GetVectorDescription(
-    const std::vector<std::pair<OutputFile, const Target*>>& v) {
-  std::string result;
-  for (size_t i = 0; i < v.size(); i++) {
-    if (i != 0)
-      result.append(", ");
-    result.append("\"" + v[i].first.value() + "\"");
-  }
-  return result;
 }
 
 }  // namespace
@@ -87,31 +76,24 @@ TEST_F(RuntimeDeps, Libs) {
 
   // The result should have deps of main, all 5 dat files, libshared.so, and
   // libloadable.so.
-  ASSERT_EQ(8u, result.size()) << GetVectorDescription(result);
+  ASSERT_EQ(8u, result.size());
 
   // The first one should always be the main exe.
   EXPECT_TRUE(MakePair("./main", &main) == result[0]);
 
   // The rest of the ordering is undefined. First the data files.
-  EXPECT_TRUE(base::ContainsValue(result, MakePair("../../stat.dat", &stat)))
-      << GetVectorDescription(result);
+  EXPECT_TRUE(base::ContainsValue(result, MakePair("../../stat.dat", &stat)));
   EXPECT_TRUE(
-      base::ContainsValue(result, MakePair("../../shared.dat", &shared)))
-      << GetVectorDescription(result);
+      base::ContainsValue(result, MakePair("../../shared.dat", &shared)));
   EXPECT_TRUE(
-      base::ContainsValue(result, MakePair("../../loadable.dat", &loadable)))
-      << GetVectorDescription(result);
-  EXPECT_TRUE(base::ContainsValue(result, MakePair("../../set.dat", &set)))
-      << GetVectorDescription(result);
-  EXPECT_TRUE(base::ContainsValue(result, MakePair("../../main.dat", &main)))
-      << GetVectorDescription(result);
+      base::ContainsValue(result, MakePair("../../loadable.dat", &loadable)));
+  EXPECT_TRUE(base::ContainsValue(result, MakePair("../../set.dat", &set)));
+  EXPECT_TRUE(base::ContainsValue(result, MakePair("../../main.dat", &main)));
 
   // Check the static library and loadable module.
-  EXPECT_TRUE(base::ContainsValue(result, MakePair("./libshared.so", &shared)))
-      << GetVectorDescription(result);
+  EXPECT_TRUE(base::ContainsValue(result, MakePair("./libshared.so", &shared)));
   EXPECT_TRUE(
-      base::ContainsValue(result, MakePair("./libloadable.so", &loadable)))
-      << GetVectorDescription(result);
+      base::ContainsValue(result, MakePair("./libloadable.so", &loadable)));
 }
 
 // Tests that executables that aren't listed as data deps aren't included in
@@ -155,17 +137,15 @@ TEST_F(RuntimeDeps, ExeDataDep) {
       ComputeRuntimeDeps(&main);
 
   // The result should have deps of main, datadep, final_in.dat
-  ASSERT_EQ(3u, result.size()) << GetVectorDescription(result);
+  ASSERT_EQ(3u, result.size());
 
   // The first one should always be the main exe.
   EXPECT_TRUE(MakePair("./main", &main) == result[0]);
 
   // The rest of the ordering is undefined.
-  EXPECT_TRUE(base::ContainsValue(result, MakePair("./datadep", &datadep)))
-      << GetVectorDescription(result);
+  EXPECT_TRUE(base::ContainsValue(result, MakePair("./datadep", &datadep)));
   EXPECT_TRUE(
-      base::ContainsValue(result, MakePair("../../final_in.dat", &final_in)))
-      << GetVectorDescription(result);
+      base::ContainsValue(result, MakePair("../../final_in.dat", &final_in)));
 }
 
 TEST_F(RuntimeDeps, ActionSharedLib) {
@@ -201,7 +181,7 @@ TEST_F(RuntimeDeps, ActionSharedLib) {
       ComputeRuntimeDeps(&main);
 
   // The result should have deps of main and data_dep.
-  ASSERT_EQ(2u, result.size()) << GetVectorDescription(result);
+  ASSERT_EQ(2u, result.size());
 
   // The first one should always be the main exe.
   EXPECT_TRUE(MakePair("./main", &main) == result[0]);
@@ -263,29 +243,23 @@ TEST_F(RuntimeDeps, ActionOutputs) {
 
   // The result should have deps of main, both datadeps files, but only
   // the data file from dep.
-  ASSERT_EQ(7u, result.size()) << GetVectorDescription(result);
+  ASSERT_EQ(7u, result.size());
 
   // The first one should always be the main exe.
   EXPECT_TRUE(MakePair("./main", &main) == result[0]);
 
   // The rest of the ordering is undefined.
   EXPECT_TRUE(
-      base::ContainsValue(result, MakePair("../../datadep.data", &datadep)))
-      << GetVectorDescription(result);
+      base::ContainsValue(result, MakePair("../../datadep.data", &datadep)));
   EXPECT_TRUE(base::ContainsValue(
-      result, MakePair("../../datadep_copy.data", &datadep_copy)))
-      << GetVectorDescription(result);
+      result, MakePair("../../datadep_copy.data", &datadep_copy)));
   EXPECT_TRUE(
-      base::ContainsValue(result, MakePair("../../datadep.output", &datadep)))
-      << GetVectorDescription(result);
+      base::ContainsValue(result, MakePair("../../datadep.output", &datadep)));
   EXPECT_TRUE(base::ContainsValue(
-      result, MakePair("../../datadep_copy.output", &datadep_copy)))
-      << GetVectorDescription(result);
-  EXPECT_TRUE(base::ContainsValue(result, MakePair("../../dep.data", &dep)))
-      << GetVectorDescription(result);
+      result, MakePair("../../datadep_copy.output", &datadep_copy)));
+  EXPECT_TRUE(base::ContainsValue(result, MakePair("../../dep.data", &dep)));
   EXPECT_TRUE(
-      base::ContainsValue(result, MakePair("../../dep_copy/data/", &dep_copy)))
-      << GetVectorDescription(result);
+      base::ContainsValue(result, MakePair("../../dep_copy/data/", &dep_copy)));
 
   // Explicitly asking for the runtime deps of an action target only includes
   // the data and not all outputs.
@@ -374,7 +348,7 @@ TEST_F(RuntimeDeps, CreateBundle) {
       ComputeRuntimeDeps(&main);
 
   // The result should have deps of main, datadep, final_in.dat
-  ASSERT_EQ(5u, result.size()) << GetVectorDescription(result);
+  ASSERT_EQ(5u, result.size());
 
   // The first one should always be the main exe.
   EXPECT_EQ(MakePair("./main", &main), result[0]);
@@ -383,15 +357,11 @@ TEST_F(RuntimeDeps, CreateBundle) {
 
   // The framework bundle's internal dependencies should not be incldued.
   EXPECT_TRUE(
-      base::ContainsValue(result, MakePair("Bundle.framework/", &bundle)))
-      << GetVectorDescription(result);
+      base::ContainsValue(result, MakePair("Bundle.framework/", &bundle)));
   // But direct data and data dependencies should be.
-  EXPECT_TRUE(base::ContainsValue(result, MakePair("./datadep", &data_dep)))
-      << GetVectorDescription(result);
-  EXPECT_TRUE(base::ContainsValue(result, MakePair("../../dd.data", &data_dep)))
-      << GetVectorDescription(result);
-  EXPECT_TRUE(base::ContainsValue(result, MakePair("../../b.data", &bundle)))
-      << GetVectorDescription(result);
+  EXPECT_TRUE(base::ContainsValue(result, MakePair("./datadep", &data_dep)));
+  EXPECT_TRUE(base::ContainsValue(result, MakePair("../../dd.data", &data_dep)));
+  EXPECT_TRUE(base::ContainsValue(result, MakePair("../../b.data", &bundle)));
 }
 
 // Tests that a dependency duplicated in regular and data deps is processed
@@ -416,8 +386,7 @@ TEST_F(RuntimeDeps, Dupe) {
   std::vector<std::pair<OutputFile, const Target*>> result =
       ComputeRuntimeDeps(&target);
   EXPECT_TRUE(
-      base::ContainsValue(result, MakePair("../../action.output", &action)))
-      << GetVectorDescription(result);
+      base::ContainsValue(result, MakePair("../../action.output", &action)));
 }
 
 // Tests that actions can't have output substitutions.

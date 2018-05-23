@@ -12,7 +12,6 @@
 
 #include "base/base_export.h"
 #include "base/compiler_specific.h"
-#include "base/gtest_prod_util.h"
 #include "base/logging.h"
 #include "base/memory/ref_counted.h"
 #include "base/strings/string16.h"
@@ -105,7 +104,6 @@ class BASE_EXPORT PickleIterator {
   size_t read_index_;  // Offset of the next readable byte in payload.
   size_t end_index_;  // Payload size.
 
-  FRIEND_TEST_ALL_PREFIXES(PickleTest, GetReadPointerAndAdvance);
 };
 
 // This class provides facilities for basic binary value packing and unpacking.
@@ -330,14 +328,6 @@ class BASE_EXPORT Pickle {
 
   inline void* ClaimUninitializedBytesInternal(size_t num_bytes);
   inline void WriteBytesCommon(const void* data, size_t length);
-
-  FRIEND_TEST_ALL_PREFIXES(PickleTest, DeepCopyResize);
-  FRIEND_TEST_ALL_PREFIXES(PickleTest, Resize);
-  FRIEND_TEST_ALL_PREFIXES(PickleTest, PeekNext);
-  FRIEND_TEST_ALL_PREFIXES(PickleTest, PeekNextOverflow);
-  FRIEND_TEST_ALL_PREFIXES(PickleTest, FindNext);
-  FRIEND_TEST_ALL_PREFIXES(PickleTest, FindNextWithIncompleteHeader);
-  FRIEND_TEST_ALL_PREFIXES(PickleTest, FindNextOverflow);
 };
 
 }  // namespace base

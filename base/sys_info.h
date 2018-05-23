@@ -13,15 +13,10 @@
 
 #include "base/base_export.h"
 #include "base/files/file_path.h"
-#include "base/gtest_prod_util.h"
 #include "base/time/time.h"
 #include "build/build_config.h"
 
 namespace base {
-
-namespace debug {
-FORWARD_DECLARE_TEST(SystemMetricsTest, ParseMeminfo);
-}
 
 struct SystemMemoryInfoKB;
 
@@ -167,8 +162,6 @@ class BASE_EXPORT SysInfo {
   static bool IsLowEndDevice();
 
  private:
-  FRIEND_TEST_ALL_PREFIXES(SysInfoTest, AmountOfAvailablePhysicalMemory);
-  FRIEND_TEST_ALL_PREFIXES(debug::SystemMetricsTest, ParseMeminfo);
 
   static int64_t AmountOfPhysicalMemoryImpl();
   static int64_t AmountOfAvailablePhysicalMemoryImpl();

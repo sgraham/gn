@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "base/bind.h"
-#include "testing/gtest/include/gtest/gtest.h"
+#include "test/test.h"
 #include "tools/gn/config.h"
 #include "tools/gn/header_checker.h"
 #include "tools/gn/scheduler.h"
@@ -378,5 +378,5 @@ TEST_F(HeaderCheckerTest, Friend) {
   // A should be able to because of the friend declaration.
   err = Err();
   EXPECT_TRUE(checker->CheckInclude(&a_, input_file, c_private, range, &err));
-  EXPECT_FALSE(err.has_error()) << err.message();
+  EXPECT_FALSE(err.has_error());
 }

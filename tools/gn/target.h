@@ -9,9 +9,9 @@
 #include <string>
 #include <vector>
 
-#include "base/gtest_prod_util.h"
 #include "base/logging.h"
 #include "base/macros.h"
+#include "test/test.h"
 #include "tools/gn/action_values.h"
 #include "tools/gn/bundle_data.h"
 #include "tools/gn/config_values.h"
@@ -309,7 +309,7 @@ class Target : public Item {
                                std::vector<OutputFile>* outputs) const;
 
  private:
-  FRIEND_TEST_ALL_PREFIXES(TargetTest, ResolvePrecompiledHeaders);
+  FRIEND_TEST(TargetTest, ResolvePrecompiledHeaders);
 
   // Pulls necessary information from dependencies to this one when all
   // dependencies have been resolved.

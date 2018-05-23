@@ -7,7 +7,7 @@
 #include <memory>
 #include <utility>
 
-#include "testing/gtest/include/gtest/gtest.h"
+#include "test/test.h"
 #include "tools/gn/build_settings.h"
 #include "tools/gn/config.h"
 #include "tools/gn/scheduler.h"
@@ -25,11 +25,8 @@ void AssertSchedulerHasOneUnknownFileMatching(const Target* target,
   auto unknown = g_scheduler->GetUnknownGeneratedInputs();
   ASSERT_EQ(1u, unknown.size());  // Should be one unknown file.
   auto found = unknown.find(file);
-  ASSERT_TRUE(found != unknown.end()) << file.value();
-  EXPECT_TRUE(target == found->second)
-      << "Target doesn't match. Expected\n  "
-      << target->label().GetUserVisibleName(false)
-      << "\nBut got\n  " << found->second->label().GetUserVisibleName(false);
+  ASSERT_TRUE(found != unknown.end());
+  EXPECT_TRUE(target == found->second);
 }
 
 }  // namespace
@@ -427,7 +424,7 @@ TEST_F(TargetTest, VisibilityDatadeps) {
   a.data_deps().push_back(LabelTargetPair(&b));
   IdentifierNode origin;  // Dummy origin.
   a.data_deps()[0].origin = &origin;
-  ASSERT_TRUE(a.OnResolved(&err)) << err.help_text();
+  ASSERT_TRUE(a.OnResolved(&err));
 }
 
 // Tests that A -> Group -> B where the group is visible from A but B isn't,
@@ -723,7 +720,7 @@ TEST_F(TargetTest, GeneratedInputs) {
   TestTarget non_existent_generator(setup, "//foo:non_existent_generator",
                                     Target::EXECUTABLE);
   non_existent_generator.sources().push_back(generated_file);
-  EXPECT_TRUE(non_existent_generator.OnResolved(&err)) << err.message();
+  EXPECT_TRUE(non_existent_generator.OnResolved(&err));
   AssertSchedulerHasOneUnknownFileMatching(&non_existent_generator,
                                            generated_file);
   scheduler().ClearUnknownGeneratedInputsAndWrittenFiles();
@@ -733,7 +730,7 @@ TEST_F(TargetTest, GeneratedInputs) {
   generator.action_values().outputs() =
       SubstitutionList::MakeForTest(generated_file.value().c_str());
   err = Err();
-  EXPECT_TRUE(generator.OnResolved(&err)) << err.message();
+  EXPECT_TRUE(generator.OnResolved(&err));
 
   // A target that depends on the generator that uses the file as a source
   // should be OK. This uses a private dep (will be used later).
@@ -741,7 +738,7 @@ TEST_F(TargetTest, GeneratedInputs) {
                                 Target::SHARED_LIBRARY);
   existent_generator.sources().push_back(generated_file);
   existent_generator.private_deps().push_back(LabelTargetPair(&generator));
-  EXPECT_TRUE(existent_generator.OnResolved(&err)) << err.message();
+  EXPECT_TRUE(existent_generator.OnResolved(&err));
   EXPECT_TRUE(scheduler().GetUnknownGeneratedInputs().empty());
 
   // A target that depends on the previous one should *not* be allowed to
@@ -761,12 +758,12 @@ TEST_F(TargetTest, GeneratedInputs) {
   TestTarget existent_public(setup, "//foo:existent_public",
                              Target::SHARED_LIBRARY);
   existent_public.public_deps().push_back(LabelTargetPair(&generator));
-  EXPECT_TRUE(existent_public.OnResolved(&err)) << err.message();
+  EXPECT_TRUE(existent_public.OnResolved(&err));
   TestTarget indirect_public(setup, "//foo:indirect_public",
                              Target::EXECUTABLE);
   indirect_public.sources().push_back(generated_file);
   indirect_public.public_deps().push_back(LabelTargetPair(&existent_public));
-  EXPECT_TRUE(indirect_public.OnResolved(&err)) << err.message();
+  EXPECT_TRUE(indirect_public.OnResolved(&err));
   EXPECT_TRUE(scheduler().GetUnknownGeneratedInputs().empty());
 }
 

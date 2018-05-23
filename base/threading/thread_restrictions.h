@@ -6,7 +6,6 @@
 #define BASE_THREADING_THREAD_RESTRICTIONS_H_
 
 #include "base/base_export.h"
-#include "base/gtest_prod_util.h"
 #include "base/logging.h"
 #include "base/macros.h"
 
@@ -217,7 +216,6 @@ class BASE_EXPORT ScopedAllowBlocking {
  private:
   // This can only be instantiated by friends. Use ScopedAllowBlockingForTesting
   // in unit tests to avoid the friend requirement.
-  FRIEND_TEST_ALL_PREFIXES(ThreadRestrictionsTest, ScopedAllowBlocking);
   friend class android_webview::ScopedAllowInitGLBindings;
   friend class content::BrowserProcessSubThread;
   friend class cronet::CronetPrefsManager;
@@ -280,12 +278,6 @@ class BASE_EXPORT ScopedAllowBaseSyncPrimitives {
   // This can only be instantiated by friends. Use
   // ScopedAllowBaseSyncPrimitivesForTesting in unit tests to avoid the friend
   // requirement.
-  FRIEND_TEST_ALL_PREFIXES(ThreadRestrictionsTest,
-                           ScopedAllowBaseSyncPrimitives);
-  FRIEND_TEST_ALL_PREFIXES(ThreadRestrictionsTest,
-                           ScopedAllowBaseSyncPrimitivesResetsState);
-  FRIEND_TEST_ALL_PREFIXES(ThreadRestrictionsTest,
-                           ScopedAllowBaseSyncPrimitivesWithBlockingDisallowed);
   friend class base::GetAppOutputScopedAllowBaseSyncPrimitives;
   friend class content::BrowserProcessSubThread;
   friend class content::SessionStorageDatabase;
@@ -313,11 +305,6 @@ class BASE_EXPORT ScopedAllowBaseSyncPrimitivesOutsideBlockingScope {
   // This can only be instantiated by friends. Use
   // ScopedAllowBaseSyncPrimitivesForTesting in unit tests to avoid the friend
   // requirement.
-  FRIEND_TEST_ALL_PREFIXES(ThreadRestrictionsTest,
-                           ScopedAllowBaseSyncPrimitivesOutsideBlockingScope);
-  FRIEND_TEST_ALL_PREFIXES(
-      ThreadRestrictionsTest,
-      ScopedAllowBaseSyncPrimitivesOutsideBlockingScopeResetsState);
   friend class ::KeyStorageLinux;
   friend class content::SynchronousCompositor;
   friend class content::SynchronousCompositorHost;

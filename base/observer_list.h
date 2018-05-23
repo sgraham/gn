@@ -13,7 +13,6 @@
 #include <utility>
 #include <vector>
 
-#include "base/gtest_prod_util.h"
 #include "base/logging.h"
 #include "base/macros.h"
 #include "base/memory/weak_ptr.h"
@@ -181,9 +180,6 @@ class ObserverList
     }
 
    private:
-    FRIEND_TEST_ALL_PREFIXES(ObserverListTest, BasicStdIterator);
-    FRIEND_TEST_ALL_PREFIXES(ObserverListTest, StdIteratorRemoveFront);
-
     ObserverType* GetCurrent() const {
       DCHECK(list_);
       DCHECK_LT(index_, clamped_max_index());

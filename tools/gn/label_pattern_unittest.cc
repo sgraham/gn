@@ -5,7 +5,7 @@
 #include <stddef.h>
 
 #include "base/macros.h"
-#include "testing/gtest/include/gtest/gtest.h"
+#include "test/test.h"
 #include "tools/gn/err.h"
 #include "tools/gn/label_pattern.h"
 #include "tools/gn/value.h"
@@ -76,11 +76,10 @@ TEST(LabelPattern, PatternParse) {
     LabelPattern result =
         LabelPattern::GetPattern(current_dir, Value(nullptr, cur.input), &err);
 
-    EXPECT_EQ(cur.success, !err.has_error()) << i << " " << cur.input;
-    EXPECT_EQ(cur.type, result.type()) << i << " " << cur.input;
-    EXPECT_EQ(cur.dir, result.dir().value()) << i << " " << cur.input;
-    EXPECT_EQ(cur.name, result.name()) << i << " " << cur.input;
-    EXPECT_EQ(cur.toolchain, result.toolchain().GetUserVisibleName(false))
-        << i << " " << cur.input;
+    EXPECT_EQ(cur.success, !err.has_error());
+    EXPECT_EQ(cur.type, result.type());
+    EXPECT_EQ(cur.dir, result.dir().value());
+    EXPECT_EQ(cur.name, result.name());
+    EXPECT_EQ(cur.toolchain, result.toolchain().GetUserVisibleName(false));
   }
 }

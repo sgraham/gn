@@ -11,7 +11,6 @@
 
 #include "base/base_export.h"
 #include "base/callback_forward.h"
-#include "base/gtest_prod_util.h"
 #include "base/macros.h"
 #include "base/memory/scoped_refptr.h"
 #include "base/message_loop/incoming_task_queue.h"
@@ -220,7 +219,6 @@ class BASE_EXPORT MessageLoop : public MessagePump::Delegate,
   friend class MessageLoopCurrentForUI;
   friend class ScheduleWorkTest;
   friend class Thread;
-  FRIEND_TEST_ALL_PREFIXES(MessageLoopTest, DeleteUnboundLoop);
 
   // Creates a MessageLoop without binding to a thread.
   // If |type| is TYPE_CUSTOM non-null |pump_factory| must be also given

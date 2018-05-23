@@ -171,8 +171,6 @@ class BASE_EXPORT MemoryDumpManager {
   friend std::default_delete<MemoryDumpManager>;  // For the testing instance.
   friend struct DefaultSingletonTraits<MemoryDumpManager>;
   friend class MemoryDumpManagerTest;
-  FRIEND_TEST_ALL_PREFIXES(MemoryDumpManagerTest,
-                           NoStackOverflowWithTooManyMDPs);
 
   // Holds the state of a process memory dump that needs to be carried over
   // across task runners in order to fulfill an asynchronous CreateProcessDump()

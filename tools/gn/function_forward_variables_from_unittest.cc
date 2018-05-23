@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "testing/gtest/include/gtest/gtest.h"
+#include "test/test.h"
 #include "tools/gn/scheduler.h"
 #include "tools/gn/test_with_scheduler.h"
 #include "tools/gn/test_with_scope.h"
@@ -30,7 +30,7 @@ TEST_F(FunctionForwardVariablesFromTest, List) {
     ASSERT_FALSE(input.has_error());
 
     input.parsed()->Execute(setup.scope(), &err);
-    ASSERT_FALSE(err.has_error()) << err.message();
+    ASSERT_FALSE(err.has_error());
 
     EXPECT_EQ("target, 1, 2\n", setup.print_output());
     setup.print_output().clear();
@@ -67,7 +67,7 @@ TEST_F(FunctionForwardVariablesFromTest, LiteralList) {
 
   Err err;
   input.parsed()->Execute(setup.scope(), &err);
-  ASSERT_FALSE(err.has_error()) << err.message();
+  ASSERT_FALSE(err.has_error());
 
   EXPECT_EQ("1 2 3\n", setup.print_output());
   setup.print_output().clear();
@@ -94,7 +94,7 @@ TEST_F(FunctionForwardVariablesFromTest, ListWithExclusion) {
 
   Err err;
   input.parsed()->Execute(setup.scope(), &err);
-  ASSERT_FALSE(err.has_error()) << err.message();
+  ASSERT_FALSE(err.has_error());
 
   EXPECT_EQ("3\ntarget, 1, 2\n", setup.print_output());
   setup.print_output().clear();
@@ -209,7 +209,7 @@ TEST_F(FunctionForwardVariablesFromTest, Star) {
 
   Err err;
   input.parsed()->Execute(setup.scope(), &err);
-  ASSERT_FALSE(err.has_error()) << err.message();
+  ASSERT_FALSE(err.has_error());
 
   EXPECT_EQ("target, 1, 2\n", setup.print_output());
   setup.print_output().clear();
@@ -237,7 +237,7 @@ TEST_F(FunctionForwardVariablesFromTest, StarWithExclusion) {
 
   Err err;
   input.parsed()->Execute(setup.scope(), &err);
-  ASSERT_FALSE(err.has_error()) << err.message();
+  ASSERT_FALSE(err.has_error());
 
   EXPECT_EQ("3\ntarget, 1, 2\n", setup.print_output());
   setup.print_output().clear();

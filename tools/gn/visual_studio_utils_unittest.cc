@@ -6,17 +6,18 @@
 
 #include "base/location.h"
 #include "base/strings/string_util.h"
-#include "testing/gtest/include/gtest/gtest.h"
+#include "test/test.h"
 
 TEST(VisualStudioUtils, MakeGuid) {
   std::string pattern = "{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}";
   std::string guid = MakeGuid(__FILE__, "foo");
   ASSERT_EQ(pattern.size(), guid.size());
   for (size_t i = 0; i < pattern.size(); ++i) {
-    if (pattern[i] == 'x')
+    if (pattern[i] == 'x') {
       ASSERT_TRUE(base::IsAsciiAlpha(guid[i]) || base::IsAsciiDigit(guid[i]));
-    else
+    } else {
       ASSERT_EQ(pattern[i], guid[i]);
+    }
   }
 
   // Calling function again should produce the same GUID.
