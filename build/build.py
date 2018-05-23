@@ -252,6 +252,8 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
   # //base/allocator/allocator_extension.cc needs this macro defined,
   # otherwise there would be link errors.
   cflags.extend(['-DNO_TCMALLOC', '-D__STDC_FORMAT_MACROS'])
+  if is_mac:
+    cflags.append('-Wno-deprecated-declarations')
 
   if is_posix:
     if options.debug:
@@ -304,7 +306,6 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
 
   static_libraries = {
       'base': {'sources': [], 'tool': 'cxx', 'include_dirs': []},
-      'dynamic_annotations': {'sources': [], 'tool': 'cc', 'include_dirs': []},
       'gn_lib': {'sources': [], 'tool': 'cxx', 'include_dirs': []},
   }
 
@@ -345,8 +346,6 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
         os.path.relpath(full_path, SRC_ROOT))
 
   static_libraries['base']['sources'].extend([
-      'base/allocator/allocator_check.cc',
-      'base/allocator/allocator_extension.cc',
       'base/at_exit.cc',
       'base/base_paths.cc',
       'base/base_switches.cc',
@@ -530,12 +529,14 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
             'base/third_party/libevent/poll.c',
             'base/third_party/libevent/select.c',
             'base/third_party/libevent/signal.c',
-            'base/third_party/libevent/strlcpy.c',
         ],
         'tool': 'cc',
         'include_dirs': [],
         'cflags': cflags + ['-DHAVE_CONFIG_H'],
     }
+    if not is_mac:
+      static_libraries['libevent']['sources'].append(
+            'base/third_party/libevent/strlcpy.c')
 
   if is_linux or is_aix:
     static_libraries['xdg_user_dirs'] = {
