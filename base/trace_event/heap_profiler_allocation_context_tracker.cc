@@ -226,13 +226,6 @@ bool AllocationContextTracker::GetContextSnapshot(AllocationContext* ctx) {
         size_t frame_count =
             CFIBacktraceAndroid::GetInitializedInstance()->Unwind(
                 frames, arraysize(frames));
-#elif BUILDFLAG(CAN_UNWIND_WITH_FRAME_POINTERS)
-        const void* frames[Backtrace::kMaxFrameCount + 1];
-        static_assert(arraysize(frames) >= Backtrace::kMaxFrameCount,
-                      "not requesting enough frames to fill Backtrace");
-        size_t frame_count = debug::TraceStackFramePointers(
-            frames, arraysize(frames),
-            1 /* exclude this function from the trace */);
 #else
         // Fall-back to capturing the stack with base::debug::StackTrace,
         // which is likely slower, but more reliable.
