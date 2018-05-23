@@ -42,10 +42,6 @@
 #if defined(OS_ANDROID)
 #include "base/trace_event/java_heap_dump_provider_android.h"
 
-#if BUILDFLAG(CAN_UNWIND_WITH_CFI_TABLE)
-#include "base/trace_event/cfi_backtrace_android.h"
-#endif
-
 #endif  // defined(OS_ANDROID)
 
 namespace base {
@@ -240,13 +236,6 @@ bool MemoryDumpManager::EnableHeapProfiling(HeapProfilingMode profiling_mode) {
       break;
 
     case kHeapProfilingModeNative:
-#if defined(OS_ANDROID) && BUILDFLAG(CAN_UNWIND_WITH_CFI_TABLE)
-    {
-      bool can_unwind = CFIBacktraceAndroid::GetInitializedInstance()
-                            ->can_unwind_stack_frames();
-      DCHECK(can_unwind);
-    }
-#endif
       // If we don't have frame pointers and unwind tables then native tracing
       // falls-back to using base::debug::StackTrace, which may be slow.
       AllocationContextTracker::SetCaptureMode(

@@ -1824,7 +1824,6 @@ buildflag_header("debugging_buildflags") {
   # buildflag entries added to this header must also must be manually added to
   # tools/gn/bootstrap/bootstrap.py
   flags = [
-    "CAN_UNWIND_WITH_CFI_TABLE=$can_unwind_with_cfi_table",
   ]
 }
 
