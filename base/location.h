@@ -82,22 +82,10 @@ class BASE_EXPORT Location {
 
 BASE_EXPORT const void* GetProgramCounter();
 
-// The macros defined here will expand to the current function.
-#if BUILDFLAG(ENABLE_LOCATION_SOURCE)
-
-// Full source information should be included.
-#define FROM_HERE FROM_HERE_WITH_EXPLICIT_FUNCTION(__func__)
-#define FROM_HERE_WITH_EXPLICIT_FUNCTION(function_name) \
-  ::base::Location::CreateFromHere(function_name, __FILE__, __LINE__)
-
-#else
-
 // TODO(http://crbug.com/760702) remove the __FILE__ argument from these calls.
 #define FROM_HERE ::base::Location::CreateFromHere(__FILE__)
 #define FROM_HERE_WITH_EXPLICIT_FUNCTION(function_name) \
   ::base::Location::CreateFromHere(function_name, __FILE__, -1)
-
-#endif
 
 }  // namespace base
 
