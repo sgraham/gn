@@ -398,7 +398,6 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
       'base/observer_list_threadsafe.cc',
       'base/path_service.cc',
       'base/pending_task.cc',
-      'base/pickle.cc',
       'base/process/kill.cc',
       'base/process/memory.cc',
       'base/process/process_handle.cc',
