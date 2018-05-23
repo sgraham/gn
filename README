@@ -5,7 +5,7 @@ src/test/test.* forked from Ninja https://github.com/ninja-build/ninja.
 base/ to be removed over time.
 
 Build with:
-  ./bootstrap/bootstrap.py
+  ./build/build.py
   out/gn_unittests
 
 Binary in out/gn.

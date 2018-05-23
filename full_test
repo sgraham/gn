@@ -3,7 +3,7 @@
 set -e
 
 rm -rf out
-./bootstrap/bootstrap.py
+./build/build.py
 out/gn_unittests
 
 # Check in-tree vs. ours. Uses:

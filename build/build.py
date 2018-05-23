@@ -3,8 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Bootstraps gn.
-"""
+"""Builds gn."""
 
 import contextlib
 import errno
@@ -17,8 +16,8 @@ import subprocess
 import sys
 import tempfile
 
-BOOTSTRAP_DIR = os.path.dirname(os.path.abspath(__file__))
-GN_ROOT = os.path.join(os.path.dirname(BOOTSTRAP_DIR), 'tools', 'gn')
+SELF_DIR = os.path.dirname(os.path.abspath(__file__))
+GN_ROOT = os.path.join(os.path.dirname(SELF_DIR), 'tools', 'gn')
 SRC_ROOT = os.path.dirname(os.path.dirname(GN_ROOT))
 
 is_win = sys.platform.startswith('win')
@@ -100,11 +99,6 @@ def main(argv):
   parser = optparse.OptionParser(description=sys.modules[__name__].__doc__)
   parser.add_option('-d', '--debug', action='store_true',
                     help='Do a debug build. Defaults to release build.')
-  parser.add_option('-o', '--output',
-                    help='place output in PATH', metavar='PATH')
-  parser.add_option('--gn-gen-args', help='Args to pass to gn gen --args')
-  parser.add_option('--build-path', help='The directory in which to build gn, '
-                    'relative to the src directory. (eg. out/)')
   parser.add_option('-v', '--verbose', action='store_true',
                     help='Log more details')
   options, args = parser.parse_args(argv)
@@ -115,10 +109,7 @@ def main(argv):
   logging.basicConfig(level=logging.DEBUG if options.verbose else logging.ERROR)
 
   try:
-    out_bootstrap_dir = SRC_ROOT
-    if options.build_path and os.path.isabs(options.build_path):
-      out_bootstrap_dir = os.path.dirname(options.build_path)
-    build_dir = os.path.join(out_bootstrap_dir, 'out')
+    build_dir = os.path.join(SRC_ROOT, 'out')
     if not os.path.exists(build_dir):
       os.makedirs(build_dir)
     return run_build(build_dir, options)
@@ -167,7 +158,7 @@ def write_generic_ninja(path, static_libraries, executables,
   else:
     template_filename = 'build.ninja.template'
 
-  with open(os.path.join(BOOTSTRAP_DIR, template_filename)) as f:
+  with open(os.path.join(SELF_DIR, template_filename)) as f:
     ninja_template = f.read()
 
   if is_win:
