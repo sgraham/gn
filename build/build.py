@@ -452,7 +452,6 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
       'base/timer/timer.cc',
       'base/value_iterators.cc',
       'base/values.cc',
-      'base/vlog.cc',
   ])
 
   if is_posix:

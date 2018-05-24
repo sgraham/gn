@@ -96,7 +96,6 @@ void MessagePumpDefault::SetTimerSlack(TimerSlack timer_slack) {
       thread_policy_set(thread_port.get(), THREAD_LATENCY_QOS_POLICY,
                         reinterpret_cast<thread_policy_t>(&policy),
                         THREAD_LATENCY_QOS_POLICY_COUNT);
-  MACH_DVLOG_IF(1, kr != KERN_SUCCESS, kr) << "thread_policy_set";
 }
 #endif
 

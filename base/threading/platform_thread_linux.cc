@@ -52,7 +52,6 @@ void SetThreadCgroup(PlatformThreadId thread_id,
   std::string tid = IntToString(thread_id);
   int bytes_written = WriteFile(tasks_filepath, tid.c_str(), tid.size());
   if (bytes_written != static_cast<int>(tid.size())) {
-    DVLOG(1) << "Failed to add " << tid << " to " << tasks_filepath.value();
   }
 }
 
@@ -161,8 +160,6 @@ void PlatformThread::SetThreadPriority(PlatformThreadId thread_id,
 
   const int nice_setting = internal::ThreadPriorityToNiceValue(priority);
   if (setpriority(PRIO_PROCESS, thread_id, nice_setting)) {
-    DVPLOG(1) << "Failed to set nice value of thread (" << thread_id << ") to "
-              << nice_setting;
   }
 }
 #endif  //  !defined(OS_NACL) && !defined(OS_AIX)

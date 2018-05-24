@@ -84,8 +84,6 @@ void UnloadNativeLibrary(NativeLibrary library) {
       dlclose(library->dylib);
     }
   } else {
-    VLOG(2) << "Not unloading NativeLibrary because it may contain an ObjC "
-               "segment. library->objc_status = " << library->objc_status;
     // Deliberately do not CFRelease the bundle or dlclose the dylib because
     // doing so can corrupt the ObjC runtime method caches. See
     // http://crbug.com/172319 for details.
