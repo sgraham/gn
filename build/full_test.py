@@ -22,7 +22,7 @@ def Trial(gn_path_to_use, save_out_dir=None):
   bin_path = os.path.join('out', 'gntrial')
   if not os.path.isdir(bin_path):
     os.makedirs(bin_path)
-  gn_to_run = os.path.join(bin_path, 'gn')
+  gn_to_run = os.path.join(bin_path, 'gn' + ('.exe' if IS_WIN else ''))
   shutil.copy2(gn_path_to_use, gn_to_run)
   comp_dir = os.path.join('out', 'COMP')
   subprocess.check_call([gn_to_run, 'gen', comp_dir, '-q', '--check'])
@@ -44,7 +44,7 @@ def main():
   orig_dir = os.getcwd()
 
   in_chrome_tree_gn = sys.argv[2]
-  our_gn = os.path.join(orig_dir, 'out', 'gn')
+  our_gn = os.path.join(orig_dir, 'out', 'gn' + ('.exe' if IS_WIN else ''))
 
   os.chdir(sys.argv[1])
 
