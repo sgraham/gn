@@ -6,9 +6,6 @@
 
 #include <stddef.h>
 
-#include "base/debug/activity_tracker.h"
-#include "base/debug/alias.h"
-#include "base/debug/profiler.h"
 #include "base/logging.h"
 #include "base/metrics/histogram_macros.h"
 #include "base/strings/utf_string_conversions.h"

@@ -7,7 +7,6 @@
 #include <zircon/process.h>
 #include <zircon/syscalls.h>
 
-#include "base/debug/activity_tracker.h"
 #include "base/fuchsia/default_job.h"
 #include "base/strings/stringprintf.h"
 

@@ -350,11 +350,6 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
       'base/callback_helpers.cc',
       'base/callback_internal.cc',
       'base/command_line.cc',
-      'base/debug/alias.cc',
-      'base/debug/crash_logging.cc',
-      'base/debug/dump_without_crashing.cc',
-      'base/debug/stack_trace.cc',
-      'base/debug/task_annotator.cc',
       'base/environment.cc',
       'base/files/file.cc',
       'base/files/file_enumerator.cc',
@@ -463,8 +458,6 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
   if is_posix:
     static_libraries['base']['sources'].extend([
         'base/base_paths_posix.cc',
-        'base/debug/debugger_posix.cc',
-        'base/debug/stack_trace_posix.cc',
         'base/files/file_enumerator_posix.cc',
         'base/files/file_descriptor_watcher_posix.cc',
         'base/files/file_posix.cc',
@@ -597,11 +590,6 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
     static_libraries['base']['sources'].extend([
         'base/base_paths_win.cc',
         'base/cpu.cc',
-        'base/debug/close_handle_hook_win.cc',
-        'base/debug/debugger.cc',
-        'base/debug/debugger_win.cc',
-        'base/debug/profiler.cc',
-        'base/debug/stack_trace_win.cc',
         'base/files/file_enumerator_win.cc',
         'base/files/file_path_watcher_win.cc',
         'base/files/file_util_win.cc',
