@@ -90,6 +90,8 @@ class Scheduler {
   void IncrementWorkCount();
   void DecrementWorkCount();
 
+  void SuppressStdoutForTesting(bool suppress);
+
  private:
   void LogOnMainThread(const std::string& verb, const std::string& msg);
   void FailWithErrorOnMainThread(const Err& err);
@@ -137,6 +139,8 @@ class Scheduler {
   std::vector<SourceFile> written_files_;
   std::vector<const Target*> write_runtime_deps_targets_;
   std::multimap<SourceFile, const Target*> unknown_generated_inputs_;
+
+  bool suppress_stdout_for_testing_;
 
   DISALLOW_COPY_AND_ASSIGN(Scheduler);
 };

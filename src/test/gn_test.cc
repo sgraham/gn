@@ -154,6 +154,6 @@ int main(int argc, char** argv) {
     delete test;
   }
 
-  printf("%s%s%s\n", prefix, passed ? "ALL PASSED" : "SOME FAILED", suffix);
+  printf("\n%s\n", passed ? "PASSED" : "FAILED");
   return passed ? EXIT_SUCCESS : EXIT_FAILURE;
 }

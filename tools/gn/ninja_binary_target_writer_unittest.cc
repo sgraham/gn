@@ -958,9 +958,13 @@ TEST_F(NinjaBinaryTargetWriterTest, DupeObjFileError) {
 
   EXPECT_FALSE(scheduler().is_failed());
 
+  scheduler().SuppressStdoutForTesting(true);
+
   std::ostringstream out;
   NinjaBinaryTargetWriter writer(&target, out);
   writer.Run();
+
+  scheduler().SuppressStdoutForTesting(false);
 
   // Should have issued an error.
   EXPECT_TRUE(scheduler().is_failed());

@@ -2,14 +2,17 @@
 
 set -e
 
-if [ $# -ne 2 ]
+if [ $# -lt 2 ]
 then
-  echo "Usage: full_test /chromium/tree/at/556eead9ce1e rel_gn_path"
+  echo "Usage: full_test /chromium/tree/at/556eead9ce1e rel_gn_path [clean]"
   exit 65
 fi
 
 
-rm -rf out
+if [ $# -eq 3 ]
+then
+  rm -rf out
+fi
 ./build/build.py
 out/gn_unittests
 

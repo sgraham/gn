@@ -166,6 +166,11 @@ void Scheduler::DecrementWorkCount() {
   }
 }
 
+void Scheduler::SuppressStdoutForTesting(bool suppress) {
+  base::AutoLock lock(lock_);
+  suppress_stdout_for_testing_ = suppress;
+}
+
 void Scheduler::LogOnMainThread(const std::string& verb,
                                 const std::string& msg) {
   OutputString(verb, DECORATION_YELLOW);
@@ -173,7 +178,13 @@ void Scheduler::LogOnMainThread(const std::string& verb,
 }
 
 void Scheduler::FailWithErrorOnMainThread(const Err& err) {
-  err.PrintToStdout();
+  bool suppress_stdout_for_testing = false;
+  {
+    base::AutoLock lock(lock_);
+    suppress_stdout_for_testing = suppress_stdout_for_testing_;
+  }
+  if (!suppress_stdout_for_testing)
+    err.PrintToStdout();
   runner_.Quit();
 }
 
