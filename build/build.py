@@ -303,23 +303,40 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
         ldflags.extend(['/MACHINE:x86'])
 
   static_libraries = {
-      'base': {'sources': [], 'tool': 'cxx', 'include_dirs': []},
-      'gn_lib': {'sources': [], 'tool': 'cxx', 'include_dirs': []},
+    'base': {'sources': [], 'tool': 'cxx', 'include_dirs': []},
+
+    'gn_lib': {
+    'sources': [
+        'src/exe_path.cc'
+    ],
+    'tool': 'cxx',
+    'include_dirs': []
+    },
   }
 
   executables = {
-      'gn': {'sources': ['tools/gn/gn_main.cc'],
-             'tool': 'cxx', 'include_dirs': [], 'libs': []},
-      'gn_unittests': {'sources': [
-                          'base/task_scheduler/lazy_task_runner.cc',
-                          'base/test/scoped_task_environment.cc',
-                          'base/test/test_mock_time_task_runner.cc',
-                          'base/test/test_pending_task.cc',
-                          'src/test/gn_test.cc',
-                          'src/test/test.cc',
-                          'tools/gn/test_with_scheduler.cc',
-                        ],
-             'tool': 'cxx', 'include_dirs': [], 'libs': ['gn_lib']},
+      'gn': {
+        'sources': [
+          'tools/gn/gn_main.cc',
+        ],
+        'tool': 'cxx',
+        'include_dirs': [],
+        'libs': []
+      },
+      'gn_unittests': {
+        'sources': [
+          'base/task_scheduler/lazy_task_runner.cc',
+          'base/test/scoped_task_environment.cc',
+          'base/test/test_mock_time_task_runner.cc',
+          'base/test/test_pending_task.cc',
+          'src/test/gn_test.cc',
+          'src/test/test.cc',
+          'tools/gn/test_with_scheduler.cc',
+        ],
+        'tool': 'cxx',
+        'include_dirs': [],
+        'libs': ['gn_lib']
+      },
   }
 
   for name in os.listdir(GN_ROOT):
@@ -345,7 +362,6 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
 
   static_libraries['base']['sources'].extend([
       'base/at_exit.cc',
-      'base/base_paths.cc',
       'base/base_switches.cc',
       'base/callback_helpers.cc',
       'base/callback_internal.cc',
@@ -381,7 +397,6 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
       'base/message_loop/message_pump_default.cc',
       'base/message_loop/watchable_io_message_pump_posix.cc',
       'base/observer_list_threadsafe.cc',
-      'base/path_service.cc',
       'base/pending_task.cc',
       'base/process/kill.cc',
       'base/process/memory.cc',
@@ -456,7 +471,6 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
 
   if is_posix:
     static_libraries['base']['sources'].extend([
-        'base/base_paths_posix.cc',
         'base/files/file_enumerator_posix.cc',
         'base/files/file_descriptor_watcher_posix.cc',
         'base/files/file_posix.cc',
@@ -549,7 +563,6 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
 
   if is_mac:
     static_libraries['base']['sources'].extend([
-        'base/base_paths_mac.mm',
         'base/files/file_util_mac.mm',
         'base/mac/bundle_locations.mm',
         'base/mac/call_with_eh_frame.cc',
@@ -587,7 +600,6 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
 
   if is_win:
     static_libraries['base']['sources'].extend([
-        'base/base_paths_win.cc',
         'base/cpu.cc',
         'base/files/file_enumerator_win.cc',
         'base/files/file_path_watcher_win.cc',

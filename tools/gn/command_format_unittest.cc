@@ -5,7 +5,6 @@
 #include "tools/gn/command_format.h"
 
 #include "base/files/file_util.h"
-#include "base/path_service.h"
 #include "base/strings/string_util.h"
 #include "test/test.h"
 #include "tools/gn/commands.h"
