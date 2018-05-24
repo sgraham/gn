@@ -1,3 +1,4 @@
 out/
 out_bootstrap/
 tags
+.DS_Store
