@@ -7,6 +7,7 @@ import os
 import shutil
 import subprocess
 import sys
+import timeit
 
 
 IS_WIN = sys.platform.startswith('win')
@@ -15,6 +16,19 @@ IS_WIN = sys.platform.startswith('win')
 def RemoveDir(d):
   if os.path.isdir(d):
     shutil.rmtree(d)
+
+
+def Trial(gn_path_to_use, save_out_dir=None):
+  bin_path = os.path.join('out', 'gntrial')
+  if not os.path.isdir(bin_path):
+    os.makedirs(bin_path)
+  gn_to_run = os.path.join(bin_path, 'gn')
+  shutil.copy2(gn_path_to_use, gn_to_run)
+  comp_dir = os.path.join('out', 'COMP')
+  subprocess.check_call([gn_to_run, 'gen', comp_dir, '-q', '--check'])
+  if save_out_dir:
+    RemoveDir(save_out_dir)
+    shutil.move(comp_dir, save_out_dir)
 
 
 def main():
@@ -29,26 +43,34 @@ def main():
   subprocess.check_call([os.path.join('out', 'gn_unittests')])
   orig_dir = os.getcwd()
 
+  in_chrome_tree_gn = sys.argv[2]
+  our_gn = os.path.join(orig_dir, 'out', 'gn')
+
+  os.chdir(sys.argv[1])
+
   # Check in-tree vs. ours. Uses:
   # - Chromium tree at 556eead9ce1e in argv[1]
   # - relative path to argv[1] built gn binary in argv[2]
-  os.chdir(sys.argv[1])
-  comp_dir = os.path.join('out', 'COMP')
-  a_dir = os.path.join('out', 'a')
-  b_dir = os.path.join('out', 'b')
-  RemoveDir(comp_dir)
-  RemoveDir(a_dir)
-  RemoveDir(b_dir)
-  subprocess.check_call([sys.argv[2], 'gen', comp_dir, '--check'],
-                        shell=IS_WIN)
-  shutil.move(comp_dir, a_dir)
 
-  RemoveDir(comp_dir)
-  subprocess.check_call([os.path.join(orig_dir, 'out', 'gn'), 'gen', comp_dir,
-                         '--check'],
-                        shell=IS_WIN)
-  shutil.move(comp_dir, b_dir)
-  subprocess.call(['diff', '-r', a_dir, b_dir])
+  # First, do a comparison to make sure the output between the two gn binaries
+  # actually matches.
+  print 'Confirming output matches...'
+  dir_a = os.path.join('out', 'a')
+  dir_b = os.path.join('out', 'b')
+  Trial(in_chrome_tree_gn, dir_a)
+  Trial(our_gn, dir_b)
+  subprocess.check_call(['diff', '-r', dir_a, dir_b])
+
+  # Then, some time trials.
+  TRIALS = 5
+  print 'Comparing performance... (takes a while)'
+  time_a = timeit.timeit('Trial("%s")' % in_chrome_tree_gn, number=TRIALS,
+                         setup='from __main__ import Trial')
+  time_b = timeit.timeit('Trial("%s")' % our_gn, number=TRIALS,
+                         setup='from __main__ import Trial')
+  print 'In-tree gn avg: %.3fs' % (time_a / TRIALS)
+  print 'Our gn avg: %.3fs' % (time_b / TRIALS)
+
   return 0
 
 
