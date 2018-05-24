@@ -9,9 +9,13 @@ import subprocess
 import sys
 
 
+IS_WIN = sys.platform.startswith('win')
+
+
 def RemoveDir(d):
   if os.path.isdir(d):
     shutil.rmtree(d)
+
 
 def main():
   if len(sys.argv) < 3 or len(sys.argv) > 4:
@@ -23,7 +27,7 @@ def main():
 
   subprocess.check_call([sys.executable, os.path.join('build', 'build.py')])
   subprocess.check_call([os.path.join('out', 'gn_unittests')])
-  orig_dir = getcwd()
+  orig_dir = os.getcwd()
 
   # Check in-tree vs. ours. Uses:
   # - Chromium tree at 556eead9ce1e in argv[1]
@@ -44,7 +48,7 @@ def main():
                          '--check'],
                         shell=IS_WIN)
   shutil.move(comp_dir, b_dir)
-  subprocess.check_call(['diff', '-r', a_dir, b_dir])
+  subprocess.call(['diff', '-r', a_dir, b_dir])
   return 0
 
 

@@ -67,19 +67,30 @@ bool TestMatchesFilter(const char* test, const char* filter) {
   return PatternMatchesString(pos, test) && !PatternMatchesString(neg, test);
 }
 
-void EnableVTEscapeProcessing() {
 #if defined(OS_WIN)
-  DWORD mode;
-  HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-  CONSOLE_SCREEN_BUFFER_INFO csbi;
-  if (GetConsoleScreenBufferInfo(console, &csbi)) {
-    if (GetConsoleMode(console, &mode)) {
-      SetConsoleMode(console, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING |
-                                  DISABLE_NEWLINE_AUTO_RETURN);
+struct ScopedEnableVTEscapeProcessing {
+  ScopedEnableVTEscapeProcessing() {
+    console_ = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    if (GetConsoleScreenBufferInfo(console_, &csbi) &&
+        GetConsoleMode(console_, &original_mode_)) {
+      SetConsoleMode(console_, original_mode_ |
+                                   ENABLE_VIRTUAL_TERMINAL_PROCESSING |
+                                   DISABLE_NEWLINE_AUTO_RETURN);
+    } else {
+      console_ = INVALID_HANDLE_VALUE;
     }
   }
+
+  ~ScopedEnableVTEscapeProcessing() {
+    if (console_ != INVALID_HANDLE_VALUE)
+      SetConsoleMode(console_, original_mode_);
+  }
+
+  HANDLE console_;
+  DWORD original_mode_;
+};
 #endif
-}
 
 }  // namespace
 
@@ -97,7 +108,9 @@ bool testing::Test::Check(bool condition,
 int main(int argc, char** argv) {
   base::CommandLine::Init(argc, argv);
 
-  EnableVTEscapeProcessing();
+#if defined(OS_WIN)
+  ScopedEnableVTEscapeProcessing enable_vt_processing;
+#endif
 
   int tests_started = 0;
 

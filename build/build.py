@@ -261,7 +261,7 @@ def write_gn_ninja(path, root_gen_dir, options):
         '/D_HAS_EXCEPTIONS=0',
     ])
 
-    ldflags.extend(['/MACHINE:x64'])
+    ldflags.extend(['/DEBUG', '/MACHINE:x64'])
     libflags.extend(['/MACHINE:x64'])
 
   static_libraries = {

@@ -3,6 +3,9 @@
 // found in the LICENSE file.
 
 #include "base/win/scoped_handle.h"
+
+#include <windows.h>
+
 #include "base/win/windows_types.h"
 
 namespace base {
@@ -10,6 +13,8 @@ namespace win {
 
 // Static.
 bool HandleTraits::CloseHandle(HANDLE handle) {
+  if (!::CloseHandle(handle))
+    CHECK(false);  // CloseHandle failed.
   return true;
 }
 
