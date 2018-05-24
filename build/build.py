@@ -516,14 +516,7 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
             'base/third_party/libevent/strlcpy.c')
 
   if is_linux or is_aix:
-    static_libraries['xdg_user_dirs'] = {
-        'sources': [
-            'base/third_party/xdg_user_dirs/xdg_user_dir_lookup.cc',
-        ],
-        'tool': 'cxx',
-    }
     static_libraries['base']['sources'].extend([
-        'base/nix/xdg_util.cc',
         'base/process/internal_linux.cc',
         'base/process/memory_linux.cc',
         'base/process/process_handle_linux.cc',
