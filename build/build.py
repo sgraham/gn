@@ -617,7 +617,6 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
         'base/files/file_util_win.cc',
         'base/files/file_win.cc',
         'base/files/memory_mapped_file_win.cc',
-        'base/guid.cc',
         'base/logging_win.cc',
         'base/message_loop/message_pump_win.cc',
         'base/native_library_win.cc',
