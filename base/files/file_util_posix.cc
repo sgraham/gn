@@ -50,7 +50,6 @@
 
 #if defined(OS_ANDROID)
 #include "base/android/content_uri_utils.h"
-#include "base/os_compat_android.h"
 #endif
 
 #if !defined(OS_IOS)
