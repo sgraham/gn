@@ -4,6 +4,8 @@
 
 #include "exe_path.h"
 
+#include <mach-o/dyld.h>
+
 #include "base/files/file_util.h"
 #include "base/logging.h"
 #include "base/strings/string_util.h"
@@ -27,8 +29,6 @@ base::FilePath GetExePath() {
   // FilePath::DirName() work incorrectly, convert it to absolute path so that
   // paths such as DIR_SOURCE_ROOT can work, since we expect absolute paths to
   // be returned here.
-  // TODO(bauerb): http://crbug.com/259796, http://crbug.com/373477
-  base::ThreadRestrictions::ScopedAllowIO allow_io;
   return base::MakeAbsoluteFilePath(base::FilePath(executable_path));
 }
 
