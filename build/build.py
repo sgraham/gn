@@ -349,7 +349,6 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
       'base/at_exit.cc',
       'base/base_paths.cc',
       'base/base_switches.cc',
-      'base/build_time.cc',
       'base/callback_helpers.cc',
       'base/callback_internal.cc',
       'base/command_line.cc',
