@@ -459,7 +459,6 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
       'base/time/time.cc',
       'base/timer/elapsed_timer.cc',
       'base/timer/timer.cc',
-      'base/unguessable_token.cc',
       'base/value_iterators.cc',
       'base/values.cc',
       'base/vlog.cc',
