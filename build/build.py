@@ -307,7 +307,8 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
 
     'gn_lib': {
     'sources': [
-        'src/exe_path.cc'
+        'src/exe_path.cc',
+        'src/worker_pool.cc',
     ],
     'tool': 'cxx',
     'include_dirs': []

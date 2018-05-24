@@ -23,10 +23,10 @@ out/gn_unittests
 SELF_DIR=$PWD
 pushd $1
 rm -rf out/COMP out/a out/b
-$2 gen out/COMP
+$2 gen out/COMP --check
 mv out/COMP out/a
 rm -rf out/COMP
-$SELF_DIR/out/gn gen out/COMP
+$SELF_DIR/out/gn gen out/COMP --check
 mv out/COMP out/b
 # only diff should be regen line
 diff -r out/a out/b
