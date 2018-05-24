@@ -618,8 +618,6 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
         'base/process/process_iterator_win.cc',
         'base/process/process_metrics_win.cc',
         'base/process/process_win.cc',
-        'base/profiler/native_stack_sampler_win.cc',
-        'base/profiler/win32_stack_frame_unwinder.cc',
         'base/rand_util_win.cc',
         'base/strings/sys_string_conversions_win.cc',
         'base/synchronization/condition_variable_win.cc',
