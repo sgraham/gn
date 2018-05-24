@@ -8,7 +8,6 @@
 #include "base/base_export.h"
 #include "base/macros.h"
 #include "base/memory/ref_counted.h"
-#include "base/power_monitor/power_observer.h"
 #include "base/timer/timer.h"
 #include "build_config.h"
 

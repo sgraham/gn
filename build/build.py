@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright 2014 The Chromium Authors. All rights reserved.
+# Copyright 2018 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -46,55 +46,6 @@ def mkdir_p(path):
     else: raise
 
 
-def run_build(build_root, options):
-  windows_x64_toolchain = None
-  if is_win:
-    windows_x64_toolchain = windows_prepare_toolchain(build_root)
-    os.environ["PATH"] = windows_x64_toolchain["paths"]
-
-  build_gn_with_ninja_manually(build_root, options, windows_x64_toolchain)
-
-def windows_target_build_arch():
-    # Target build architecture set by vcvarsall.bat
-    target_arch = os.environ.get('Platform')
-    if target_arch in ['x64', 'x86']: return target_arch
-
-    if platform.machine().lower() in ['x86_64', 'amd64']: return 'x64'
-    return 'x86'
-
-def windows_prepare_toolchain(tempdir):
-
-  def CallPythonScopeScript(command, **kwargs):
-    response = check_output(command, **kwargs)
-
-    _globals = {"__builtins__":None}
-    _locals = {}
-    exec(response, _globals, _locals)
-
-    return _locals
-
-  toolchain_paths = CallPythonScopeScript(
-      [sys.executable,
-       os.path.join(SRC_ROOT, "build", "vs_toolchain.py"),
-      "get_toolchain_dir"],
-      cwd=tempdir)
-
-  windows_x64_toolchain =  CallPythonScopeScript(
-      [sys.executable,
-       os.path.join(SRC_ROOT, "build", "toolchain",
-                    "win", "setup_toolchain.py"),
-       toolchain_paths["vs_path"],
-       toolchain_paths["sdk_path"],
-       toolchain_paths["runtime_dirs"],
-       "win",
-       "x64",
-       "environment.x64",
-       "true"
-      ],
-      cwd=tempdir)
-
-  return windows_x64_toolchain
-
 def main(argv):
   parser = optparse.OptionParser(description=sys.modules[__name__].__doc__)
   parser.add_option('-d', '--debug', action='store_true',
@@ -112,18 +63,18 @@ def main(argv):
     build_dir = os.path.join(SRC_ROOT, 'out')
     if not os.path.exists(build_dir):
       os.makedirs(build_dir)
-    return run_build(build_dir, options)
+    return build_gn_with_ninja_manually(build_dir, options)
   except subprocess.CalledProcessError as e:
     print >> sys.stderr, str(e)
     return 1
   return 0
 
-def build_gn_with_ninja_manually(tempdir, options, windows_x64_toolchain):
+def build_gn_with_ninja_manually(tempdir, options):
   root_gen_dir = os.path.join(tempdir, 'gen')
   mkdir_p(root_gen_dir)
 
   write_gn_ninja(os.path.join(tempdir, 'build.ninja'),
-                 root_gen_dir, options, windows_x64_toolchain)
+                 root_gen_dir, options)
   cmd = ['ninja', '-C', tempdir, '-w', 'dupbuild=err']
   if options.verbose:
     cmd.append('-v')
@@ -140,7 +91,7 @@ def build_gn_with_ninja_manually(tempdir, options, windows_x64_toolchain):
 def write_generic_ninja(path, static_libraries, executables,
                         cc, cxx, ar, ld,
                         cflags=[], cflags_cc=[], ldflags=[],
-                        include_dirs=[], solibs=[]):
+                        libflags=[], include_dirs=[], solibs=[]):
   ninja_header_lines = [
     'cc = ' + cc,
     'cxx = ' + cxx,
@@ -198,9 +149,11 @@ def write_generic_ninja(path, static_libraries, executables,
     for src_file in settings['sources']:
       build_source(src_file, settings)
 
-    ninja_lines.append('build %s: alink_thin %s' % (
+    ninja_lines.extend(['build %s: alink_thin %s' % (
         library_to_a(library),
-        ' '.join([src_to_obj(src_file) for src_file in settings['sources']])))
+        ' '.join([src_to_obj(src_file) for src_file in settings['sources']])),
+      '  libflags = %s' % ' '.join(libflags),
+    ])
 
   for executable, settings in executables.iteritems():
     for src_file in settings['sources']:
@@ -224,14 +177,12 @@ def write_generic_ninja(path, static_libraries, executables,
     f.write(ninja_template)
     f.write('\n'.join(ninja_lines))
 
-def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
+def write_gn_ninja(path, root_gen_dir, options):
   if is_win:
-    CCPATH = windows_x64_toolchain["vc_bin_dir"]
-
-    cc = os.environ.get('CC', os.path.join(CCPATH, 'cl.exe'))
-    cxx = os.environ.get('CXX', os.path.join(CCPATH, 'cl.exe'))
-    ld = os.environ.get('LD', os.path.join(CCPATH, 'link.exe'))
-    ar = os.environ.get('AR', os.path.join(CCPATH, 'lib.exe'))
+    cc = os.environ.get('CC', 'cl.exe')
+    cxx = os.environ.get('CXX', 'cl.exe')
+    ld = os.environ.get('LD', 'link.exe')
+    ar = os.environ.get('AR', 'lib.exe')
   elif is_aix:
     cc = os.environ.get('CC', 'gcc')
     cxx = os.environ.get('CXX', 'c++')
@@ -246,6 +197,7 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
   cflags = os.environ.get('CFLAGS', '').split()
   cflags_cc = os.environ.get('CXXFLAGS', '').split()
   ldflags = os.environ.get('LDFLAGS', '').split()
+  libflags = os.environ.get('LIBFLAGS', '').split()
   include_dirs = [root_gen_dir, SRC_ROOT, os.path.join(SRC_ROOT, 'src')]
   libs = []
 
@@ -280,14 +232,27 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
     if not options.debug:
       cflags.extend(['/Ox', '/DNDEBUG', '/GL'])
       ldflags.extend(['/LTCG', '/OPT:REF', '/OPT:ICF'])
+      libflags.extend(['/LTCG'])
 
     cflags.extend([
         '/FS',
         '/Gy',
-        '/W3', '/wd4244',
+        '/W4',
+        '/WX',
+        '/wd4099',
+        '/wd4100',
+        '/wd4127',
+        '/wd4244',
+        '/wd4267',
+        '/wd4505',
+        '/wd4577',
+        '/wd4706',
+        '/wd4838',
+        '/wd4996',
         '/Zi',
         '/DWIN32_LEAN_AND_MEAN', '/DNOMINMAX',
         '/D_CRT_SECURE_NO_DEPRECATE', '/D_SCL_SECURE_NO_DEPRECATE',
+        '/D_NO_EXCEPTIONS',
         '/D_WIN32_WINNT=0x0A00', '/DWINVER=0x0A00',
         '/DUNICODE', '/D_UNICODE',
     ])
@@ -296,11 +261,8 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
         '/D_HAS_EXCEPTIONS=0',
     ])
 
-    target_arch = windows_target_build_arch()
-    if target_arch == 'x64':
-        ldflags.extend(['/MACHINE:x64'])
-    else:
-        ldflags.extend(['/MACHINE:x86'])
+    ldflags.extend(['/MACHINE:x64'])
+    libflags.extend(['/MACHINE:x64'])
 
   static_libraries = {
     'base': {'sources': [], 'tool': 'cxx', 'include_dirs': []},
@@ -602,6 +564,7 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
   if is_win:
     static_libraries['base']['sources'].extend([
         'base/cpu.cc',
+        'base/file_version_info_win.cc',
         'base/files/file_enumerator_win.cc',
         'base/files/file_path_watcher_win.cc',
         'base/files/file_util_win.cc',
@@ -627,13 +590,10 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
         'base/threading/platform_thread_win.cc',
         'base/threading/thread_local_storage_win.cc',
         'base/time/time_win.cc',
-        'base/timer/hi_res_timer_manager_win.cc',
-        'base/trace_event/trace_event_etw_export_win.cc',
         'base/win/core_winrt_util.cc',
         'base/win/enum_variant.cc',
         'base/win/event_trace_controller.cc',
         'base/win/event_trace_provider.cc',
-        'base/win/i18n.cc',
         'base/win/iat_patch_function.cc',
         'base/win/iunknown_impl.cc',
         'base/win/message_window.cc',
@@ -645,7 +605,6 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
         'base/win/scoped_bstr.cc',
         'base/win/scoped_com_initializer.cc',
         'base/win/scoped_handle.cc',
-        'base/win/scoped_handle_verifier.cc',
         'base/win/scoped_process_information.cc',
         'base/win/scoped_variant.cc',
         'base/win/scoped_winrt_initializer.cc',
@@ -676,7 +635,7 @@ def write_gn_ninja(path, root_gen_dir, options, windows_x64_toolchain):
   executables['gn_unittests']['libs'].extend(static_libraries.keys())
 
   write_generic_ninja(path, static_libraries, executables, cc, cxx, ar, ld,
-                      cflags, cflags_cc, ldflags, include_dirs, libs)
+                      cflags, cflags_cc, ldflags, libflags, include_dirs, libs)
 
 
 if __name__ == '__main__':

@@ -20,7 +20,6 @@
 
 #include "base/files/file_enumerator.h"
 #include "base/files/file_path.h"
-#include "base/guid.h"
 #include "base/logging.h"
 #include "base/macros.h"
 #include "base/process/process_handle.h"
@@ -28,6 +27,7 @@
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_piece.h"
 #include "base/strings/string_util.h"
+#include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/time/time.h"
@@ -88,18 +88,6 @@ void RecordPostOperationState(const FilePath& path,
       metric = PostOperationState::kNotDirectoryAfterFailure;
     }
   }
-
-  std::string histogram_name = "Windows.PostOperationState.";
-  operation.AppendToString(&histogram_name);
-  UmaHistogramEnumeration(histogram_name, metric, PostOperationState::kCount);
-}
-
-// Records the sample |error| in a histogram named
-// "Windows.FilesystemError.|operation|".
-void RecordFilesystemError(StringPiece operation, DWORD error) {
-  std::string histogram_name = "Windows.FilesystemError.";
-  operation.AppendToString(&histogram_name);
-  UmaHistogramSparse(histogram_name, error);
 }
 
 // Deletes all files and directories in a path.
@@ -321,6 +309,37 @@ DWORD DoDeleteFile(const FilePath& path, bool recursive) {
                                                  : ::GetLastError();
 }
 
+std::string RandomDataToGUIDString(const uint64_t bytes[2]) {
+  return base::StringPrintf(
+      "%08x-%04x-%04x-%04x-%012llx", static_cast<unsigned int>(bytes[0] >> 32),
+      static_cast<unsigned int>((bytes[0] >> 16) & 0x0000ffff),
+      static_cast<unsigned int>(bytes[0] & 0x0000ffff),
+      static_cast<unsigned int>(bytes[1] >> 48),
+      bytes[1] & 0x0000ffff'ffffffffULL);
+}
+
+std::string GenerateGUID() {
+  uint64_t sixteen_bytes[2];
+  // Use base::RandBytes instead of crypto::RandBytes, because crypto calls the
+  // base version directly, and to prevent the dependency from base/ to crypto/.
+  base::RandBytes(&sixteen_bytes, sizeof(sixteen_bytes));
+
+  // Set the GUID to version 4 as described in RFC 4122, section 4.4.
+  // The format of GUID version 4 must be xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx,
+  // where y is one of [8, 9, A, B].
+
+  // Clear the version bits and set the version to 4:
+  sixteen_bytes[0] &= 0xffffffff'ffff0fffULL;
+  sixteen_bytes[0] |= 0x00000000'00004000ULL;
+
+  // Set the two most significant bits (bits 6 and 7) of the
+  // clock_seq_hi_and_reserved to zero and one, respectively:
+  sixteen_bytes[1] &= 0x3fffffff'ffffffffULL;
+  sixteen_bytes[1] |= 0x80000000'00000000ULL;
+
+  return RandomDataToGUIDString(sixteen_bytes);
+}
+
 }  // namespace
 
 FilePath MakeAbsoluteFilePath(const FilePath& input) {
@@ -347,7 +366,6 @@ bool DeleteFile(const FilePath& path, bool recursive) {
   if (error == ERROR_SUCCESS)
     return true;
 
-  RecordFilesystemError(operation, error);
   return false;
 }
 

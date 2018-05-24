@@ -141,7 +141,7 @@ Value ParseJSONValue(const Settings* settings,
     case base::Value::Type::DICTIONARY: {
       std::unique_ptr<Scope> scope = std::make_unique<Scope>(settings);
       for (const auto& it : value.DictItems()) {
-        Value value =
+        Value parsed_value =
             ParseJSONValue(settings, it.second, origin, input_file, err);
         if (!IsIdentifier(it.first)) {
           *err = Err(origin, "Invalid identifier \"" + it.first + "\".");
@@ -157,7 +157,7 @@ Value ParseJSONValue(const Settings* settings,
         }
         base::StringPiece key(&input_file->contents()[off + 1],
                               it.first.size());
-        scope->SetValue(key, std::move(value), origin);
+        scope->SetValue(key, std::move(parsed_value), origin);
       }
       return Value(origin, std::move(scope));
     }
@@ -165,8 +165,9 @@ Value ParseJSONValue(const Settings* settings,
       Value result(origin, Value::LIST);
       result.list_value().reserve(value.GetList().size());
       for (const auto& val : value.GetList()) {
-        Value value = ParseJSONValue(settings, val, origin, input_file, err);
-        result.list_value().push_back(value);
+        Value parsed_value =
+            ParseJSONValue(settings, val, origin, input_file, err);
+        result.list_value().push_back(parsed_value);
       }
       return result;
     }

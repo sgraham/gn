@@ -9,9 +9,9 @@
 
 #include <limits>
 
+#include "base/bind.h"
 #include "base/memory/ptr_util.h"
 #include "base/strings/stringprintf.h"
-#include "base/trace_event/trace_event.h"
 #include "base/win/current_module.h"
 #include "base/win/wrapped_window_proc.h"
 
@@ -114,8 +114,6 @@ void MessagePumpForUI::ScheduleWork() {
 
   // Clarify that we didn't really insert.
   InterlockedExchange(&work_state_, READY);
-  UMA_HISTOGRAM_ENUMERATION("Chrome.MessageLoopProblem", MESSAGE_POST_ERROR,
-                            MESSAGE_LOOP_PROBLEM_MAX);
   state_->schedule_work_error_count++;
   state_->last_schedule_work_error_time = Time::Now();
 }
@@ -208,8 +206,6 @@ void MessagePumpForUI::WaitForWork() {
       delay = INFINITE;
 
     // Tell the optimizer to retain these values to simplify analyzing hangs.
-    base::debug::Alias(&delay);
-    base::debug::Alias(&wait_flags);
     DWORD result = MsgWaitForMultipleObjectsEx(0, nullptr, delay, QS_ALLINPUT,
                                                wait_flags);
 
@@ -312,8 +308,6 @@ void MessagePumpForUI::RescheduleTimer() {
     if (delay_msec < USER_TIMER_MINIMUM)
       delay_msec = USER_TIMER_MINIMUM;
 
-    // Tell the optimizer to retain these values to simplify analyzing hangs.
-    base::debug::Alias(&delay_msec);
     // Create a WM_TIMER event that will wake us up to check for any pending
     // timers (in case we are running within a nested, external sub-pump).
     UINT_PTR ret = SetTimer(message_window_.hwnd(), 0, delay_msec, nullptr);
@@ -321,9 +315,6 @@ void MessagePumpForUI::RescheduleTimer() {
       return;
     // If we can't set timers, we are in big trouble... but cross our fingers
     // for now.
-    // TODO(jar): If we don't see this error, use a CHECK() here instead.
-    UMA_HISTOGRAM_ENUMERATION("Chrome.MessageLoopProblem", SET_TIMER_ERROR,
-                              MESSAGE_LOOP_PROBLEM_MAX);
   }
 }
 
@@ -345,14 +336,10 @@ bool MessagePumpForUI::ProcessNextWindowsMessage() {
 }
 
 bool MessagePumpForUI::ProcessMessageHelper(const MSG& msg) {
-  TRACE_EVENT1("base", "MessagePumpForUI::ProcessMessageHelper",
-               "message", msg.message);
   if (WM_QUIT == msg.message) {
     // WM_QUIT is the standard way to exit a GetMessage() loop. Our MessageLoop
     // has its own quit mechanism, so WM_QUIT is unexpected and should be
     // ignored.
-    UMA_HISTOGRAM_ENUMERATION("Chrome.MessageLoopProblem",
-                              RECEIVED_WM_QUIT_ERROR, MESSAGE_LOOP_PROBLEM_MAX);
     return true;
   }
 
@@ -428,8 +415,6 @@ void MessagePumpForIO::ScheduleWork() {
 
   // See comment in MessagePumpForUI::ScheduleWork() for this error recovery.
   InterlockedExchange(&work_state_, READY);  // Clarify that we didn't succeed.
-  UMA_HISTOGRAM_ENUMERATION("Chrome.MessageLoopProblem", COMPLETION_POST_ERROR,
-                            MESSAGE_LOOP_PROBLEM_MAX);
   state_->schedule_work_error_count++;
   state_->last_schedule_work_error_time = Time::Now();
 }
@@ -512,7 +497,6 @@ void MessagePumpForIO::WaitForWork() {
     timeout = INFINITE;
 
   // Tell the optimizer to retain these values to simplify analyzing hangs.
-  base::debug::Alias(&timeout);
   WaitForIOCompletion(timeout, nullptr);
 }
 

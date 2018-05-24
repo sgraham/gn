@@ -43,6 +43,10 @@ int _mktemp_s(char* templ) {
 }
 #endif
 
+#ifndef chdir
+#define chdir _chdir
+#endif
+
 /// Windows has no mkdtemp.  Implement it in terms of _mktemp_s.
 char* mkdtemp(char* name_template) {
   int err = _mktemp_s(name_template);
@@ -64,7 +68,7 @@ char* mkdtemp(char* name_template) {
 std::string GetSystemTempDir() {
 #ifdef _WIN32
   char buf[1024];
-  if (!GetTempPath(sizeof(buf), buf))
+  if (!GetTempPathA(sizeof(buf), buf))
     return "";
   return buf;
 #else

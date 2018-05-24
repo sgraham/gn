@@ -117,8 +117,6 @@ bool WaitableEvent::TimedWaitUntil(const TimeTicks& end_time) {
     return IsSignaled();
 
   internal::AssertBaseSyncPrimitivesAllowed();
-  // Record the event that this thread is blocking upon (for hang diagnosis).
-  base::debug::ScopedEventWaitActivity event_activity(this);
 
   TimeTicks now(TimeTicks::Now());
   if (end_time <= now)
