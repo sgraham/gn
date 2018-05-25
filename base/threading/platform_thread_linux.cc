@@ -13,7 +13,6 @@
 #include "base/logging.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/threading/platform_thread_internal_posix.h"
-#include "base/threading/thread_id_name_manager.h"
 #include "build_config.h"
 
 #if !defined(OS_NACL) && !defined(OS_AIX)
@@ -125,8 +124,6 @@ bool GetCurrentThreadPriorityForPlatform(ThreadPriority* priority) {
 
 // static
 void PlatformThread::SetName(const std::string& name) {
-  ThreadIdNameManager::GetInstance()->SetName(name);
-
 #if !defined(OS_NACL) && !defined(OS_AIX)
   // On linux we can get the thread names to show up in the debugger by setting
   // the process name for the LWP.  We don't want to do this for the main
