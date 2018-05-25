@@ -404,7 +404,6 @@ def write_gn_ninja(path, root_gen_dir, options):
   if is_posix:
     static_libraries['base']['sources'].extend([
         'base/files/file_enumerator_posix.cc',
-        #'base/files/file_descriptor_watcher_posix.cc',
         'base/files/file_posix.cc',
         'base/files/file_util_posix.cc',
         'base/files/memory_mapped_file_posix.cc',
