@@ -7,7 +7,6 @@
 
 #include "base/at_exit.h"
 #include "base/command_line.h"
-#include "base/message_loop/message_loop.h"
 #include "base/strings/utf_string_conversions.h"
 #include "build_config.h"
 #include "msg_loop.h"

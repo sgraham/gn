@@ -23,7 +23,6 @@
 #include "base/strings/string_util.h"
 #include "base/task_runner.h"
 #include "base/task_runner_util.h"
-#include "base/threading/thread.h"
 #include "base/time/time.h"
 #include "build_config.h"
 

@@ -437,11 +437,11 @@ def write_gn_ninja(path, root_gen_dir, options):
   if is_posix:
     static_libraries['base']['sources'].extend([
         'base/files/file_enumerator_posix.cc',
-        'base/files/file_descriptor_watcher_posix.cc',
+        #'base/files/file_descriptor_watcher_posix.cc',
         'base/files/file_posix.cc',
         'base/files/file_util_posix.cc',
         'base/files/memory_mapped_file_posix.cc',
-        'base/message_loop/message_pump_libevent.cc',
+        #'base/message_loop/message_pump_libevent.cc',
         'base/posix/file_descriptor_shuffle.cc',
         'base/posix/global_descriptors.cc',
         'base/posix/safe_strerror.cc',
@@ -538,7 +538,7 @@ def write_gn_ninja(path, root_gen_dir, options):
         'base/mac/scoped_mach_port.cc',
         'base/mac/scoped_mach_vm.cc',
         'base/mac/scoped_nsautorelease_pool.mm',
-        'base/message_loop/message_pump_mac.mm',
+        #'base/message_loop/message_pump_mac.mm',
         'base/process/process_handle_mac.cc',
         'base/process/process_info_mac.cc',
         'base/process/process_iterator_mac.cc',
