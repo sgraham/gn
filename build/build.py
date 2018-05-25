@@ -345,7 +345,6 @@ def write_gn_ninja(path, root_gen_dir, options):
       'base/md5.cc',
       'base/memory/ref_counted.cc',
       'base/memory/weak_ptr.cc',
-      'base/pending_task.cc',
       'base/process/kill.cc',
       'base/process/memory.cc',
       'base/process/process_handle.cc',
