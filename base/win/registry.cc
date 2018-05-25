@@ -35,56 +35,6 @@ const REGSAM kWow64AccessMask = KEY_WOW64_32KEY | KEY_WOW64_64KEY;
 
 }  // namespace
 
-// Watches for modifications to a key.
-class RegKey::Watcher : public ObjectWatcher::Delegate {
- public:
-  Watcher() {}
-  ~Watcher() override {}
-
-  bool StartWatching(HKEY key, const ChangeCallback& callback);
-
-  // Implementation of ObjectWatcher::Delegate.
-  void OnObjectSignaled(HANDLE object) override {
-    DCHECK(watch_event_.IsValid() && watch_event_.Get() == object);
-    ChangeCallback callback = callback_;
-    callback_.Reset();
-    callback.Run();
-  }
-
- private:
-  ScopedHandle watch_event_;
-  ObjectWatcher object_watcher_;
-  ChangeCallback callback_;
-  DISALLOW_COPY_AND_ASSIGN(Watcher);
-};
-
-bool RegKey::Watcher::StartWatching(HKEY key, const ChangeCallback& callback) {
-  DCHECK(key);
-  DCHECK(callback_.is_null());
-
-  if (!watch_event_.IsValid())
-    watch_event_.Set(CreateEvent(NULL, TRUE, FALSE, NULL));
-
-  if (!watch_event_.IsValid())
-    return false;
-
-  DWORD filter = REG_NOTIFY_CHANGE_NAME |
-                 REG_NOTIFY_CHANGE_ATTRIBUTES |
-                 REG_NOTIFY_CHANGE_LAST_SET |
-                 REG_NOTIFY_CHANGE_SECURITY;
-
-  // Watch the registry key for a change of value.
-  LONG result = RegNotifyChangeKeyValue(key, TRUE, filter, watch_event_.Get(),
-                                        TRUE);
-  if (result != ERROR_SUCCESS) {
-    watch_event_.Close();
-    return false;
-  }
-
-  callback_ = callback;
-  return object_watcher_.StartWatchingOnce(watch_event_.Get(), this);
-}
-
 // RegKey ----------------------------------------------------------------------
 
 RegKey::RegKey() : key_(NULL), wow64access_(0) {
@@ -407,16 +357,6 @@ LONG RegKey::WriteValue(const wchar_t* name,
   LONG result = RegSetValueEx(key_, name, 0, dtype,
       reinterpret_cast<LPBYTE>(const_cast<void*>(data)), dsize);
   return result;
-}
-
-bool RegKey::StartWatching(const ChangeCallback& callback) {
-  if (!key_watcher_)
-    key_watcher_.reset(new Watcher());
-
-  if (!key_watcher_->StartWatching(key_, callback))
-    return false;
-
-  return true;
 }
 
 // static

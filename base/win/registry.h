@@ -12,7 +12,6 @@
 
 #include "base/base_export.h"
 #include "base/macros.h"
-#include "base/win/object_watcher.h"
 #include "base/win/scoped_handle.h"
 
 namespace base {
@@ -125,18 +124,9 @@ class BASE_EXPORT RegKey {
                   DWORD dsize,
                   DWORD dtype);
 
-  // Starts watching the key to see if any of its values have changed.
-  // The key must have been opened with the KEY_NOTIFY access privilege.
-  // Returns true on success.
-  // To stop watching, delete this RegKey object. To continue watching the
-  // object after the callback is invoked, call StartWatching again.
-  bool StartWatching(const ChangeCallback& callback);
-
   HKEY Handle() const { return key_; }
 
  private:
-  class Watcher;
-
   // Calls RegDeleteKeyEx on supported platforms, alternatively falls back to
   // RegDeleteKey.
   static LONG RegDeleteKeyExWrapper(HKEY hKey,
@@ -151,7 +141,6 @@ class BASE_EXPORT RegKey {
 
   HKEY key_;  // The registry key being iterated.
   REGSAM wow64access_;
-  std::unique_ptr<Watcher> key_watcher_;
 
   DISALLOW_COPY_AND_ASSIGN(RegKey);
 };

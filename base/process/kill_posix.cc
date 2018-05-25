@@ -155,16 +155,6 @@ class BackgroundReaper : public PlatformThread::Delegate {
 
 }  // namespace
 
-void EnsureProcessTerminated(Process process) {
-  DCHECK(!process.is_current());
-
-  if (process.WaitForExitWithTimeout(TimeDelta(), nullptr))
-    return;
-
-  PlatformThread::CreateNonJoinable(
-      0, new BackgroundReaper(std::move(process), TimeDelta::FromSeconds(2)));
-}
-
 #if defined(OS_LINUX)
 void EnsureProcessGetsReaped(Process process) {
   DCHECK(!process.is_current());

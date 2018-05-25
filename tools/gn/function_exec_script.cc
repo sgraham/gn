@@ -116,8 +116,6 @@ Example
   exec_script("//foo/bar/myscript.py")
 )";
 
-class ExecScriptScopedAllowBaseSyncPrimitives {};
-
 Value RunExecScript(Scope* scope,
                     const FunctionCallNode* function,
                     const std::vector<Value>& args,
@@ -228,7 +226,6 @@ Value RunExecScript(Scope* scope,
   std::string stderr_output;
   int exit_code = 0;
   {
-    ExecScriptScopedAllowBaseSyncPrimitives allow_base_sync_primitives;
     if (!internal::ExecProcess(cmdline, startup_dir, &output, &stderr_output,
                                &exit_code)) {
       *err = Err(
