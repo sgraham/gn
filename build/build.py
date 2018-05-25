@@ -405,28 +405,6 @@ def write_gn_ninja(path, root_gen_dir, options):
         'base/threading/platform_thread_posix.cc',
         'base/time/time_conversion_posix.cc',
     ])
-    static_libraries['libevent'] = {
-        'sources': [
-            'base/third_party/libevent/buffer.c',
-            'base/third_party/libevent/evbuffer.c',
-            'base/third_party/libevent/evdns.c',
-            'base/third_party/libevent/event.c',
-            'base/third_party/libevent/event_tagging.c',
-            'base/third_party/libevent/evrpc.c',
-            'base/third_party/libevent/evutil.c',
-            'base/third_party/libevent/http.c',
-            'base/third_party/libevent/log.c',
-            'base/third_party/libevent/poll.c',
-            'base/third_party/libevent/select.c',
-            'base/third_party/libevent/signal.c',
-        ],
-        'tool': 'cc',
-        'include_dirs': [],
-        'cflags': cflags + ['-DHAVE_CONFIG_H'],
-    }
-    if not is_mac:
-      static_libraries['libevent']['sources'].append(
-            'base/third_party/libevent/strlcpy.c')
 
   if is_linux or is_aix:
     static_libraries['base']['sources'].extend([
@@ -452,23 +430,11 @@ def write_gn_ninja(path, root_gen_dir, options):
           '-lpthread',
       ])
       libs.extend(['-lrt', '-latomic'])
-      static_libraries['libevent']['include_dirs'].extend([
-          os.path.join(SRC_ROOT, 'base', 'third_party', 'libevent', 'linux')
-      ])
-      static_libraries['libevent']['sources'].extend([
-         'base/third_party/libevent/epoll.c',
-      ])
     else:
       ldflags.extend(['-pthread'])
       libs.extend(['-lrt'])
       static_libraries['base']['sources'].extend([
           'base/process/internal_aix.cc'
-      ])
-      static_libraries['libevent']['include_dirs'].extend([
-          os.path.join(SRC_ROOT, 'base', 'third_party', 'libevent', 'aix')
-      ])
-      static_libraries['libevent']['include_dirs'].extend([
-          os.path.join(SRC_ROOT, 'base', 'third_party', 'libevent', 'compat')
       ])
 
   if is_mac:
@@ -493,12 +459,6 @@ def write_gn_ninja(path, root_gen_dir, options):
         'base/time/time_exploded_posix.cc',
         'base/time/time_mac.cc',
         'base/threading/platform_thread_mac.mm',
-    ])
-    static_libraries['libevent']['include_dirs'].extend([
-        os.path.join(SRC_ROOT, 'base', 'third_party', 'libevent', 'mac')
-    ])
-    static_libraries['libevent']['sources'].extend([
-        'base/third_party/libevent/kqueue.c',
     ])
 
     libs.extend([
