@@ -13,7 +13,6 @@
 #include "base/synchronization/waitable_event.h"
 #include "base/threading/thread_id_name_manager.h"
 #include "base/threading/thread_local.h"
-#include "base/threading/thread_restrictions.h"
 #include "build_config.h"
 
 #if defined(OS_POSIX) && !defined(OS_NACL)

@@ -11,7 +11,6 @@
 
 #include "base/files/file_path.h"
 #include "base/strings/string16.h"
-#include "base/threading/thread_restrictions.h"
 
 #include <windows.h>
 
@@ -23,8 +22,6 @@ MemoryMappedFile::MemoryMappedFile() : data_(NULL), length_(0) {
 bool MemoryMappedFile::MapFileRegionToMemory(
     const MemoryMappedFile::Region& region,
     Access access) {
-  AssertBlockingAllowed();
-
   if (!file_.IsValid())
     return false;
 

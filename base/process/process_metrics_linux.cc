@@ -25,7 +25,6 @@
 #include "base/strings/string_split.h"
 #include "base/strings/string_tokenizer.h"
 #include "base/strings/string_util.h"
-#include "base/threading/thread_restrictions.h"
 #include "build_config.h"
 
 namespace base {
@@ -61,8 +60,6 @@ bool ReadProcFileToTrimmedStringPairs(pid_t pid,
                                       StringPairs* key_value_pairs) {
   std::string status_data;
   {
-    // Synchronously reading files in /proc does not hit the disk.
-    ThreadRestrictions::ScopedAllowIO allow_io;
     FilePath status_file = internal::GetProcPidDir(pid).Append(filename);
     if (!ReadFileToString(status_file, &status_data))
       return false;
@@ -333,7 +330,6 @@ ProcessMetrics::TotalsSummary ProcessMetrics::GetTotalsSummary() const {
   std::string totmaps_data;
   {
     FilePath totmaps_file = internal::GetProcPidDir(process_).Append("totmaps");
-    ThreadRestrictions::ScopedAllowIO allow_io;
     bool ret = ReadFileToString(totmaps_file, &totmaps_data);
     if (!ret || totmaps_data.length() == 0)
       return summary;
@@ -610,9 +606,6 @@ bool ParseProcVmstat(StringPiece vmstat_data, VmStatInfo* vmstat) {
 }
 
 bool GetSystemMemoryInfo(SystemMemoryInfoKB* meminfo) {
-  // Synchronously reading files in /proc and /sys are safe.
-  ThreadRestrictions::ScopedAllowIO allow_io;
-
   // Used memory is: total - free - buffers - caches
   FilePath meminfo_file("/proc/meminfo");
   std::string meminfo_data;
@@ -642,9 +635,6 @@ std::unique_ptr<DictionaryValue> VmStatInfo::ToValue() const {
 }
 
 bool GetVmStatInfo(VmStatInfo* vmstat) {
-  // Synchronously reading files in /proc and /sys are safe.
-  ThreadRestrictions::ScopedAllowIO allow_io;
-
   FilePath vmstat_file("/proc/vmstat");
   std::string vmstat_data;
   if (!ReadFileToString(vmstat_file, &vmstat_data)) {
@@ -721,9 +711,6 @@ bool IsValidDiskName(StringPiece candidate) {
 }
 
 bool GetSystemDiskInfo(SystemDiskInfo* diskinfo) {
-  // Synchronously reading files in /proc does not hit the disk.
-  ThreadRestrictions::ScopedAllowIO allow_io;
-
   FilePath diskinfo_file("/proc/diskstats");
   std::string diskinfo_data;
   if (!ReadFileToString(diskinfo_file, &diskinfo_data)) {
@@ -908,9 +895,6 @@ void ParseZramPath(SwapInfo* swap_info) {
 }
 
 bool GetSwapInfoImpl(SwapInfo* swap_info) {
-  // Synchronously reading files in /sys/block/zram0 does not hit the disk.
-  ThreadRestrictions::ScopedAllowIO allow_io;
-
   // Since ZRAM update, it shows the usage data in different places.
   // If file "/sys/block/zram0/mm_stat" exists, use the new way, otherwise,
   // use the old way.

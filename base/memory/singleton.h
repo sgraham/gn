@@ -33,7 +33,6 @@
 #include "base/lazy_instance_helpers.h"
 #include "base/logging.h"
 #include "base/macros.h"
-#include "base/threading/thread_restrictions.h"
 
 namespace base {
 
@@ -228,11 +227,6 @@ class Singleton {
 
   // Return a pointer to the one true instance of the class.
   static Type* get() {
-#if DCHECK_IS_ON()
-    if (!Traits::kAllowedToAccessOnNonjoinableThread)
-      ThreadRestrictions::AssertSingletonAllowed();
-#endif
-
     return subtle::GetOrCreateLazyPointer(
         &instance_, &CreatorFunc, nullptr,
         Traits::kRegisterAtExit ? OnExit : nullptr, nullptr);

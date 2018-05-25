@@ -13,7 +13,6 @@
 
 #include "base/logging.h"
 #include "base/numerics/safe_conversions.h"
-#include "base/threading/thread_restrictions.h"
 #include "build_config.h"
 
 #if defined(OS_ANDROID)
@@ -28,8 +27,6 @@ MemoryMappedFile::MemoryMappedFile() : data_(nullptr), length_(0) {}
 bool MemoryMappedFile::MapFileRegionToMemory(
     const MemoryMappedFile::Region& region,
     Access access) {
-  AssertBlockingAllowed();
-
   off_t map_start = 0;
   size_t map_size = 0;
   int32_t data_offset = 0;
@@ -172,8 +169,6 @@ bool MemoryMappedFile::MapFileRegionToMemory(
 #endif
 
 void MemoryMappedFile::CloseHandles() {
-  AssertBlockingAllowed();
-
   if (data_ != nullptr)
     munmap(data_, length_);
   file_.Close();

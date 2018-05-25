@@ -7,7 +7,6 @@
 #include "base/logging.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/utf_string_conversions.h"
-#include "base/threading/thread_restrictions.h"
 #include "base/time/time.h"
 #include "build_config.h"
 #include "tools/gn/err.h"
@@ -117,8 +116,7 @@ Example
   exec_script("//foo/bar/myscript.py")
 )";
 
-class ExecScriptScopedAllowBaseSyncPrimitives
-    : public base::ScopedAllowBaseSyncPrimitives {};
+class ExecScriptScopedAllowBaseSyncPrimitives {};
 
 Value RunExecScript(Scope* scope,
                     const FunctionCallNode* function,

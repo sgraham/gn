@@ -11,7 +11,6 @@
 #include <wrl/client.h>
 
 #include "base/files/file_util.h"
-#include "base/threading/thread_restrictions.h"
 #include "base/win/scoped_propvariant.h"
 #include "base/win/win_util.h"
 #include "base/win/windows_version.h"

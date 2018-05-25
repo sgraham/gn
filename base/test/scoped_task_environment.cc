@@ -16,7 +16,6 @@
 #include "base/task_scheduler/task_scheduler_impl.h"
 #include "base/test/test_mock_time_task_runner.h"
 #include "base/threading/sequence_local_storage_map.h"
-#include "base/threading/thread_restrictions.h"
 #include "base/threading/thread_task_runner_handle.h"
 #include "base/time/time.h"
 

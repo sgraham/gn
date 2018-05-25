@@ -14,7 +14,6 @@
 #include "base/logging.h"
 #include "base/process/process_metrics.h"
 #include "base/strings/stringprintf.h"
-#include "base/threading/thread_restrictions.h"
 #include "base/win/windows_version.h"
 
 namespace {
@@ -82,8 +81,6 @@ int64_t SysInfo::AmountOfVirtualMemory() {
 
 // static
 int64_t SysInfo::AmountOfFreeDiskSpace(const FilePath& path) {
-  AssertBlockingAllowed();
-
   int64_t available;
   if (!GetDiskSpaceInfo(path, &available, nullptr))
     return -1;
@@ -92,8 +89,6 @@ int64_t SysInfo::AmountOfFreeDiskSpace(const FilePath& path) {
 
 // static
 int64_t SysInfo::AmountOfTotalDiskSpace(const FilePath& path) {
-  AssertBlockingAllowed();
-
   int64_t total;
   if (!GetDiskSpaceInfo(path, nullptr, &total))
     return -1;

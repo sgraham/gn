@@ -17,7 +17,6 @@
 #include "base/logging.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/sys_info_internal.h"
-#include "base/threading/thread_restrictions.h"
 #include "build_config.h"
 
 #if !defined(OS_FUCHSIA)
@@ -148,8 +147,6 @@ int64_t SysInfo::AmountOfVirtualMemory() {
 
 // static
 int64_t SysInfo::AmountOfFreeDiskSpace(const FilePath& path) {
-  AssertBlockingAllowed();
-
   int64_t available;
   if (!GetDiskSpaceInfo(path, &available, nullptr))
     return -1;
@@ -158,8 +155,6 @@ int64_t SysInfo::AmountOfFreeDiskSpace(const FilePath& path) {
 
 // static
 int64_t SysInfo::AmountOfTotalDiskSpace(const FilePath& path) {
-  AssertBlockingAllowed();
-
   int64_t total;
   if (!GetDiskSpaceInfo(path, nullptr, &total))
     return -1;
