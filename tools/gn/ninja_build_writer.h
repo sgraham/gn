@@ -7,6 +7,7 @@
 
 #include <iosfwd>
 #include <map>
+#include <unordered_map>
 #include <vector>
 
 #include "base/macros.h"

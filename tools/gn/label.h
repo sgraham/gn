@@ -7,7 +7,6 @@
 
 #include <stddef.h>
 
-#include "base/containers/hash_tables.h"
 #include "tools/gn/source_dir.h"
 
 class Err;
@@ -103,7 +102,7 @@ class Label {
   std::string toolchain_name_;
 };
 
-namespace BASE_HASH_NAMESPACE {
+namespace std {
 
 template <>
 struct hash<Label> {
@@ -116,7 +115,7 @@ struct hash<Label> {
   }
 };
 
-}  // namespace BASE_HASH_NAMESPACE
+}  // namespace std
 
 inline void swap(Label& lhs, Label& rhs) {
   lhs.swap(rhs);
