@@ -14,7 +14,6 @@
 #include <unistd.h>
 #include <utility>
 
-#include "base/files/dir_reader_posix.h"
 #include "base/files/file_util.h"
 #include "base/logging.h"
 #include "base/memory/ptr_util.h"
@@ -25,7 +24,6 @@
 #include "base/strings/string_split.h"
 #include "base/strings/string_tokenizer.h"
 #include "base/strings/string_util.h"
-#include "base/threading/thread_restrictions.h"
 #include "build_config.h"
 
 namespace base {
@@ -61,8 +59,6 @@ bool ReadProcFileToTrimmedStringPairs(pid_t pid,
                                       StringPairs* key_value_pairs) {
   std::string status_data;
   {
-    // Synchronously reading files in /proc does not hit the disk.
-    ThreadRestrictions::ScopedAllowIO allow_io;
     FilePath status_file = internal::GetProcPidDir(pid).Append(filename);
     if (!ReadFileToString(status_file, &status_data))
       return false;
@@ -257,24 +253,6 @@ bool ProcessMetrics::GetPageFaultCounts(PageFaultCounts* counts) const {
 }
 #endif  // defined(OS_LINUX) || defined(OS_ANDROID)
 
-int ProcessMetrics::GetOpenFdCount() const {
-  // Use /proc/<pid>/fd to count the number of entries there.
-  FilePath fd_path = internal::GetProcPidDir(process_).Append("fd");
-
-  DirReaderPosix dir_reader(fd_path.value().c_str());
-  if (!dir_reader.IsValid())
-    return -1;
-
-  int total_count = 0;
-  for (; dir_reader.Next(); ) {
-    const char* name = dir_reader.name();
-    if (strcmp(name, ".") != 0 && strcmp(name, "..") != 0)
-      ++total_count;
-  }
-
-  return total_count;
-}
-
 int ProcessMetrics::GetOpenFdSoftLimit() const {
   // Use /proc/<pid>/limits to read the open fd limit.
   FilePath fd_path = internal::GetProcPidDir(process_).Append("limits");
@@ -333,7 +311,6 @@ ProcessMetrics::TotalsSummary ProcessMetrics::GetTotalsSummary() const {
   std::string totmaps_data;
   {
     FilePath totmaps_file = internal::GetProcPidDir(process_).Append("totmaps");
-    ThreadRestrictions::ScopedAllowIO allow_io;
     bool ret = ReadFileToString(totmaps_file, &totmaps_data);
     if (!ret || totmaps_data.length() == 0)
       return summary;
@@ -610,9 +587,6 @@ bool ParseProcVmstat(StringPiece vmstat_data, VmStatInfo* vmstat) {
 }
 
 bool GetSystemMemoryInfo(SystemMemoryInfoKB* meminfo) {
-  // Synchronously reading files in /proc and /sys are safe.
-  ThreadRestrictions::ScopedAllowIO allow_io;
-
   // Used memory is: total - free - buffers - caches
   FilePath meminfo_file("/proc/meminfo");
   std::string meminfo_data;
@@ -642,9 +616,6 @@ std::unique_ptr<DictionaryValue> VmStatInfo::ToValue() const {
 }
 
 bool GetVmStatInfo(VmStatInfo* vmstat) {
-  // Synchronously reading files in /proc and /sys are safe.
-  ThreadRestrictions::ScopedAllowIO allow_io;
-
   FilePath vmstat_file("/proc/vmstat");
   std::string vmstat_data;
   if (!ReadFileToString(vmstat_file, &vmstat_data)) {
@@ -655,146 +626,6 @@ bool GetVmStatInfo(VmStatInfo* vmstat) {
     DLOG(WARNING) << "Failed to parse " << vmstat_file.value();
     return false;
   }
-  return true;
-}
-
-SystemDiskInfo::SystemDiskInfo() {
-  reads = 0;
-  reads_merged = 0;
-  sectors_read = 0;
-  read_time = 0;
-  writes = 0;
-  writes_merged = 0;
-  sectors_written = 0;
-  write_time = 0;
-  io = 0;
-  io_time = 0;
-  weighted_io_time = 0;
-}
-
-SystemDiskInfo::SystemDiskInfo(const SystemDiskInfo& other) = default;
-
-std::unique_ptr<Value> SystemDiskInfo::ToValue() const {
-  auto res = std::make_unique<DictionaryValue>();
-
-  // Write out uint64_t variables as doubles.
-  // Note: this may discard some precision, but for JS there's no other option.
-  res->SetDouble("reads", static_cast<double>(reads));
-  res->SetDouble("reads_merged", static_cast<double>(reads_merged));
-  res->SetDouble("sectors_read", static_cast<double>(sectors_read));
-  res->SetDouble("read_time", static_cast<double>(read_time));
-  res->SetDouble("writes", static_cast<double>(writes));
-  res->SetDouble("writes_merged", static_cast<double>(writes_merged));
-  res->SetDouble("sectors_written", static_cast<double>(sectors_written));
-  res->SetDouble("write_time", static_cast<double>(write_time));
-  res->SetDouble("io", static_cast<double>(io));
-  res->SetDouble("io_time", static_cast<double>(io_time));
-  res->SetDouble("weighted_io_time", static_cast<double>(weighted_io_time));
-
-  return std::move(res);
-}
-
-bool IsValidDiskName(StringPiece candidate) {
-  if (candidate.length() < 3)
-    return false;
-
-  if (candidate[1] == 'd' &&
-      (candidate[0] == 'h' || candidate[0] == 's' || candidate[0] == 'v')) {
-    // [hsv]d[a-z]+ case
-    for (size_t i = 2; i < candidate.length(); ++i) {
-      if (!islower(candidate[i]))
-        return false;
-    }
-    return true;
-  }
-
-  const char kMMCName[] = "mmcblk";
-  if (!candidate.starts_with(kMMCName))
-    return false;
-
-  // mmcblk[0-9]+ case
-  for (size_t i = strlen(kMMCName); i < candidate.length(); ++i) {
-    if (!isdigit(candidate[i]))
-      return false;
-  }
-  return true;
-}
-
-bool GetSystemDiskInfo(SystemDiskInfo* diskinfo) {
-  // Synchronously reading files in /proc does not hit the disk.
-  ThreadRestrictions::ScopedAllowIO allow_io;
-
-  FilePath diskinfo_file("/proc/diskstats");
-  std::string diskinfo_data;
-  if (!ReadFileToString(diskinfo_file, &diskinfo_data)) {
-    DLOG(WARNING) << "Failed to open " << diskinfo_file.value();
-    return false;
-  }
-
-  std::vector<StringPiece> diskinfo_lines = SplitStringPiece(
-      diskinfo_data, "\n", KEEP_WHITESPACE, SPLIT_WANT_NONEMPTY);
-  if (diskinfo_lines.empty()) {
-    DLOG(WARNING) << "No lines found";
-    return false;
-  }
-
-  diskinfo->reads = 0;
-  diskinfo->reads_merged = 0;
-  diskinfo->sectors_read = 0;
-  diskinfo->read_time = 0;
-  diskinfo->writes = 0;
-  diskinfo->writes_merged = 0;
-  diskinfo->sectors_written = 0;
-  diskinfo->write_time = 0;
-  diskinfo->io = 0;
-  diskinfo->io_time = 0;
-  diskinfo->weighted_io_time = 0;
-
-  uint64_t reads = 0;
-  uint64_t reads_merged = 0;
-  uint64_t sectors_read = 0;
-  uint64_t read_time = 0;
-  uint64_t writes = 0;
-  uint64_t writes_merged = 0;
-  uint64_t sectors_written = 0;
-  uint64_t write_time = 0;
-  uint64_t io = 0;
-  uint64_t io_time = 0;
-  uint64_t weighted_io_time = 0;
-
-  for (const StringPiece& line : diskinfo_lines) {
-    std::vector<StringPiece> disk_fields = SplitStringPiece(
-        line, kWhitespaceASCII, TRIM_WHITESPACE, SPLIT_WANT_NONEMPTY);
-
-    // Fields may have overflowed and reset to zero.
-    if (!IsValidDiskName(disk_fields[kDiskDriveName].as_string()))
-      continue;
-
-    StringToUint64(disk_fields[kDiskReads], &reads);
-    StringToUint64(disk_fields[kDiskReadsMerged], &reads_merged);
-    StringToUint64(disk_fields[kDiskSectorsRead], &sectors_read);
-    StringToUint64(disk_fields[kDiskReadTime], &read_time);
-    StringToUint64(disk_fields[kDiskWrites], &writes);
-    StringToUint64(disk_fields[kDiskWritesMerged], &writes_merged);
-    StringToUint64(disk_fields[kDiskSectorsWritten], &sectors_written);
-    StringToUint64(disk_fields[kDiskWriteTime], &write_time);
-    StringToUint64(disk_fields[kDiskIO], &io);
-    StringToUint64(disk_fields[kDiskIOTime], &io_time);
-    StringToUint64(disk_fields[kDiskWeightedIOTime], &weighted_io_time);
-
-    diskinfo->reads += reads;
-    diskinfo->reads_merged += reads_merged;
-    diskinfo->sectors_read += sectors_read;
-    diskinfo->read_time += read_time;
-    diskinfo->writes += writes;
-    diskinfo->writes_merged += writes_merged;
-    diskinfo->sectors_written += sectors_written;
-    diskinfo->write_time += write_time;
-    diskinfo->io += io;
-    diskinfo->io_time += io_time;
-    diskinfo->weighted_io_time += weighted_io_time;
-  }
-
   return true;
 }
 
@@ -908,9 +739,6 @@ void ParseZramPath(SwapInfo* swap_info) {
 }
 
 bool GetSwapInfoImpl(SwapInfo* swap_info) {
-  // Synchronously reading files in /sys/block/zram0 does not hit the disk.
-  ThreadRestrictions::ScopedAllowIO allow_io;
-
   // Since ZRAM update, it shows the usage data in different places.
   // If file "/sys/block/zram0/mm_stat" exists, use the new way, otherwise,
   // use the old way.

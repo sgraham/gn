@@ -7,8 +7,7 @@
 #include <algorithm>
 
 #include "base/bind.h"
-#include "base/single_thread_task_runner.h"
-#include "base/threading/thread_task_runner_handle.h"
+#include "msg_loop.h"
 #include "tools/gn/standard_out.h"
 #include "tools/gn/target.h"
 
@@ -19,7 +18,7 @@ namespace {
 Scheduler* g_scheduler = nullptr;
 
 Scheduler::Scheduler()
-    : main_thread_task_runner_(base::ThreadTaskRunnerHandle::Get()),
+    : main_thread_run_loop_(MsgLoop::Current()),
       input_file_manager_(new InputFileManager),
       verbose_logging_(false),
       pool_work_count_cv_(&pool_work_count_lock_),
@@ -35,7 +34,7 @@ Scheduler::~Scheduler() {
 }
 
 bool Scheduler::Run() {
-  runner_.Run();
+  main_thread_run_loop_->Run();
   bool local_is_failed;
   {
     base::AutoLock lock(lock_);
@@ -49,15 +48,8 @@ bool Scheduler::Run() {
 }
 
 void Scheduler::Log(const std::string& verb, const std::string& msg) {
-  if (task_runner()->BelongsToCurrentThread()) {
-    LogOnMainThread(verb, msg);
-  } else {
-    // The run loop always joins on the sub threads, so the lifetime of this
-    // object outlives the invocations of this function, hence "unretained".
-    task_runner()->PostTask(FROM_HERE,
-                            base::Bind(&Scheduler::LogOnMainThread,
-                                       base::Unretained(this), verb, msg));
-  }
+  task_runner()->PostTask(base::BindOnce(&Scheduler::LogOnMainThread,
+                                         base::Unretained(this), verb, msg));
 }
 
 void Scheduler::FailWithError(const Err& err) {
@@ -70,28 +62,23 @@ void Scheduler::FailWithError(const Err& err) {
     is_failed_ = true;
   }
 
-  if (task_runner()->BelongsToCurrentThread()) {
-    FailWithErrorOnMainThread(err);
-  } else {
-    // The run loop always joins on the sub threads, so the lifetime of this
-    // object outlives the invocations of this function, hence "unretained".
-    task_runner()->PostTask(FROM_HERE,
-                            base::Bind(&Scheduler::FailWithErrorOnMainThread,
-                                       base::Unretained(this), err));
-  }
+  task_runner()->PostTask(base::BindOnce(&Scheduler::FailWithErrorOnMainThread,
+                                         base::Unretained(this), err));
 }
 
-void Scheduler::ScheduleWork(std::function<void()> work) {
+void Scheduler::ScheduleWork(Task work) {
   IncrementWorkCount();
   pool_work_count_.Increment();
-  worker_pool_.PostTask([ this, work = std::move(work) ] {
-    work();
-    DecrementWorkCount();
-    if (!pool_work_count_.Decrement()) {
-      base::AutoLock auto_lock(pool_work_count_lock_);
-      pool_work_count_cv_.Signal();
-    }
-  });
+  worker_pool_.PostTask(base::BindOnce(
+      [](Scheduler* self, Task work) {
+        std::move(work).Run();
+        self->DecrementWorkCount();
+        if (!self->pool_work_count_.Decrement()) {
+          base::AutoLock auto_lock(self->pool_work_count_lock_);
+          self->pool_work_count_cv_.Signal();
+        }
+      },
+      this, std::move(work)));
 }
 
 void Scheduler::AddGenDependency(const base::FilePath& file) {
@@ -165,12 +152,8 @@ void Scheduler::IncrementWorkCount() {
 
 void Scheduler::DecrementWorkCount() {
   if (!work_count_.Decrement()) {
-    if (task_runner()->BelongsToCurrentThread()) {
-      OnComplete();
-    } else {
-      task_runner()->PostTask(FROM_HERE, base::Bind(&Scheduler::OnComplete,
-                                                    base::Unretained(this)));
-    }
+    task_runner()->PostTask(
+        base::BindOnce(&Scheduler::OnComplete, base::Unretained(this)));
   }
 }
 
@@ -193,13 +176,13 @@ void Scheduler::FailWithErrorOnMainThread(const Err& err) {
   }
   if (!suppress_stdout_for_testing)
     err.PrintToStdout();
-  runner_.Quit();
+  task_runner()->PostQuit();
 }
 
 void Scheduler::OnComplete() {
   // Should be called on the main thread.
-  DCHECK(task_runner()->BelongsToCurrentThread());
-  runner_.Quit();
+  DCHECK(task_runner() == MsgLoop::Current());
+  task_runner()->PostQuit();
 }
 
 void Scheduler::WaitForPoolTasks() {

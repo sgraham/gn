@@ -215,19 +215,20 @@ def write_gn_ninja(path, root_gen_dir, options):
       # This can be easily fixed once we start building using a GN binary,
       # as the optimization flag can then just be set using the
       # logic inside //build/toolchain.
-      cflags.extend(['-O2', '-g0'])
+      cflags.extend(['-O2', '-g0', '-DNDEBUG'])
 
     cflags.extend([
         '-D_FILE_OFFSET_BITS=64',
         '-D__STDC_CONSTANT_MACROS', '-D__STDC_FORMAT_MACROS',
         '-pthread',
         '-pipe',
-        '-fno-exceptions'
+        '-fno-exceptions',
+        '-fno-rtti',
     ])
     cflags_cc.extend(['-std=c++14', '-Wno-c++11-narrowing'])
     if is_aix:
-     cflags.extend(['-maix64'])
-     ldflags.extend([ '-maix64 -Wl,-bbigtoc' ])
+      cflags.extend(['-maix64'])
+      ldflags.extend([ '-maix64 -Wl,-bbigtoc' ])
   elif is_win:
     if not options.debug:
       cflags.extend(['/Ox', '/DNDEBUG', '/GL'])
@@ -270,6 +271,8 @@ def write_gn_ninja(path, root_gen_dir, options):
     'gn_lib': {
     'sources': [
         'src/exe_path.cc',
+        'src/msg_loop.cc',
+        'src/sys_info.cc',
         'src/worker_pool.cc',
     ],
     'tool': 'cxx',
@@ -288,10 +291,6 @@ def write_gn_ninja(path, root_gen_dir, options):
       },
       'gn_unittests': {
         'sources': [
-          'base/task_scheduler/lazy_task_runner.cc',
-          'base/test/scoped_task_environment.cc',
-          'base/test/test_mock_time_task_runner.cc',
-          'base/test/test_pending_task.cc',
           'src/test/gn_test.cc',
           'src/test/test.cc',
           'tools/gn/test_with_scheduler.cc',
@@ -324,8 +323,6 @@ def write_gn_ninja(path, root_gen_dir, options):
         os.path.relpath(full_path, SRC_ROOT))
 
   static_libraries['base']['sources'].extend([
-      'base/at_exit.cc',
-      'base/base_switches.cc',
       'base/callback_helpers.cc',
       'base/callback_internal.cc',
       'base/command_line.cc',
@@ -334,43 +331,24 @@ def write_gn_ninja(path, root_gen_dir, options):
       'base/files/file_enumerator.cc',
       'base/files/file_path.cc',
       'base/files/file_path_constants.cc',
-      'base/files/file_tracing.cc',
       'base/files/file_util.cc',
-      'base/files/important_file_writer.cc',
-      'base/files/memory_mapped_file.cc',
       'base/files/scoped_file.cc',
       'base/files/scoped_temp_dir.cc',
-      'base/hash.cc',
       'base/json/json_parser.cc',
       'base/json/json_reader.cc',
       'base/json/json_string_value_serializer.cc',
       'base/json/json_writer.cc',
       'base/json/string_escape.cc',
-      'base/lazy_instance_helpers.cc',
-      'base/location.cc',
       'base/logging.cc',
       'base/md5.cc',
       'base/memory/ref_counted.cc',
       'base/memory/weak_ptr.cc',
-      'base/message_loop/incoming_task_queue.cc',
-      'base/message_loop/message_loop.cc',
-      'base/message_loop/message_loop_current.cc',
-      'base/message_loop/message_loop_task_runner.cc',
-      'base/message_loop/message_pump.cc',
-      'base/message_loop/message_pump_default.cc',
-      'base/message_loop/watchable_io_message_pump_posix.cc',
-      'base/observer_list_threadsafe.cc',
-      'base/pending_task.cc',
       'base/process/kill.cc',
       'base/process/memory.cc',
       'base/process/process_handle.cc',
       'base/process/process_iterator.cc',
       'base/process/process_metrics.cc',
       'base/rand_util.cc',
-      'base/run_loop.cc',
-      'base/sequence_token.cc',
-      'base/sequence_checker_impl.cc',
-      'base/sequenced_task_runner.cc',
       'base/sha1.cc',
       'base/strings/pattern.cc',
       'base/strings/string_number_conversions.cc',
@@ -383,51 +361,13 @@ def write_gn_ninja(path, root_gen_dir, options):
       'base/strings/utf_string_conversions.cc',
       'base/synchronization/atomic_flag.cc',
       'base/synchronization/lock.cc',
-      'base/sys_info.cc',
-      'base/task_runner.cc',
-      'base/task_scheduler/delayed_task_manager.cc',
-      'base/task_scheduler/environment_config.cc',
-      'base/task_scheduler/post_task.cc',
-      'base/task_scheduler/priority_queue.cc',
-      'base/task_scheduler/scheduler_lock_impl.cc',
-      'base/task_scheduler/scheduler_single_thread_task_runner_manager.cc',
-      'base/task_scheduler/scheduler_worker.cc',
-      'base/task_scheduler/scheduler_worker_pool.cc',
-      'base/task_scheduler/scheduler_worker_pool_impl.cc',
-      'base/task_scheduler/scheduler_worker_pool_params.cc',
-      'base/task_scheduler/scheduler_worker_stack.cc',
-      'base/task_scheduler/scoped_set_task_priority_for_current_thread.cc',
-      'base/task_scheduler/sequence.cc',
-      'base/task_scheduler/sequence_sort_key.cc',
-      'base/task_scheduler/service_thread.cc',
-      'base/task_scheduler/task.cc',
-      'base/task_scheduler/task_scheduler.cc',
-      'base/task_scheduler/task_scheduler_impl.cc',
-      'base/task_scheduler/task_tracker.cc',
-      'base/task_scheduler/task_traits.cc',
-      'base/third_party/dmg_fp/dtoa_wrapper.cc',
-      'base/third_party/dmg_fp/g_fmt.cc',
       'base/third_party/icu/icu_utf.cc',
       'base/third_party/nspr/prtime.cc',
-      'base/threading/post_task_and_reply_impl.cc',
-      'base/threading/scoped_blocking_call.cc',
-      'base/threading/sequence_local_storage_map.cc',
-      'base/threading/sequenced_task_runner_handle.cc',
-      'base/threading/simple_thread.cc',
-      'base/threading/thread.cc',
-      'base/threading/thread_checker_impl.cc',
-      'base/threading/thread_collision_warner.cc',
-      'base/threading/thread_id_name_manager.cc',
-      'base/threading/thread_local_storage.cc',
-      'base/threading/thread_restrictions.cc',
-      'base/threading/thread_task_runner_handle.cc',
       'base/time/clock.cc',
-      'base/time/default_clock.cc',
       'base/time/default_tick_clock.cc',
       'base/time/tick_clock.cc',
       'base/time/time.cc',
       'base/timer/elapsed_timer.cc',
-      'base/timer/timer.cc',
       'base/value_iterators.cc',
       'base/values.cc',
   ])
@@ -435,13 +375,9 @@ def write_gn_ninja(path, root_gen_dir, options):
   if is_posix:
     static_libraries['base']['sources'].extend([
         'base/files/file_enumerator_posix.cc',
-        'base/files/file_descriptor_watcher_posix.cc',
         'base/files/file_posix.cc',
         'base/files/file_util_posix.cc',
-        'base/files/memory_mapped_file_posix.cc',
-        'base/message_loop/message_pump_libevent.cc',
         'base/posix/file_descriptor_shuffle.cc',
-        'base/posix/global_descriptors.cc',
         'base/posix/safe_strerror.cc',
         'base/process/kill_posix.cc',
         'base/process/process_handle_posix.cc',
@@ -451,35 +387,10 @@ def write_gn_ninja(path, root_gen_dir, options):
         'base/strings/string16.cc',
         'base/synchronization/condition_variable_posix.cc',
         'base/synchronization/lock_impl_posix.cc',
-        'base/sys_info_posix.cc',
-        'base/task_scheduler/task_tracker_posix.cc',
         'base/threading/platform_thread_internal_posix.cc',
         'base/threading/platform_thread_posix.cc',
-        'base/threading/thread_local_storage_posix.cc',
         'base/time/time_conversion_posix.cc',
     ])
-    static_libraries['libevent'] = {
-        'sources': [
-            'base/third_party/libevent/buffer.c',
-            'base/third_party/libevent/evbuffer.c',
-            'base/third_party/libevent/evdns.c',
-            'base/third_party/libevent/event.c',
-            'base/third_party/libevent/event_tagging.c',
-            'base/third_party/libevent/evrpc.c',
-            'base/third_party/libevent/evutil.c',
-            'base/third_party/libevent/http.c',
-            'base/third_party/libevent/log.c',
-            'base/third_party/libevent/poll.c',
-            'base/third_party/libevent/select.c',
-            'base/third_party/libevent/signal.c',
-        ],
-        'tool': 'cc',
-        'include_dirs': [],
-        'cflags': cflags + ['-DHAVE_CONFIG_H'],
-    }
-    if not is_mac:
-      static_libraries['libevent']['sources'].append(
-            'base/third_party/libevent/strlcpy.c')
 
   if is_linux or is_aix:
     static_libraries['base']['sources'].extend([
@@ -492,7 +403,6 @@ def write_gn_ninja(path, root_gen_dir, options):
         'base/process/process_metrics_linux.cc',
         'base/strings/sys_string_conversions_posix.cc',
         'base/synchronization/waitable_event_posix.cc',
-        'base/sys_info_linux.cc',
         'base/time/time_exploded_posix.cc',
         'base/time/time_now_posix.cc',
         'base/threading/platform_thread_linux.cc',
@@ -505,23 +415,11 @@ def write_gn_ninja(path, root_gen_dir, options):
           '-lpthread',
       ])
       libs.extend(['-lrt', '-latomic'])
-      static_libraries['libevent']['include_dirs'].extend([
-          os.path.join(SRC_ROOT, 'base', 'third_party', 'libevent', 'linux')
-      ])
-      static_libraries['libevent']['sources'].extend([
-         'base/third_party/libevent/epoll.c',
-      ])
     else:
       ldflags.extend(['-pthread'])
       libs.extend(['-lrt'])
       static_libraries['base']['sources'].extend([
           'base/process/internal_aix.cc'
-      ])
-      static_libraries['libevent']['include_dirs'].extend([
-          os.path.join(SRC_ROOT, 'base', 'third_party', 'libevent', 'aix')
-      ])
-      static_libraries['libevent']['include_dirs'].extend([
-          os.path.join(SRC_ROOT, 'base', 'third_party', 'libevent', 'compat')
       ])
 
   if is_mac:
@@ -530,28 +428,21 @@ def write_gn_ninja(path, root_gen_dir, options):
         'base/mac/bundle_locations.mm',
         'base/mac/call_with_eh_frame.cc',
         'base/mac/call_with_eh_frame_asm.S',
+        'base/mac/dispatch_source_mach.cc',
         'base/mac/foundation_util.mm',
         'base/mac/mach_logging.cc',
         'base/mac/scoped_mach_port.cc',
         'base/mac/scoped_mach_vm.cc',
         'base/mac/scoped_nsautorelease_pool.mm',
-        'base/message_loop/message_pump_mac.mm',
         'base/process/process_handle_mac.cc',
         'base/process/process_info_mac.cc',
         'base/process/process_iterator_mac.cc',
         'base/process/process_metrics_mac.cc',
         'base/strings/sys_string_conversions_mac.mm',
         'base/synchronization/waitable_event_mac.cc',
-        'base/sys_info_mac.mm',
         'base/time/time_exploded_posix.cc',
         'base/time/time_mac.cc',
         'base/threading/platform_thread_mac.mm',
-    ])
-    static_libraries['libevent']['include_dirs'].extend([
-        os.path.join(SRC_ROOT, 'base', 'third_party', 'libevent', 'mac')
-    ])
-    static_libraries['libevent']['sources'].extend([
-        'base/third_party/libevent/kqueue.c',
     ])
 
     libs.extend([
@@ -566,12 +457,8 @@ def write_gn_ninja(path, root_gen_dir, options):
         'base/cpu.cc',
         'base/file_version_info_win.cc',
         'base/files/file_enumerator_win.cc',
-        'base/files/file_path_watcher_win.cc',
         'base/files/file_util_win.cc',
         'base/files/file_win.cc',
-        'base/files/memory_mapped_file_win.cc',
-        'base/logging_win.cc',
-        'base/message_loop/message_pump_win.cc',
         'base/process/kill_win.cc',
         'base/process/launch_win.cc',
         'base/process/memory_win.cc',
@@ -584,11 +471,8 @@ def write_gn_ninja(path, root_gen_dir, options):
         'base/strings/sys_string_conversions_win.cc',
         'base/synchronization/condition_variable_win.cc',
         'base/synchronization/lock_impl_win.cc',
-        'base/synchronization/waitable_event_watcher_win.cc',
         'base/synchronization/waitable_event_win.cc',
-        'base/sys_info_win.cc',
         'base/threading/platform_thread_win.cc',
-        'base/threading/thread_local_storage_win.cc',
         'base/time/time_win.cc',
         'base/win/core_winrt_util.cc',
         'base/win/enum_variant.cc',
@@ -596,18 +480,14 @@ def write_gn_ninja(path, root_gen_dir, options):
         'base/win/event_trace_provider.cc',
         'base/win/iat_patch_function.cc',
         'base/win/iunknown_impl.cc',
-        'base/win/message_window.cc',
-        'base/win/object_watcher.cc',
         'base/win/pe_image.cc',
         'base/win/process_startup_helper.cc',
         'base/win/registry.cc',
         'base/win/resource_util.cc',
         'base/win/scoped_bstr.cc',
-        'base/win/scoped_com_initializer.cc',
         'base/win/scoped_handle.cc',
         'base/win/scoped_process_information.cc',
         'base/win/scoped_variant.cc',
-        'base/win/scoped_winrt_initializer.cc',
         'base/win/shortcut.cc',
         'base/win/startup_information.cc',
         'base/win/wait_chain.cc',

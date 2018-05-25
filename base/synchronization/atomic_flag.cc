@@ -13,11 +13,9 @@ AtomicFlag::AtomicFlag() {
   // Set() from the same sequence after. Note: the sequencing requirements are
   // necessary for IsSet()'s callers to know which sequence's memory operations
   // they are synchronized with.
-  set_sequence_checker_.DetachFromSequence();
 }
 
 void AtomicFlag::Set() {
-  DCHECK(set_sequence_checker_.CalledOnValidSequence());
   base::subtle::Release_Store(&flag_, 1);
 }
 

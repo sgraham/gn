@@ -177,10 +177,6 @@ class BASE_EXPORT ProcessMetrics {
   bool GetIOCounters(IoCounters* io_counters) const;
 
 #if defined(OS_LINUX) || defined(OS_AIX) || defined(OS_ANDROID)
-  // Returns the number of file descriptors currently open by the process, or
-  // -1 on error.
-  int GetOpenFdCount() const;
-
   // Returns the soft limit of file descriptors that can be opened by the
   // process, or -1 on error.
   int GetOpenFdSoftLimit() const;
@@ -400,36 +396,6 @@ BASE_EXPORT bool GetVmStatInfo(VmStatInfo* vmstat);
 // Exposed for testing.
 BASE_EXPORT bool ParseProcVmstat(StringPiece input, VmStatInfo* vmstat);
 
-// Data from /proc/diskstats about system-wide disk I/O.
-struct BASE_EXPORT SystemDiskInfo {
-  SystemDiskInfo();
-  SystemDiskInfo(const SystemDiskInfo& other);
-
-  // Serializes the platform specific fields to value.
-  std::unique_ptr<Value> ToValue() const;
-
-  uint64_t reads = 0;
-  uint64_t reads_merged = 0;
-  uint64_t sectors_read = 0;
-  uint64_t read_time = 0;
-  uint64_t writes = 0;
-  uint64_t writes_merged = 0;
-  uint64_t sectors_written = 0;
-  uint64_t write_time = 0;
-  uint64_t io = 0;
-  uint64_t io_time = 0;
-  uint64_t weighted_io_time = 0;
-};
-
-// Checks whether the candidate string is a valid disk name, [hsv]d[a-z]+
-// for a generic disk or mmcblk[0-9]+ for the MMC case.
-// Names of disk partitions (e.g. sda1) are not valid.
-BASE_EXPORT bool IsValidDiskName(StringPiece candidate);
-
-// Retrieves data from /proc/diskstats about system-wide disk I/O.
-// Fills in the provided |diskinfo| structure. Returns true on success.
-BASE_EXPORT bool GetSystemDiskInfo(SystemDiskInfo* diskinfo);
-
 // Returns the amount of time spent in user space since boot across all CPUs.
 BASE_EXPORT TimeDelta GetUserCpuTimeSinceBoot();
 
@@ -492,7 +458,6 @@ class SystemMetrics {
 #if defined(OS_LINUX) || defined(OS_ANDROID)
   SystemMemoryInfoKB memory_info_;
   VmStatInfo vmstat_info_;
-  SystemDiskInfo disk_info_;
 #endif
 #if defined(OS_CHROMEOS)
   SwapInfo swap_info_;

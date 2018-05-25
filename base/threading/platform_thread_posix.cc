@@ -15,11 +15,8 @@
 
 #include <memory>
 
-#include "base/lazy_instance.h"
 #include "base/logging.h"
 #include "base/threading/platform_thread_internal_posix.h"
-#include "base/threading/thread_id_name_manager.h"
-#include "base/threading/thread_restrictions.h"
 #include "build_config.h"
 
 #if defined(OS_LINUX)
@@ -57,8 +54,6 @@ void* ThreadFunc(void* params) {
         static_cast<ThreadParams*>(params));
 
     delegate = thread_params->delegate;
-    if (!thread_params->joinable)
-      base::ThreadRestrictions::SetSingletonAllowed(false);
 
 #if !defined(OS_NACL)
     // Threads on linux/android may inherit their priority from the thread
@@ -68,15 +63,7 @@ void* ThreadFunc(void* params) {
 #endif
   }
 
-  ThreadIdNameManager::GetInstance()->RegisterThread(
-      PlatformThread::CurrentHandle().platform_handle(),
-      PlatformThread::CurrentId());
-
   delegate->ThreadMain();
-
-  ThreadIdNameManager::GetInstance()->RemoveName(
-      PlatformThread::CurrentHandle().platform_handle(),
-      PlatformThread::CurrentId());
 
   base::TerminateOnThread();
   return nullptr;
@@ -189,7 +176,7 @@ void PlatformThread::Sleep(TimeDelta duration) {
 
 // static
 const char* PlatformThread::GetName() {
-  return ThreadIdNameManager::GetInstance()->GetName(CurrentId());
+  return "<UNKNOWN>";
 }
 
 // static
@@ -222,7 +209,6 @@ void PlatformThread::Join(PlatformThreadHandle thread_handle) {
   // Joining another thread may block the current thread for a long time, since
   // the thread referred to by |thread_handle| may still be running long-lived /
   // blocking tasks.
-  AssertBlockingAllowed();
   CHECK_EQ(0, pthread_join(thread_handle.platform_handle(), nullptr));
 }
 

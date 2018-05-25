@@ -8,8 +8,6 @@
 
 #include "base/logging.h"
 #include "base/strings/utf_string_conversions.h"
-#include "base/threading/thread_id_name_manager.h"
-#include "base/threading/thread_restrictions.h"
 #include "base/win/scoped_handle.h"
 
 #include <windows.h>
@@ -57,8 +55,6 @@ struct ThreadParams {
 DWORD __stdcall ThreadFunc(void* params) {
   ThreadParams* thread_params = static_cast<ThreadParams*>(params);
   PlatformThread::Delegate* delegate = thread_params->delegate;
-  if (!thread_params->joinable)
-    base::ThreadRestrictions::SetSingletonAllowed(false);
 
   if (thread_params->priority != ThreadPriority::NORMAL)
     PlatformThread::SetCurrentThreadPriority(thread_params->priority);
@@ -78,19 +74,10 @@ DWORD __stdcall ThreadFunc(void* params) {
 
   if (did_dup) {
     scoped_platform_handle.Set(platform_handle);
-    ThreadIdNameManager::GetInstance()->RegisterThread(
-        scoped_platform_handle.Get(),
-        PlatformThread::CurrentId());
   }
 
   delete thread_params;
   delegate->ThreadMain();
-
-  if (did_dup) {
-    ThreadIdNameManager::GetInstance()->RemoveName(
-        scoped_platform_handle.Get(),
-        PlatformThread::CurrentId());
-  }
 
   return 0;
 }
@@ -169,8 +156,6 @@ void PlatformThread::Sleep(TimeDelta duration) {
 
 // static
 void PlatformThread::SetName(const std::string& name) {
-  ThreadIdNameManager::GetInstance()->SetName(name);
-
   // The SetThreadDescription API works even if no debugger is attached.
   auto set_thread_description_func =
       reinterpret_cast<SetThreadDescription>(::GetProcAddress(
@@ -190,7 +175,7 @@ void PlatformThread::SetName(const std::string& name) {
 
 // static
 const char* PlatformThread::GetName() {
-  return ThreadIdNameManager::GetInstance()->GetName(CurrentId());
+  return "<UNKNOWN>";
 }
 
 // static

@@ -101,16 +101,16 @@ inline bool operator<(const LabelPtrPair<T>& a, const LabelPtrPair<T>& b) {
   return a.label < b.label;
 }
 
-namespace BASE_HASH_NAMESPACE {
+namespace std {
 
 template <typename T>
 struct hash<LabelPtrPair<T>> {
   std::size_t operator()(const LabelPtrPair<T>& v) const {
-    BASE_HASH_NAMESPACE::hash<Label> h;
+    std::hash<Label> h;
     return h(v.label);
   }
 };
 
-}  // namespace BASE_HASH_NAMESPACE
+}  // namespace std
 
 #endif  // TOOLS_GN_LABEL_PTR_H_

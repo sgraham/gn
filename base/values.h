@@ -88,7 +88,6 @@ class BASE_EXPORT Value {
     NONE = 0,
     BOOLEAN,
     INTEGER,
-    DOUBLE,
     STRING,
     BINARY,
     DICTIONARY,
@@ -153,7 +152,6 @@ class BASE_EXPORT Value {
   bool is_none() const { return type() == Type::NONE; }
   bool is_bool() const { return type() == Type::BOOLEAN; }
   bool is_int() const { return type() == Type::INTEGER; }
-  bool is_double() const { return type() == Type::DOUBLE; }
   bool is_string() const { return type() == Type::STRING; }
   bool is_blob() const { return type() == Type::BINARY; }
   bool is_dict() const { return type() == Type::DICTIONARY; }
@@ -162,7 +160,6 @@ class BASE_EXPORT Value {
   // These will all fatally assert if the type doesn't match.
   bool GetBool() const;
   int GetInt() const;
-  double GetDouble() const;  // Implicitly converts from int if necessary.
   const std::string& GetString() const;
   const BlobStorage& GetBlob() const;
 
@@ -188,7 +185,7 @@ class BASE_EXPORT Value {
   // Note: This fatally asserts if type() is not Type::DICTIONARY.
   //
   // Example:
-  //   auto* found = FindKey("foo", Type::DOUBLE);
+  //   auto* found = FindKey("foo", Type::INTEGER);
   Value* FindKeyOfType(StringPiece key, Type type);
   const Value* FindKeyOfType(StringPiece key, Type type) const;
 
@@ -309,8 +306,6 @@ class BASE_EXPORT Value {
   bool GetAsBoolean(bool* out_value) const;
   // DEPRECATED, use GetInt() instead.
   bool GetAsInteger(int* out_value) const;
-  // DEPRECATED, use GetDouble() instead.
-  bool GetAsDouble(double* out_value) const;
   // DEPRECATED, use GetString() instead.
   bool GetAsString(std::string* out_value) const;
   bool GetAsString(string16* out_value) const;
@@ -417,8 +412,6 @@ class BASE_EXPORT DictionaryValue : public Value {
   Value* SetBoolean(StringPiece path, bool in_value);
   // DEPRECATED, use Value::SetPath(path, Value(int)) instead.
   Value* SetInteger(StringPiece path, int in_value);
-  // DEPRECATED, use Value::SetPath(path, Value(double)) instead.
-  Value* SetDouble(StringPiece path, double in_value);
   // DEPRECATED, use Value::SetPath(path, Value(StringPiece)) instead.
   Value* SetString(StringPiece path, StringPiece in_value);
   // DEPRECATED, use Value::SetPath(path, Value(const string& 16)) instead.
@@ -458,8 +451,6 @@ class BASE_EXPORT DictionaryValue : public Value {
   bool GetInteger(StringPiece path, int* out_value) const;
   // Values of both type Type::INTEGER and Type::DOUBLE can be obtained as
   // doubles.
-  // DEPRECATED, use Value::FindPath(path) and Value::GetDouble() instead.
-  bool GetDouble(StringPiece path, double* out_value) const;
   // DEPRECATED, use Value::FindPath(path) and Value::GetString() instead.
   bool GetString(StringPiece path, std::string* out_value) const;
   // DEPRECATED, use Value::FindPath(path) and Value::GetString() instead.
@@ -490,8 +481,6 @@ class BASE_EXPORT DictionaryValue : public Value {
   bool GetBooleanWithoutPathExpansion(StringPiece key, bool* out_value) const;
   // DEPRECATED, use Value::FindKey(key) and Value::GetInt() instead.
   bool GetIntegerWithoutPathExpansion(StringPiece key, int* out_value) const;
-  // DEPRECATED, use Value::FindKey(key) and Value::GetDouble() instead.
-  bool GetDoubleWithoutPathExpansion(StringPiece key, double* out_value) const;
   // DEPRECATED, use Value::FindKey(key) and Value::GetString() instead.
   bool GetStringWithoutPathExpansion(StringPiece key,
                                      std::string* out_value) const;
@@ -639,8 +628,6 @@ class BASE_EXPORT ListValue : public Value {
   bool GetInteger(size_t index, int* out_value) const;
   // Values of both type Type::INTEGER and Type::DOUBLE can be obtained as
   // doubles.
-  // DEPRECATED, use GetList()::operator[]::GetDouble() instead.
-  bool GetDouble(size_t index, double* out_value) const;
   // DEPRECATED, use GetList()::operator[]::GetString() instead.
   bool GetString(size_t index, std::string* out_value) const;
   bool GetString(size_t index, string16* out_value) const;
@@ -682,7 +669,6 @@ class BASE_EXPORT ListValue : public Value {
   // DEPRECATED, use GetList()::emplace_back() instead.
   void AppendBoolean(bool in_value);
   void AppendInteger(int in_value);
-  void AppendDouble(double in_value);
   void AppendString(StringPiece in_value);
   void AppendString(const string16& in_value);
   // DEPRECATED, use GetList()::emplace_back() in a loop instead.

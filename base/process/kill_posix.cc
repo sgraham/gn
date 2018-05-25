@@ -15,7 +15,6 @@
 #include "base/macros.h"
 #include "base/posix/eintr_wrapper.h"
 #include "base/process/process_iterator.h"
-#include "base/task_scheduler/post_task.h"
 #include "base/threading/platform_thread.h"
 #include "build_config.h"
 
@@ -155,16 +154,6 @@ class BackgroundReaper : public PlatformThread::Delegate {
 };
 
 }  // namespace
-
-void EnsureProcessTerminated(Process process) {
-  DCHECK(!process.is_current());
-
-  if (process.WaitForExitWithTimeout(TimeDelta(), nullptr))
-    return;
-
-  PlatformThread::CreateNonJoinable(
-      0, new BackgroundReaper(std::move(process), TimeDelta::FromSeconds(2)));
-}
 
 #if defined(OS_LINUX)
 void EnsureProcessGetsReaped(Process process) {
