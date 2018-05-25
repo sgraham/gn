@@ -463,7 +463,6 @@ def write_gn_ninja(path, root_gen_dir, options):
         'base/files/file_enumerator_win.cc',
         'base/files/file_util_win.cc',
         'base/files/file_win.cc',
-        'base/logging_win.cc',
         'base/process/kill_win.cc',
         'base/process/launch_win.cc',
         'base/process/memory_win.cc',

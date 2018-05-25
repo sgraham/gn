@@ -529,7 +529,6 @@ LogMessage::LogMessage(const char* file, int line, LogSeverity severity,
 }
 
 LogMessage::~LogMessage() {
-  size_t stack_start = stream_.tellp();
   stream_ << std::endl;
   std::string str_newline(stream_.str());
 
