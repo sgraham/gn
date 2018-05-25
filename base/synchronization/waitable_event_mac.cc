@@ -15,7 +15,6 @@
 #include "base/mac/mach_logging.h"
 #include "base/mac/scoped_dispatch_object.h"
 #include "base/posix/eintr_wrapper.h"
-#include "base/threading/scoped_blocking_call.h"
 #include "build_config.h"
 
 namespace base {

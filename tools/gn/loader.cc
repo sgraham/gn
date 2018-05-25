@@ -7,7 +7,6 @@
 #include <memory>
 
 #include "base/bind.h"
-#include "base/threading/thread_task_runner_handle.h"
 #include "tools/gn/build_settings.h"
 #include "tools/gn/err.h"
 #include "tools/gn/filesystem_utils.h"

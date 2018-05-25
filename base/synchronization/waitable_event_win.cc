@@ -12,7 +12,6 @@
 
 #include "base/logging.h"
 #include "base/numerics/safe_conversions.h"
-#include "base/threading/scoped_blocking_call.h"
 #include "base/time/time.h"
 
 namespace base {

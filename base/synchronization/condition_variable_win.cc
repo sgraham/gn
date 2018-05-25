@@ -5,7 +5,6 @@
 #include "base/synchronization/condition_variable.h"
 
 #include "base/synchronization/lock.h"
-#include "base/threading/scoped_blocking_call.h"
 #include "base/time/time.h"
 
 #include <windows.h>
