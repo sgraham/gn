@@ -290,10 +290,6 @@ def write_gn_ninja(path, root_gen_dir, options):
       },
       'gn_unittests': {
         'sources': [
-          #'base/task_scheduler/lazy_task_runner.cc',
-          #'base/test/scoped_task_environment.cc',
-          #'base/test/test_mock_time_task_runner.cc',
-          'base/test/test_pending_task.cc',
           'src/test/gn_test.cc',
           'src/test/test.cc',
           'tools/gn/test_with_scheduler.cc',
