@@ -6,13 +6,14 @@ base/ to be removed over time.
 
 Build with:
   ./build/build.py
-  out/gn_unittests
+  out/gn_unittests  (or out\gn_unittests.exe)
 
-Binary in out/gn.
+Binary in out/gn  (or out\gn.exe)
 
 If you have a Chromium tree handy, checkout 556eead9ce1e, then use:
 
   ./build/full_test.py /path/to/cr out/lin/gn
   
 where `out/lin/gn` is the relative path in the Chromium tree to the gn binary.
-This will show the diff of generation to make sure nothing has changed.
+This will see if any .ninja files have changed between the original GN, as well
+as do some simple performance testing.
