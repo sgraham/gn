@@ -29,7 +29,7 @@ class WorkerPool {
   std::vector<std::thread> threads_;
   std::queue<std::function<void()>> task_queue_;
   std::mutex queue_mutex_;
-  std::condition_variable_any pool_notifier_;
+  std::condition_variable pool_notifier_;
   bool should_stop_processing_;
 
   DISALLOW_COPY_AND_ASSIGN(WorkerPool);

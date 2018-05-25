@@ -83,9 +83,11 @@ struct ScopedEnableVTEscapeProcessing {
   }
 
   ~ScopedEnableVTEscapeProcessing() {
-    if (console_ != INVALID_HANDLE_VALUE)
+    if (is_valid())
       SetConsoleMode(console_, original_mode_);
   }
+
+  bool is_valid() const { return console_ != INVALID_HANDLE_VALUE; }
 
   HANDLE console_;
   DWORD original_mode_;
@@ -111,6 +113,7 @@ int main(int argc, char** argv) {
 #if defined(OS_WIN)
   ScopedEnableVTEscapeProcessing enable_vt_processing;
 #endif
+  setvbuf(stdout, NULL, _IOLBF, BUFSIZ);
 
   int tests_started = 0;
 
@@ -127,8 +130,17 @@ int main(int argc, char** argv) {
     if ((tests[i].should_run = TestMatchesFilter(tests[i].name, test_filter)))
       ++nactivetests;
 
-  const char* prefix = "\r";
-  const char* suffix = "\x1B[K";
+  const char* prefix = "";
+  const char* suffix = "\n";
+#if defined(OS_WIN)
+  if (enable_vt_processing.is_valid())
+#else
+  if (isatty(1))
+#endif
+  {
+    prefix = "\r";
+    suffix = "\x1B[K";
+  }
   bool passed = true;
   for (int i = 0; i < ntests; i++) {
     if (!tests[i].should_run)
@@ -147,5 +159,6 @@ int main(int argc, char** argv) {
   }
 
   printf("\n%s\n", passed ? "PASSED" : "FAILED");
+  fflush(stdout);
   return passed ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -337,6 +337,8 @@ void TestMockTimeTaskRunner::ProcessAllTasksNoLaterThan(TimeDelta max_delta) {
   DCHECK(thread_checker_.CalledOnValidThread());
   DCHECK_GE(max_delta, TimeDelta());
 
+  printf("HERE!\n");
+
   // Multiple test task runners can share the same thread for determinism in
   // unit tests. Make sure this TestMockTimeTaskRunner's tasks run in its scope.
   ScopedClosureRunner undo_override;

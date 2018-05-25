@@ -366,18 +366,6 @@ void SchedulerWorkerPoolImpl::SchedulerWorkerDelegateImpl::OnMainEntry(
 #endif
   }
 
-#if defined(OS_WIN)
-  if (outer_->worker_environment_ == WorkerEnvironment::COM_MTA) {
-    if (win::GetVersion() >= win::VERSION_WIN8) {
-      win_thread_environment_ = std::make_unique<win::ScopedWinrtInitializer>();
-    } else {
-      win_thread_environment_ = std::make_unique<win::ScopedCOMInitializer>(
-          win::ScopedCOMInitializer::kMTA);
-    }
-    DCHECK(win_thread_environment_->Succeeded());
-  }
-#endif  // defined(OS_WIN)
-
   DCHECK_EQ(num_tasks_since_last_wait_, 0U);
 
   PlatformThread::SetName(

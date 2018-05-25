@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "base/bind.h"
-#include "base/run_loop.h"
+#include "msg_loop.h"
 #include "test/test.h"
 #include "tools/gn/build_settings.h"
 #include "tools/gn/err.h"
@@ -174,12 +174,12 @@ TEST_F(LoaderTest, Foo) {
 
   // Completing the build config load should kick off the root build file load.
   mock_ifm_.IssueAllPending();
-  base::RunLoop().RunUntilIdle();
+  MsgLoop::Current()->RunUntilIdleForTesting();
   EXPECT_TRUE(mock_ifm_.HasOnePending(root_build));
 
   // Load the root build file.
   mock_ifm_.IssueAllPending();
-  base::RunLoop().RunUntilIdle();
+  MsgLoop::Current()->RunUntilIdleForTesting();
 
   // Schedule some other file to load in another toolchain.
   Label second_tc(SourceDir("//tc2/"), "tc2");
@@ -190,7 +190,7 @@ TEST_F(LoaderTest, Foo) {
   // Running the toolchain file should schedule the build config file to load
   // for that toolchain.
   mock_ifm_.IssueAllPending();
-  base::RunLoop().RunUntilIdle();
+  MsgLoop::Current()->RunUntilIdleForTesting();
 
   // We have to tell it we have a toolchain definition now (normally the
   // builder would do this).
@@ -207,7 +207,7 @@ TEST_F(LoaderTest, Foo) {
 
   // Running the build config file should make our third file pending.
   mock_ifm_.IssueAllPending();
-  base::RunLoop().RunUntilIdle();
+  MsgLoop::Current()->RunUntilIdleForTesting();
   EXPECT_TRUE(mock_ifm_.HasTwoPending(second_file, third_file));
 
   EXPECT_FALSE(scheduler().is_failed());
@@ -240,13 +240,13 @@ TEST_F(LoaderTest, BuildDependencyFilesAreCollected) {
 
   // Completing the build config load should kick off the root build file load.
   mock_ifm_.IssueAllPending();
-  base::RunLoop().RunUntilIdle();
+  MsgLoop::Current()->RunUntilIdleForTesting();
   EXPECT_TRUE(mock_ifm_.HasOnePending(root_build));
 
   // Completing the root build file should define a target which must have
   // set of source files hashes.
   mock_ifm_.IssueAllPending();
-  base::RunLoop().RunUntilIdle();
+  MsgLoop::Current()->RunUntilIdleForTesting();
 
   std::vector<const Item*> items = mock_builder_.GetAllItems();
   EXPECT_TRUE(items[0]->AsTarget());

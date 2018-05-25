@@ -270,6 +270,7 @@ def write_gn_ninja(path, root_gen_dir, options):
     'gn_lib': {
     'sources': [
         'src/exe_path.cc',
+        'src/msg_loop.cc',
         'src/worker_pool.cc',
     ],
     'tool': 'cxx',
@@ -607,7 +608,6 @@ def write_gn_ninja(path, root_gen_dir, options):
         'base/win/scoped_handle.cc',
         'base/win/scoped_process_information.cc',
         'base/win/scoped_variant.cc',
-        'base/win/scoped_winrt_initializer.cc',
         'base/win/shortcut.cc',
         'base/win/startup_information.cc',
         'base/win/wait_chain.cc',
