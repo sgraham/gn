@@ -10,6 +10,7 @@
 #include "base/message_loop/message_loop.h"
 #include "base/strings/utf_string_conversions.h"
 #include "build_config.h"
+#include "msg_loop.h"
 #include "tools/gn/commands.h"
 #include "tools/gn/err.h"
 #include "tools/gn/location.h"
@@ -76,7 +77,7 @@ int main(int argc, char** argv) {
 
   int retval;
   if (found_command != command_map.end()) {
-    base::MessageLoop message_loop;
+    MsgLoop msg_loop;
     retval = found_command->second.runner(args);
   } else {
     Err(Location(), "Command \"" + command + "\" unknown.").PrintToStdout();

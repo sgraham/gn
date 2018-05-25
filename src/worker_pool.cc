@@ -65,7 +65,7 @@ WorkerPool::~WorkerPool() {
       task_thread.join();
 }
 
-void WorkerPool::PostTask(std::function<void()> work) {
+void WorkerPool::PostTask(base::OnceClosure work) {
   {
     std::unique_lock<std::mutex> queue_lock(queue_mutex_);
     CHECK(!should_stop_processing_);
@@ -77,7 +77,7 @@ void WorkerPool::PostTask(std::function<void()> work) {
 
 void WorkerPool::Worker() {
   for (;;) {
-    std::function<void()> task;
+    base::OnceClosure task;
 
     {
       std::unique_lock<std::mutex> queue_lock(queue_mutex_);
@@ -93,6 +93,6 @@ void WorkerPool::Worker() {
       task_queue_.pop();
     }
 
-    task();
+    std::move(task).Run();
   }
 }
