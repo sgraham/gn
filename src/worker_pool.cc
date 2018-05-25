@@ -6,7 +6,7 @@
 
 #include "base/command_line.h"
 #include "base/strings/string_number_conversions.h"
-#include "base/sys_info.h"
+#include "sys_info.h"
 #include "tools/gn/switches.h"
 
 namespace {
@@ -37,7 +37,7 @@ int GetThreadCount() {
   // The minimum thread count is based on measuring the optimal threads for the
   // Chrome build on a several-year-old 4-core MacBook.
   // Almost all CPUs now are hyperthreaded.
-  int num_cores = base::SysInfo::NumberOfProcessors() / 2;
+  int num_cores = NumberOfProcessors() / 2;
   return std::max(num_cores - 1, 8);
 }
 

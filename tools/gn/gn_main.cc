@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <string>
 
-#include "base/at_exit.h"
 #include "base/command_line.h"
 #include "base/strings/utf_string_conversions.h"
 #include "build_config.h"
@@ -41,7 +40,6 @@ std::vector<std::string> GetArgs(const base::CommandLine& cmdline) {
 }  // namespace
 
 int main(int argc, char** argv) {
-  base::AtExitManager at_exit;
 #if defined(OS_WIN)
   base::CommandLine::set_slash_is_not_a_switch();
 #endif

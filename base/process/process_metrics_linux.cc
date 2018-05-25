@@ -14,7 +14,6 @@
 #include <unistd.h>
 #include <utility>
 
-#include "base/files/dir_reader_posix.h"
 #include "base/files/file_util.h"
 #include "base/logging.h"
 #include "base/memory/ptr_util.h"
@@ -253,24 +252,6 @@ bool ProcessMetrics::GetPageFaultCounts(PageFaultCounts* counts) const {
   return true;
 }
 #endif  // defined(OS_LINUX) || defined(OS_ANDROID)
-
-int ProcessMetrics::GetOpenFdCount() const {
-  // Use /proc/<pid>/fd to count the number of entries there.
-  FilePath fd_path = internal::GetProcPidDir(process_).Append("fd");
-
-  DirReaderPosix dir_reader(fd_path.value().c_str());
-  if (!dir_reader.IsValid())
-    return -1;
-
-  int total_count = 0;
-  for (; dir_reader.Next(); ) {
-    const char* name = dir_reader.name();
-    if (strcmp(name, ".") != 0 && strcmp(name, "..") != 0)
-      ++total_count;
-  }
-
-  return total_count;
-}
 
 int ProcessMetrics::GetOpenFdSoftLimit() const {
   // Use /proc/<pid>/limits to read the open fd limit.

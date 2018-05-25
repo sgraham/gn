@@ -237,15 +237,6 @@ using LogAssertHandlerFunction =
                         const base::StringPiece message,
                         const base::StringPiece stack_trace)>;
 
-class BASE_EXPORT ScopedLogAssertHandler {
- public:
-  explicit ScopedLogAssertHandler(LogAssertHandlerFunction handler);
-  ~ScopedLogAssertHandler();
-
- private:
-  DISALLOW_COPY_AND_ASSIGN(ScopedLogAssertHandler);
-};
-
 // Sets the Log Message Handler that gets passed every log message before
 // it's sent to other log destinations (if any).
 // Returns true to signal that it handled the message and the message

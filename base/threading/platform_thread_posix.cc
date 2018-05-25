@@ -15,7 +15,6 @@
 
 #include <memory>
 
-#include "base/lazy_instance.h"
 #include "base/logging.h"
 #include "base/threading/platform_thread_internal_posix.h"
 #include "build_config.h"
