@@ -323,7 +323,6 @@ def write_gn_ninja(path, root_gen_dir, options):
         os.path.relpath(full_path, SRC_ROOT))
 
   static_libraries['base']['sources'].extend([
-      'base/base_switches.cc',
       'base/callback_helpers.cc',
       'base/callback_internal.cc',
       'base/command_line.cc',
