@@ -7,7 +7,6 @@
 #include <crtdbg.h>
 #include <new.h>
 
-#include "base/base_switches.h"
 #include "base/command_line.h"
 
 namespace {
@@ -45,9 +44,7 @@ void SetupCRT(const CommandLine& command_line) {
   _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
   _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
 #else
-  if (!command_line.HasSwitch(switches::kDisableBreakpad)) {
-    _CrtSetReportMode(_CRT_ASSERT, 0);
-  }
+  _CrtSetReportMode(_CRT_ASSERT, 0);
 #endif
 }
 
