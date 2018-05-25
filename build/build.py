@@ -379,7 +379,6 @@ def write_gn_ninja(path, root_gen_dir, options):
       'base/time/tick_clock.cc',
       'base/time/time.cc',
       'base/timer/elapsed_timer.cc',
-      #'base/timer/timer.cc',
       'base/value_iterators.cc',
       'base/values.cc',
   ])
