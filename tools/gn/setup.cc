@@ -175,10 +175,13 @@ void ItemDefinedCallback(MsgLoop* task_runner,
   // this call completing on the main thread, the 'Complete' function will
   // be signaled and we'll stop running with an incomplete build.
   g_scheduler->IncrementWorkCount();
-  task_runner->PostTask([&builder_call_on_main_thread_only, &item]() {
-    builder_call_on_main_thread_only->ItemDefined(std::move(item));
-    g_scheduler->DecrementWorkCount();
-  });
+  task_runner->PostTask(base::BindOnce(
+      [](Builder* builder_call_on_main_thread_only,
+         std::unique_ptr<Item> item) {
+        builder_call_on_main_thread_only->ItemDefined(std::move(item));
+        g_scheduler->DecrementWorkCount();
+      },
+      builder_call_on_main_thread_only, base::Passed(&item)));
 }
 
 void DecrementWorkCount() {

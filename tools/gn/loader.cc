@@ -237,7 +237,8 @@ void LoaderImpl::BackgroundLoadFile(const Settings* settings,
                                     const LocationRange& origin,
                                     const ParseNode* root) {
   if (!root) {
-    task_runner_->PostTask(std::bind(&LoaderImpl::DecrementPendingLoads, this));
+    task_runner_->PostTask(
+        base::BindOnce(&LoaderImpl::DecrementPendingLoads, this));
     return;
   }
 
@@ -276,7 +277,7 @@ void LoaderImpl::BackgroundLoadFile(const Settings* settings,
 
   trace.Done();
 
-  task_runner_->PostTask(std::bind(&LoaderImpl::DidLoadFile, this));
+  task_runner_->PostTask(base::BindOnce(&LoaderImpl::DidLoadFile, this));
 }
 
 void LoaderImpl::BackgroundLoadBuildConfig(
@@ -284,7 +285,8 @@ void LoaderImpl::BackgroundLoadBuildConfig(
     const Scope::KeyValueMap& toolchain_overrides,
     const ParseNode* root) {
   if (!root) {
-    task_runner_->PostTask(std::bind(&LoaderImpl::DecrementPendingLoads, this));
+    task_runner_->PostTask(
+        base::BindOnce(&LoaderImpl::DecrementPendingLoads, this));
     return;
   }
 
@@ -336,8 +338,8 @@ void LoaderImpl::BackgroundLoadBuildConfig(
     }
   }
 
-  task_runner_->PostTask(std::bind(&LoaderImpl::DidLoadBuildConfig, this,
-                                   settings->toolchain_label()));
+  task_runner_->PostTask(base::BindOnce(&LoaderImpl::DidLoadBuildConfig, this,
+                                        settings->toolchain_label()));
 }
 
 void LoaderImpl::DidLoadFile() {

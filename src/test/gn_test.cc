@@ -23,6 +23,8 @@
 
 #if defined(OS_WIN)
 #include <windows.h>
+#else
+#include <unistd.h>
 #endif
 
 struct RegisteredTest {

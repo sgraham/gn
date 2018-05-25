@@ -24,7 +24,7 @@ MsgLoop::~MsgLoop() {
 
 void MsgLoop::Run() {
   while (!should_quit_) {
-    std::function<void()> task;
+    Task task;
     {
       std::unique_lock<std::mutex> queue_lock(queue_mutex_);
       notifier_.wait(queue_lock, [this]() {
@@ -38,15 +38,16 @@ void MsgLoop::Run() {
       task_queue_.pop();
     }
 
-    task();
+    std::move(task).Run();
   }
 }
 
 void MsgLoop::PostQuit() {
-  PostTask([this] { should_quit_ = true; });
+  PostTask(
+      base::BindOnce([](MsgLoop* self) { self->should_quit_ = true; }, this));
 }
 
-void MsgLoop::PostTask(std::function<void()> work) {
+void MsgLoop::PostTask(Task work) {
   {
     std::unique_lock<std::mutex> queue_lock(queue_mutex_);
     task_queue_.emplace(std::move(work));
@@ -57,7 +58,7 @@ void MsgLoop::PostTask(std::function<void()> work) {
 
 void MsgLoop::RunUntilIdleForTesting() {
   for (bool done = false; !done;) {
-    std::function<void()> task;
+    Task task;
     {
       std::unique_lock<std::mutex> queue_lock(queue_mutex_);
       task = std::move(task_queue_.front());
@@ -67,7 +68,7 @@ void MsgLoop::RunUntilIdleForTesting() {
         done = true;
     }
 
-    task();
+    std::move(task).Run();
   }
 }
 

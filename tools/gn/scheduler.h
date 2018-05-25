@@ -14,6 +14,7 @@
 #include "base/synchronization/condition_variable.h"
 #include "base/synchronization/lock.h"
 #include "msg_loop.h"
+#include "task.h"
 #include "tools/gn/input_file_manager.h"
 #include "tools/gn/label.h"
 #include "tools/gn/source_file.h"
@@ -46,7 +47,7 @@ class Scheduler {
   void Log(const std::string& verb, const std::string& msg);
   void FailWithError(const Err& err);
 
-  void ScheduleWork(std::function<void()> work);
+  void ScheduleWork(Task work);
 
   void Shutdown();
 

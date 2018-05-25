@@ -48,8 +48,8 @@ bool Scheduler::Run() {
 }
 
 void Scheduler::Log(const std::string& verb, const std::string& msg) {
-  task_runner()->PostTask(
-      std::bind(&Scheduler::LogOnMainThread, this, verb, msg));
+  task_runner()->PostTask(base::BindOnce(&Scheduler::LogOnMainThread,
+                                         base::Unretained(this), verb, msg));
 }
 
 void Scheduler::FailWithError(const Err& err) {
@@ -62,21 +62,23 @@ void Scheduler::FailWithError(const Err& err) {
     is_failed_ = true;
   }
 
-  task_runner()->PostTask(
-      std::bind(&Scheduler::FailWithErrorOnMainThread, this, err));
+  task_runner()->PostTask(base::BindOnce(&Scheduler::FailWithErrorOnMainThread,
+                                         base::Unretained(this), err));
 }
 
-void Scheduler::ScheduleWork(std::function<void()> work) {
+void Scheduler::ScheduleWork(Task work) {
   IncrementWorkCount();
   pool_work_count_.Increment();
-  worker_pool_.PostTask([ this, work = std::move(work) ] {
-    work();
-    DecrementWorkCount();
-    if (!pool_work_count_.Decrement()) {
-      base::AutoLock auto_lock(pool_work_count_lock_);
-      pool_work_count_cv_.Signal();
-    }
-  });
+  worker_pool_.PostTask(base::BindOnce(
+      [](Scheduler* self, Task work) {
+        std::move(work).Run();
+        self->DecrementWorkCount();
+        if (!self->pool_work_count_.Decrement()) {
+          base::AutoLock auto_lock(self->pool_work_count_lock_);
+          self->pool_work_count_cv_.Signal();
+        }
+      },
+      this, std::move(work)));
 }
 
 void Scheduler::AddGenDependency(const base::FilePath& file) {
@@ -150,7 +152,8 @@ void Scheduler::IncrementWorkCount() {
 
 void Scheduler::DecrementWorkCount() {
   if (!work_count_.Decrement()) {
-    task_runner()->PostTask(std::bind(&Scheduler::OnComplete, this));
+    task_runner()->PostTask(
+        base::BindOnce(&Scheduler::OnComplete, base::Unretained(this)));
   }
 }
 
