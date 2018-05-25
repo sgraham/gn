@@ -62,7 +62,6 @@ SystemMetrics SystemMetrics::Sample() {
 #if defined(OS_LINUX) || defined(OS_ANDROID)
   GetSystemMemoryInfo(&system_metrics.memory_info_);
   GetVmStatInfo(&system_metrics.vmstat_info_);
-  GetSystemDiskInfo(&system_metrics.disk_info_);
 #endif
 #if defined(OS_CHROMEOS)
   GetSwapInfo(&system_metrics.swap_info_);
@@ -80,7 +79,6 @@ std::unique_ptr<Value> SystemMetrics::ToValue() const {
   std::unique_ptr<DictionaryValue> vmstat = vmstat_info_.ToValue();
   meminfo->MergeDictionary(vmstat.get());
   res->Set("meminfo", std::move(meminfo));
-  res->Set("diskinfo", disk_info_.ToValue());
 #endif
 #if defined(OS_CHROMEOS)
   res->Set("swapinfo", swap_info_.ToValue());
