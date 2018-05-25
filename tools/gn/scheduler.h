@@ -10,7 +10,6 @@
 #include "base/atomic_ref_count.h"
 #include "base/files/file_path.h"
 #include "base/macros.h"
-#include "base/single_thread_task_runner.h"
 #include "base/synchronization/condition_variable.h"
 #include "base/synchronization/lock.h"
 #include "msg_loop.h"

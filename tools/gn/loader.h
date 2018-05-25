@@ -11,7 +11,6 @@
 
 #include "base/callback.h"
 #include "base/memory/ref_counted.h"
-#include "base/single_thread_task_runner.h"
 #include "msg_loop.h"
 #include "tools/gn/label.h"
 #include "tools/gn/scope.h"
