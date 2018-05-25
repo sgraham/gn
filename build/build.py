@@ -340,7 +340,6 @@ def write_gn_ninja(path, root_gen_dir, options):
       'base/json/json_string_value_serializer.cc',
       'base/json/json_writer.cc',
       'base/json/string_escape.cc',
-      'base/location.cc',
       'base/logging.cc',
       'base/md5.cc',
       'base/memory/ref_counted.cc',
