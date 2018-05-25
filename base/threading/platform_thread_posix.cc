@@ -18,7 +18,6 @@
 #include "base/lazy_instance.h"
 #include "base/logging.h"
 #include "base/threading/platform_thread_internal_posix.h"
-#include "base/threading/thread_id_name_manager.h"
 #include "build_config.h"
 
 #if defined(OS_LINUX)
@@ -65,15 +64,7 @@ void* ThreadFunc(void* params) {
 #endif
   }
 
-  ThreadIdNameManager::GetInstance()->RegisterThread(
-      PlatformThread::CurrentHandle().platform_handle(),
-      PlatformThread::CurrentId());
-
   delegate->ThreadMain();
-
-  ThreadIdNameManager::GetInstance()->RemoveName(
-      PlatformThread::CurrentHandle().platform_handle(),
-      PlatformThread::CurrentId());
 
   base::TerminateOnThread();
   return nullptr;
@@ -186,7 +177,7 @@ void PlatformThread::Sleep(TimeDelta duration) {
 
 // static
 const char* PlatformThread::GetName() {
-  return ThreadIdNameManager::GetInstance()->GetName(CurrentId());
+  return "<UNKNOWN>";
 }
 
 // static
