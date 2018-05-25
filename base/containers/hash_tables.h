@@ -10,8 +10,6 @@
 #include <unordered_set>
 #include <utility>
 
-#include "base/hash.h"
-
 // This header file is deprecated. Use the corresponding C++11 type
 // instead. https://crbug.com/576864
 
@@ -26,14 +24,6 @@ namespace BASE_HASH_NAMESPACE {
 template<typename T>
 struct hash {
   std::size_t operator()(const T& value) const { return std::hash<T>()(value); }
-};
-
-// Use base::IntPairHash from base/hash.h as a custom hasher instead.
-template <typename Type1, typename Type2>
-struct hash<std::pair<Type1, Type2>> {
-  std::size_t operator()(std::pair<Type1, Type2> value) const {
-    return base::HashInts(value.first, value.second);
-  }
 };
 
 }  // namespace BASE_HASH_NAMESPACE

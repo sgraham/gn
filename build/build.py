@@ -334,7 +334,6 @@ def write_gn_ninja(path, root_gen_dir, options):
       'base/files/file_util.cc',
       'base/files/scoped_file.cc',
       'base/files/scoped_temp_dir.cc',
-      'base/hash.cc',
       'base/json/json_parser.cc',
       'base/json/json_reader.cc',
       'base/json/json_string_value_serializer.cc',
