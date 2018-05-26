@@ -5,7 +5,6 @@
 #ifndef BASE_MAC_SCOPED_SENDING_EVENT_H_
 #define BASE_MAC_SCOPED_SENDING_EVENT_H_
 
-#include "base/base_export.h"
 #include "base/macros.h"
 #include "base/message_loop/message_pump_mac.h"
 
@@ -28,7 +27,7 @@
 namespace base {
 namespace mac {
 
-class BASE_EXPORT ScopedSendingEvent {
+class ScopedSendingEvent {
  public:
   ScopedSendingEvent();
   ~ScopedSendingEvent();

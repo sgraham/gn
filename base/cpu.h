@@ -7,12 +7,10 @@
 
 #include <string>
 
-#include "base/base_export.h"
-
 namespace base {
 
 // Query information about the processor.
-class BASE_EXPORT CPU final {
+class CPU final {
  public:
   CPU();
 
@@ -61,10 +59,10 @@ class BASE_EXPORT CPU final {
   void Initialize();
 
   int signature_;  // raw form of type, family, model, and stepping
-  int type_;  // process type
-  int family_;  // family of the processor
-  int model_;  // model of processor
-  int stepping_;  // processor revision number
+  int type_;       // process type
+  int family_;     // family of the processor
+  int model_;      // model of processor
+  int stepping_;   // processor revision number
   int ext_model_;
   int ext_family_;
   bool has_mmx_;

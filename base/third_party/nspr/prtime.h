@@ -54,8 +54,6 @@
 
 #include <stdint.h>
 
-#include "base/base_export.h"
-
 typedef int8_t PRInt8;
 typedef int16_t PRInt16;
 typedef int32_t PRInt32;
@@ -255,7 +253,7 @@ NSPR_API(PRTimeParameters) PR_GMTParameters(const PRExplodedTime *gmt);
  * from the unit test.
  */
 
-BASE_EXPORT PRStatus PR_ParseTimeString (
+PRStatus PR_ParseTimeString (
 	const char *string,
 	PRBool default_to_gmt,
 	PRTime *result);

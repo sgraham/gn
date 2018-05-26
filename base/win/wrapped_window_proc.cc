@@ -43,7 +43,7 @@ int CallExceptionFilter(EXCEPTION_POINTERS* info) {
                               EXCEPTION_CONTINUE_SEARCH;
 }
 
-BASE_EXPORT void InitializeWindowClass(
+void InitializeWindowClass(
     const char16* class_name,
     WNDPROC window_proc,
     UINT style,

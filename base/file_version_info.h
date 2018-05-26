@@ -7,7 +7,6 @@
 
 #include <string>
 
-#include "base/base_export.h"
 #include "base/strings/string16.h"
 #include "build_config.h"
 
@@ -29,7 +28,7 @@ class FilePath;
 // version returns values from the Info.plist as appropriate. TODO(avi): make
 // this a less-obvious Windows-ism.
 
-class BASE_EXPORT FileVersionInfo {
+class FileVersionInfo {
  public:
   virtual ~FileVersionInfo() {}
 #if defined(OS_WIN) || defined(OS_MACOSX)

@@ -7,7 +7,6 @@
 
 #include <initializer_list>
 
-#include "base/base_export.h"
 #include "base/compiler_specific.h"
 #include "base/containers/span.h"
 #include "base/strings/string_piece.h"
@@ -58,10 +57,10 @@ namespace base {
 // for this call and generate slightly less code. This is something we can
 // explore more in the future.
 
-BASE_EXPORT std::string StrCat(span<const StringPiece> pieces);
-BASE_EXPORT string16 StrCat(span<const StringPiece16> pieces);
-BASE_EXPORT std::string StrCat(span<const std::string> pieces);
-BASE_EXPORT string16 StrCat(span<const string16> pieces);
+std::string StrCat(span<const StringPiece> pieces);
+string16 StrCat(span<const StringPiece16> pieces);
+std::string StrCat(span<const std::string> pieces);
+string16 StrCat(span<const string16> pieces);
 
 // Initializer list forwards to the array version.
 inline std::string StrCat(std::initializer_list<StringPiece> pieces) {
@@ -79,10 +78,10 @@ inline string16 StrCat(std::initializer_list<StringPiece16> pieces) {
 //   foo += StrCat(...);
 // because it avoids a temporary string allocation and copy.
 
-BASE_EXPORT void StrAppend(std::string* dest, span<const StringPiece> pieces);
-BASE_EXPORT void StrAppend(string16* dest, span<const StringPiece16> pieces);
-BASE_EXPORT void StrAppend(std::string* dest, span<const std::string> pieces);
-BASE_EXPORT void StrAppend(string16* dest, span<const string16> pieces);
+void StrAppend(std::string* dest, span<const StringPiece> pieces);
+void StrAppend(string16* dest, span<const StringPiece16> pieces);
+void StrAppend(std::string* dest, span<const std::string> pieces);
+void StrAppend(string16* dest, span<const string16> pieces);
 
 // Initializer list forwards to the array version.
 inline void StrAppend(std::string* dest,

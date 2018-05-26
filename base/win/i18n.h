@@ -8,8 +8,6 @@
 #include <string>
 #include <vector>
 
-#include "base/base_export.h"
-
 namespace base {
 namespace win {
 namespace i18n {
@@ -17,13 +15,13 @@ namespace i18n {
 // Adds to |languages| the list of user preferred UI languages from MUI, if
 // available, falling-back on the user default UI language otherwise.  Returns
 // true if at least one language is added.
-BASE_EXPORT bool GetUserPreferredUILanguageList(
+bool GetUserPreferredUILanguageList(
     std::vector<std::wstring>* languages);
 
 // Adds to |languages| the list of thread, process, user, and system preferred
 // UI languages from MUI, if available, falling-back on the user default UI
 // language otherwise.  Returns true if at least one language is added.
-BASE_EXPORT bool GetThreadPreferredUILanguageList(
+bool GetThreadPreferredUILanguageList(
     std::vector<std::wstring>* languages);
 
 }  // namespace i18n

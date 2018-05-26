@@ -21,7 +21,7 @@
 namespace base {
 
 // Creates a null callback.
-class BASE_EXPORT NullCallback {
+class NullCallback {
  public:
   template <typename R, typename... Args>
   operator RepeatingCallback<R(Args...)>() const {
@@ -34,7 +34,7 @@ class BASE_EXPORT NullCallback {
 };
 
 // Creates a callback that does nothing when called.
-class BASE_EXPORT DoNothing {
+class DoNothing {
  public:
   template <typename... Args>
   operator RepeatingCallback<void(Args...)>() const {

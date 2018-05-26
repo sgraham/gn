@@ -7,7 +7,6 @@
 
 #include <iosfwd>
 
-#include "base/base_export.h"
 #include "base/optional.h"
 #include "base/strings/string16.h"
 #include "base/strings/string_util.h"
@@ -17,7 +16,7 @@ namespace base {
 // This class is a simple wrapper for string16 which also contains a null
 // state.  This should be used only where the difference between null and
 // empty is meaningful.
-class BASE_EXPORT NullableString16 {
+class NullableString16 {
  public:
   NullableString16();
   NullableString16(const NullableString16& other);
@@ -47,7 +46,7 @@ inline bool operator!=(const NullableString16& a, const NullableString16& b) {
   return !(a == b);
 }
 
-BASE_EXPORT std::ostream& operator<<(std::ostream& out,
+std::ostream& operator<<(std::ostream& out,
                                      const NullableString16& value);
 
 }  // namespace base

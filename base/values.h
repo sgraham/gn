@@ -31,7 +31,6 @@
 #include <utility>
 #include <vector>
 
-#include "base/base_export.h"
 #include "base/containers/flat_map.h"
 #include "base/containers/span.h"
 #include "base/macros.h"
@@ -78,7 +77,7 @@ class Value;
 //     dict.SetKey("mykey", base::Value(foo));
 //     return dict;
 //   }
-class BASE_EXPORT Value {
+class Value {
  public:
   using BlobStorage = std::vector<char>;
   using DictStorage = flat_map<std::string, std::unique_ptr<Value>>;
@@ -333,12 +332,12 @@ class BASE_EXPORT Value {
 
   // Comparison operators so that Values can easily be used with standard
   // library algorithms and associative containers.
-  BASE_EXPORT friend bool operator==(const Value& lhs, const Value& rhs);
-  BASE_EXPORT friend bool operator!=(const Value& lhs, const Value& rhs);
-  BASE_EXPORT friend bool operator<(const Value& lhs, const Value& rhs);
-  BASE_EXPORT friend bool operator>(const Value& lhs, const Value& rhs);
-  BASE_EXPORT friend bool operator<=(const Value& lhs, const Value& rhs);
-  BASE_EXPORT friend bool operator>=(const Value& lhs, const Value& rhs);
+  friend bool operator==(const Value& lhs, const Value& rhs);
+  friend bool operator!=(const Value& lhs, const Value& rhs);
+  friend bool operator<(const Value& lhs, const Value& rhs);
+  friend bool operator>(const Value& lhs, const Value& rhs);
+  friend bool operator<=(const Value& lhs, const Value& rhs);
+  friend bool operator>=(const Value& lhs, const Value& rhs);
 
   // Compares if two Value objects have equal contents.
   // DEPRECATED, use operator==(const Value& lhs, const Value& rhs) instead.
@@ -370,7 +369,7 @@ class BASE_EXPORT Value {
 // DictionaryValue provides a key-value dictionary with (optional) "path"
 // parsing for recursive access; see the comment at the top of the file. Keys
 // are |std::string|s and should be UTF-8 encoded.
-class BASE_EXPORT DictionaryValue : public Value {
+class DictionaryValue : public Value {
  public:
   using const_iterator = DictStorage::const_iterator;
   using iterator = DictStorage::iterator;
@@ -462,8 +461,7 @@ class BASE_EXPORT DictionaryValue : public Value {
   // DEPRECATED, use Value::FindPath(path) and Value::GetBlob() instead.
   bool GetBinary(StringPiece path, Value** out_value);
   // DEPRECATED, use Value::FindPath(path) and Value's Dictionary API instead.
-  bool GetDictionary(StringPiece path,
-                     const DictionaryValue** out_value) const;
+  bool GetDictionary(StringPiece path, const DictionaryValue** out_value) const;
   // DEPRECATED, use Value::FindPath(path) and Value's Dictionary API instead.
   bool GetDictionary(StringPiece path, DictionaryValue** out_value);
   // DEPRECATED, use Value::FindPath(path) and Value::GetList() instead.
@@ -539,7 +537,7 @@ class BASE_EXPORT DictionaryValue : public Value {
   // This class provides an iterator over both keys and values in the
   // dictionary.  It can't be used to modify the dictionary.
   // DEPRECATED, use Value::DictItems() instead.
-  class BASE_EXPORT Iterator {
+  class Iterator {
    public:
     explicit Iterator(const DictionaryValue& target);
     Iterator(const Iterator& other);
@@ -574,7 +572,7 @@ class BASE_EXPORT DictionaryValue : public Value {
 };
 
 // This type of Value represents a list of other Value values.
-class BASE_EXPORT ListValue : public Value {
+class ListValue : public Value {
  public:
   using const_iterator = ListStorage::const_iterator;
   using iterator = ListStorage::iterator;
@@ -716,7 +714,7 @@ class BASE_EXPORT ListValue : public Value {
 
 // This interface is implemented by classes that know how to serialize
 // Value objects.
-class BASE_EXPORT ValueSerializer {
+class ValueSerializer {
  public:
   virtual ~ValueSerializer();
 
@@ -725,7 +723,7 @@ class BASE_EXPORT ValueSerializer {
 
 // This interface is implemented by classes that know how to deserialize Value
 // objects.
-class BASE_EXPORT ValueDeserializer {
+class ValueDeserializer {
  public:
   virtual ~ValueDeserializer();
 
@@ -743,21 +741,19 @@ class BASE_EXPORT ValueDeserializer {
 // gtest uses this operator to print readable output on test failures, we must
 // override each specific type. Otherwise, the default template implementation
 // is preferred over an upcast.
-BASE_EXPORT std::ostream& operator<<(std::ostream& out, const Value& value);
+std::ostream& operator<<(std::ostream& out, const Value& value);
 
-BASE_EXPORT inline std::ostream& operator<<(std::ostream& out,
-                                            const DictionaryValue& value) {
+inline std::ostream& operator<<(std::ostream& out,
+                                const DictionaryValue& value) {
   return out << static_cast<const Value&>(value);
 }
 
-BASE_EXPORT inline std::ostream& operator<<(std::ostream& out,
-                                            const ListValue& value) {
+inline std::ostream& operator<<(std::ostream& out, const ListValue& value) {
   return out << static_cast<const Value&>(value);
 }
 
 // Stream operator so that enum class Types can be used in log statements.
-BASE_EXPORT std::ostream& operator<<(std::ostream& out,
-                                     const Value::Type& type);
+std::ostream& operator<<(std::ostream& out, const Value::Type& type);
 
 }  // namespace base
 

@@ -28,8 +28,8 @@ namespace base {
 struct FileDescriptor {
   FileDescriptor() : fd(-1), auto_close(false) {}
 
-  FileDescriptor(int ifd, bool iauto_close) : fd(ifd), auto_close(iauto_close) {
-  }
+  FileDescriptor(int ifd, bool iauto_close)
+      : fd(ifd), auto_close(iauto_close) {}
 
   FileDescriptor(File file) : fd(file.TakePlatformFile()), auto_close(true) {}
   explicit FileDescriptor(ScopedFD fd) : fd(fd.release()), auto_close(true) {}
@@ -43,9 +43,7 @@ struct FileDescriptor {
   }
 
   // A comparison operator so that we can use these as keys in a std::map.
-  bool operator<(const FileDescriptor& other) const {
-    return other.fd < fd;
-  }
+  bool operator<(const FileDescriptor& other) const { return other.fd < fd; }
 
   int fd;
   // If true, this file descriptor should be closed after it has been used. For

@@ -7,7 +7,6 @@
 
 #include <objbase.h>
 
-#include "base/base_export.h"
 #include "base/threading/thread_checker.h"
 #include "base/win/scoped_windows_thread_environment.h"
 
@@ -26,7 +25,7 @@ namespace win {
 // similar lifetime as the thread itself. You should not be using this in random
 // utility functions that make Windows Runtime calls -- instead ensure these
 // functions are running on a Windows Runtime supporting thread!
-class BASE_EXPORT ScopedWinrtInitializer
+class ScopedWinrtInitializer
     : public ScopedWindowsThreadEnvironment {
  public:
   ScopedWinrtInitializer();

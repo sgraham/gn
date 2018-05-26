@@ -11,8 +11,6 @@
 
 #import <Foundation/Foundation.h>
 
-#include "base/base_export.h"
-
 // base::mac::ReleaseProperties(self) can be used in a class's -dealloc method
 // to release all properties marked "retain" or "copy" and backed by instance
 // variables. It only affects properties defined by the calling class, not
@@ -50,7 +48,7 @@ namespace mac {
 
 namespace details {
 
-BASE_EXPORT void ReleaseProperties(id, Class);
+void ReleaseProperties(id, Class);
 
 }  // namespace details
 

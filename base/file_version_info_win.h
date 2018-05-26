@@ -13,14 +13,13 @@
 #include <string>
 #include <vector>
 
-#include "base/base_export.h"
 #include "base/file_version_info.h"
 #include "base/macros.h"
 
 struct tagVS_FIXEDFILEINFO;
 typedef tagVS_FIXEDFILEINFO VS_FIXEDFILEINFO;
 
-class BASE_EXPORT FileVersionInfoWin : public FileVersionInfo {
+class FileVersionInfoWin : public FileVersionInfo {
  public:
   ~FileVersionInfoWin() override;
 

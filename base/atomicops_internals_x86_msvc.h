@@ -30,25 +30,23 @@ inline Atomic32 NoBarrier_CompareAndSwap(volatile Atomic32* ptr,
                                          Atomic32 old_value,
                                          Atomic32 new_value) {
   LONG result = _InterlockedCompareExchange(
-      reinterpret_cast<volatile LONG*>(ptr),
-      static_cast<LONG>(new_value),
+      reinterpret_cast<volatile LONG*>(ptr), static_cast<LONG>(new_value),
       static_cast<LONG>(old_value));
   return static_cast<Atomic32>(result);
 }
 
 inline Atomic32 NoBarrier_AtomicExchange(volatile Atomic32* ptr,
                                          Atomic32 new_value) {
-  LONG result = _InterlockedExchange(
-      reinterpret_cast<volatile LONG*>(ptr),
-      static_cast<LONG>(new_value));
+  LONG result = _InterlockedExchange(reinterpret_cast<volatile LONG*>(ptr),
+                                     static_cast<LONG>(new_value));
   return static_cast<Atomic32>(result);
 }
 
 inline Atomic32 Barrier_AtomicIncrement(volatile Atomic32* ptr,
                                         Atomic32 increment) {
-  return _InterlockedExchangeAdd(
-      reinterpret_cast<volatile LONG*>(ptr),
-      static_cast<LONG>(increment)) + increment;
+  return _InterlockedExchangeAdd(reinterpret_cast<volatile LONG*>(ptr),
+                                 static_cast<LONG>(increment)) +
+         increment;
 }
 
 inline Atomic32 NoBarrier_AtomicIncrement(volatile Atomic32* ptr,
@@ -86,11 +84,11 @@ inline void NoBarrier_Store(volatile Atomic32* ptr, Atomic32 value) {
 
 inline void Acquire_Store(volatile Atomic32* ptr, Atomic32 value) {
   NoBarrier_AtomicExchange(ptr, value);
-              // acts as a barrier in this implementation
+  // acts as a barrier in this implementation
 }
 
 inline void Release_Store(volatile Atomic32* ptr, Atomic32 value) {
-  *ptr = value; // works w/o barrier for current Intel chips as of June 2005
+  *ptr = value;  // works w/o barrier for current Intel chips as of June 2005
   // See comments in Atomic64 version of Release_Store() below.
 }
 
@@ -149,11 +147,11 @@ inline void NoBarrier_Store(volatile Atomic64* ptr, Atomic64 value) {
 
 inline void Acquire_Store(volatile Atomic64* ptr, Atomic64 value) {
   NoBarrier_AtomicExchange(ptr, value);
-              // acts as a barrier in this implementation
+  // acts as a barrier in this implementation
 }
 
 inline void Release_Store(volatile Atomic64* ptr, Atomic64 value) {
-  *ptr = value; // works w/o barrier for current Intel chips as of June 2005
+  *ptr = value;  // works w/o barrier for current Intel chips as of June 2005
 
   // When new chips come out, check:
   //  IA-32 Intel Architecture Software Developer's Manual, Volume 3:
@@ -188,7 +186,6 @@ inline Atomic64 Release_CompareAndSwap(volatile Atomic64* ptr,
                                        Atomic64 new_value) {
   return NoBarrier_CompareAndSwap(ptr, old_value, new_value);
 }
-
 
 #endif  // defined(_WIN64)
 

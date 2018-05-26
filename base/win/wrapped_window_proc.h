@@ -12,7 +12,6 @@
 
 #include <windows.h>
 
-#include "base/base_export.h"
 #include "base/strings/string16.h"
 
 namespace base {
@@ -28,16 +27,16 @@ typedef int (__cdecl *WinProcExceptionFilter)(EXCEPTION_POINTERS* info);
 // Sets the filter to deal with exceptions inside a WindowProc. Returns the old
 // exception filter, if any.
 // This function should be called before any window is created.
-BASE_EXPORT WinProcExceptionFilter SetWinProcExceptionFilter(
+WinProcExceptionFilter SetWinProcExceptionFilter(
     WinProcExceptionFilter filter);
 
 // Calls the registered exception filter.
-BASE_EXPORT int CallExceptionFilter(EXCEPTION_POINTERS* info);
+int CallExceptionFilter(EXCEPTION_POINTERS* info);
 
 // Initializes the WNDCLASSEX structure |*class_out| to be passed to
 // RegisterClassEx() making sure that it is associated with the module
 // containing the window procedure.
-BASE_EXPORT void InitializeWindowClass(
+void InitializeWindowClass(
     const char16* class_name,
     WNDPROC window_proc,
     UINT style,

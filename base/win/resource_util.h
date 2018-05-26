@@ -11,15 +11,13 @@
 #include <windows.h>
 #include <stddef.h>
 
-#include "base/base_export.h"
-
 namespace base {
 namespace win {
 
 // Function for getting a data resource of the specified |resource_type| from
 // a dll.  Some resources are optional, especially in unit tests, so this
 // returns false but doesn't raise an error if the resource can't be loaded.
-bool BASE_EXPORT GetResourceFromModule(HMODULE module,
+bool GetResourceFromModule(HMODULE module,
                                        int resource_id,
                                        LPCTSTR resource_type,
                                        void** data,
@@ -28,7 +26,7 @@ bool BASE_EXPORT GetResourceFromModule(HMODULE module,
 // Function for getting a data resource (BINDATA) from a dll.  Some
 // resources are optional, especially in unit tests, so this returns false
 // but doesn't raise an error if the resource can't be loaded.
-bool BASE_EXPORT GetDataResourceFromModule(HMODULE module,
+bool GetDataResourceFromModule(HMODULE module,
                                            int resource_id,
                                            void** data,
                                            size_t* length);

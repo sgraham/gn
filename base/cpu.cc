@@ -21,34 +21,34 @@
 
 #if defined(ARCH_CPU_X86_FAMILY)
 #if defined(COMPILER_MSVC)
-#include <intrin.h>
 #include <immintrin.h>  // For _xgetbv()
+#include <intrin.h>
 #endif
 #endif
 
 namespace base {
 
 CPU::CPU()
-  : signature_(0),
-    type_(0),
-    family_(0),
-    model_(0),
-    stepping_(0),
-    ext_model_(0),
-    ext_family_(0),
-    has_mmx_(false),
-    has_sse_(false),
-    has_sse2_(false),
-    has_sse3_(false),
-    has_ssse3_(false),
-    has_sse41_(false),
-    has_sse42_(false),
-    has_popcnt_(false),
-    has_avx_(false),
-    has_avx2_(false),
-    has_aesni_(false),
-    has_non_stop_time_stamp_counter_(false),
-    cpu_vendor_("unknown") {
+    : signature_(0),
+      type_(0),
+      family_(0),
+      model_(0),
+      stepping_(0),
+      ext_model_(0),
+      ext_family_(0),
+      has_mmx_(false),
+      has_sse_(false),
+      has_sse2_(false),
+      has_sse3_(false),
+      has_ssse3_(false),
+      has_sse41_(false),
+      has_sse42_(false),
+      has_popcnt_(false),
+      has_avx_(false),
+      has_avx2_(false),
+      has_aesni_(false),
+      has_non_stop_time_stamp_counter_(false),
+      cpu_vendor_("unknown") {
   Initialize();
 }
 
@@ -85,8 +85,7 @@ void __cpuid(int cpu_info[4], int info_type) {
 uint64_t _xgetbv(uint32_t xcr) {
   uint32_t eax, edx;
 
-  __asm__ volatile (
-    "xgetbv" : "=a"(eax), "=d"(edx) : "c"(xcr));
+  __asm__ volatile("xgetbv" : "=a"(eax), "=d"(edx) : "c"(xcr));
   return (static_cast<uint64_t>(edx) << 32) | eax;
 }
 
@@ -167,10 +166,10 @@ void CPU::Initialize() {
     type_ = (cpu_info[0] >> 12) & 0x3;
     ext_model_ = (cpu_info[0] >> 16) & 0xf;
     ext_family_ = (cpu_info[0] >> 20) & 0xff;
-    has_mmx_ =   (cpu_info[3] & 0x00800000) != 0;
-    has_sse_ =   (cpu_info[3] & 0x02000000) != 0;
-    has_sse2_ =  (cpu_info[3] & 0x04000000) != 0;
-    has_sse3_ =  (cpu_info[2] & 0x00000001) != 0;
+    has_mmx_ = (cpu_info[3] & 0x00800000) != 0;
+    has_sse_ = (cpu_info[3] & 0x02000000) != 0;
+    has_sse2_ = (cpu_info[3] & 0x04000000) != 0;
+    has_sse3_ = (cpu_info[2] & 0x00000001) != 0;
     has_ssse3_ = (cpu_info[2] & 0x00000200) != 0;
     has_sse41_ = (cpu_info[2] & 0x00080000) != 0;
     has_sse42_ = (cpu_info[2] & 0x00100000) != 0;
@@ -186,11 +185,10 @@ void CPU::Initialize() {
     // even after following Intel's example code. (See crbug.com/375968.)
     // Because of that, we also test the XSAVE bit because its description in
     // the CPUID documentation suggests that it signals xgetbv support.
-    has_avx_ =
-        (cpu_info[2] & 0x10000000) != 0 &&
-        (cpu_info[2] & 0x04000000) != 0 /* XSAVE */ &&
-        (cpu_info[2] & 0x08000000) != 0 /* OSXSAVE */ &&
-        (_xgetbv(0) & 6) == 6 /* XSAVE enabled by kernel */;
+    has_avx_ = (cpu_info[2] & 0x10000000) != 0 &&
+               (cpu_info[2] & 0x04000000) != 0 /* XSAVE */ &&
+               (cpu_info[2] & 0x08000000) != 0 /* OSXSAVE */ &&
+               (_xgetbv(0) & 6) == 6 /* XSAVE enabled by kernel */;
     has_aesni_ = (cpu_info[2] & 0x02000000) != 0;
     has_avx2_ = has_avx_ && (cpu_info7[1] & 0x00000020) != 0;
   }
@@ -228,14 +226,22 @@ void CPU::Initialize() {
 }
 
 CPU::IntelMicroArchitecture CPU::GetIntelMicroArchitecture() const {
-  if (has_avx2()) return AVX2;
-  if (has_avx()) return AVX;
-  if (has_sse42()) return SSE42;
-  if (has_sse41()) return SSE41;
-  if (has_ssse3()) return SSSE3;
-  if (has_sse3()) return SSE3;
-  if (has_sse2()) return SSE2;
-  if (has_sse()) return SSE;
+  if (has_avx2())
+    return AVX2;
+  if (has_avx())
+    return AVX;
+  if (has_sse42())
+    return SSE42;
+  if (has_sse41())
+    return SSE41;
+  if (has_ssse3())
+    return SSSE3;
+  if (has_sse3())
+    return SSE3;
+  if (has_sse2())
+    return SSE2;
+  if (has_sse())
+    return SSE;
   return PENTIUM;
 }
 

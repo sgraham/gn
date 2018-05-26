@@ -25,7 +25,7 @@ typedef unsigned char Latin1Char;
 // WebString::operator string16() to convert one or the other character array
 // to string16. This function is defined here rather than in WebString.h to
 // avoid binary bloat in all the callers of the conversion operator.
-BASE_EXPORT string16 Latin1OrUTF16ToUTF16(size_t length,
+string16 Latin1OrUTF16ToUTF16(size_t length,
                                           const Latin1Char* latin1,
                                           const char16* utf16);
 

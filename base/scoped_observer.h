@@ -22,9 +22,7 @@ class ScopedObserver {
  public:
   explicit ScopedObserver(Observer* observer) : observer_(observer) {}
 
-  ~ScopedObserver() {
-    RemoveAll();
-  }
+  ~ScopedObserver() { RemoveAll(); }
 
   // Adds the object passed to the constructor as an observer on |source|.
   void Add(Source* source) {

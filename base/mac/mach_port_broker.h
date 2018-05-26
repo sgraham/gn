@@ -11,7 +11,6 @@
 #include <memory>
 #include <string>
 
-#include "base/base_export.h"
 #include "base/mac/dispatch_source_mach.h"
 #include "base/mac/scoped_mach_port.h"
 #include "base/macros.h"
@@ -35,7 +34,7 @@ namespace base {
 //
 // Since this data arrives over a separate channel, it is not available
 // immediately after a child process has been started.
-class BASE_EXPORT MachPortBroker : public base::PortProvider {
+class MachPortBroker : public base::PortProvider {
  public:
   // For use in child processes. This will send the task port of the current
   // process over Mach IPC to the port registered by name (via this class) in

@@ -352,7 +352,6 @@ def write_gn_ninja(path, root_gen_dir, options):
         'tools/gn/parse_node_value_adapter.cc',
         'tools/gn/parse_tree.cc',
         'tools/gn/parser.cc',
-        'tools/gn/parser_fuzzer.cc',
         'tools/gn/path_output.cc',
         'tools/gn/pattern.cc',
         'tools/gn/pool.cc',

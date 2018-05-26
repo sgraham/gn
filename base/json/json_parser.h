@@ -11,7 +11,6 @@
 #include <memory>
 #include <string>
 
-#include "base/base_export.h"
 #include "base/compiler_specific.h"
 #include "base/json/json_reader.h"
 #include "base/macros.h"
@@ -40,7 +39,7 @@ class JSONParserTest;
 // to the first byte of a valid JSON token. On exit, it is on the first byte
 // after the token that was just consumed, which would likely be the first byte
 // of the next token.
-class BASE_EXPORT JSONParser {
+class JSONParser {
  public:
   JSONParser(int options, int max_depth = JSONReader::kStackMaxDepth);
   ~JSONParser();
@@ -241,7 +240,7 @@ class BASE_EXPORT JSONParser {
 };
 
 // Used when decoding and an invalid utf-8 sequence is encountered.
-BASE_EXPORT extern const char kUnicodeReplacementString[];
+extern const char kUnicodeReplacementString[];
 
 }  // namespace internal
 }  // namespace base

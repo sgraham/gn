@@ -36,7 +36,6 @@
 // - libstdc++: captures bits/c++config.h for __GLIBCXX__
 #include <cstddef>
 
-#include "base/base_export.h"
 #include "build_config.h"
 
 #if defined(OS_WIN) && defined(ARCH_CPU_64_BITS)
@@ -90,8 +89,7 @@ Atomic32 NoBarrier_AtomicExchange(volatile Atomic32* ptr, Atomic32 new_value);
 // *ptr with the increment applied.  This routine implies no memory barriers.
 Atomic32 NoBarrier_AtomicIncrement(volatile Atomic32* ptr, Atomic32 increment);
 
-Atomic32 Barrier_AtomicIncrement(volatile Atomic32* ptr,
-                                 Atomic32 increment);
+Atomic32 Barrier_AtomicIncrement(volatile Atomic32* ptr, Atomic32 increment);
 
 // These following lower-level operations are typically useful only to people
 // implementing higher-level synchronization operations like spinlocks,
@@ -147,9 +145,9 @@ Atomic64 Release_Load(volatile const Atomic64* ptr);
 #if defined(OS_WIN)
 // TODO(jfb): Try to use base/atomicops_internals_portable.h everywhere.
 // https://crbug.com/559247.
-#  include "base/atomicops_internals_x86_msvc.h"
+#include "base/atomicops_internals_x86_msvc.h"
 #else
-#  include "base/atomicops_internals_portable.h"
+#include "base/atomicops_internals_portable.h"
 #endif
 
 // On some platforms we need additional declarations to make

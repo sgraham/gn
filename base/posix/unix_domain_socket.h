@@ -10,7 +10,6 @@
 #include <sys/types.h>
 #include <vector>
 
-#include "base/base_export.h"
 #include "base/files/scoped_file.h"
 #include "base/process/process_handle.h"
 #include "build_config.h"
@@ -23,10 +22,10 @@ class Pickle;
 // Creates a connected pair of UNIX-domain SOCK_SEQPACKET sockets, and passes
 // ownership of the newly allocated file descriptors to |one| and |two|.
 // Returns true on success.
-bool BASE_EXPORT CreateSocketPair(ScopedFD* one, ScopedFD* two);
+bool CreateSocketPair(ScopedFD* one, ScopedFD* two);
 #endif
 
-class BASE_EXPORT UnixDomainSocket {
+class UnixDomainSocket {
  public:
   // Maximum number of file descriptors that can be read by RecvMsg().
   static const size_t kMaxFileDescriptors;

@@ -5,7 +5,6 @@
 #ifndef BASE_TIMER_HI_RES_TIMER_MANAGER_H_
 #define BASE_TIMER_HI_RES_TIMER_MANAGER_H_
 
-#include "base/base_export.h"
 #include "base/macros.h"
 #include "base/memory/ref_counted.h"
 #include "base/timer/timer.h"
@@ -15,7 +14,7 @@ namespace base {
 
 // Ensures that the Windows high resolution timer is only used
 // when not running on battery power.
-class BASE_EXPORT HighResolutionTimerManager : public base::PowerObserver {
+class HighResolutionTimerManager : public base::PowerObserver {
  public:
   HighResolutionTimerManager();
   ~HighResolutionTimerManager() override;

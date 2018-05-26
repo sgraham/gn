@@ -10,7 +10,6 @@
 #include <vector>
 #include "base/win/windows_types.h"
 
-#include "base/base_export.h"
 #include "base/macros.h"
 #include "base/win/scoped_handle.h"
 
@@ -26,7 +25,7 @@ namespace win {
 //    is not touched in case of failure.
 //  * Functions returning LONG indicate success as ERROR_SUCCESS or an
 //    error as a (non-zero) win32 error code.
-class BASE_EXPORT RegKey {
+class RegKey {
  public:
   // Called from the MessageLoop when the key changes.
   typedef base::Callback<void()> ChangeCallback;
@@ -146,7 +145,7 @@ class BASE_EXPORT RegKey {
 };
 
 // Iterates the entries found in a particular folder on the registry.
-class BASE_EXPORT RegistryValueIterator {
+class RegistryValueIterator {
  public:
   // Constructs a Registry Value Iterator with default WOW64 access.
   RegistryValueIterator(HKEY root_key, const wchar_t* folder_key);
@@ -199,7 +198,7 @@ class BASE_EXPORT RegistryValueIterator {
   DISALLOW_COPY_AND_ASSIGN(RegistryValueIterator);
 };
 
-class BASE_EXPORT RegistryKeyIterator {
+class RegistryKeyIterator {
  public:
   // Constructs a Registry Key Iterator with default WOW64 access.
   RegistryKeyIterator(HKEY root_key, const wchar_t* folder_key);

@@ -9,7 +9,7 @@
 
 namespace base {
 
-class BASE_EXPORT MockTimer : public Timer {
+class MockTimer : public Timer {
  public:
   MockTimer(bool retain_user_task, bool is_repeating);
   MockTimer(const Location& posted_from,

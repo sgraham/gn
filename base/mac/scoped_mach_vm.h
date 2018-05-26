@@ -10,7 +10,6 @@
 
 #include <algorithm>
 
-#include "base/base_export.h"
 #include "base/logging.h"
 #include "base/macros.h"
 
@@ -46,7 +45,7 @@
 namespace base {
 namespace mac {
 
-class BASE_EXPORT ScopedMachVM {
+class ScopedMachVM {
  public:
   explicit ScopedMachVM(vm_address_t address = 0, vm_size_t size = 0)
       : address_(address), size_(size) {
