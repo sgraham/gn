@@ -521,8 +521,6 @@ def write_gn_ninja(path, root_gen_dir, options):
       'base/third_party/icu/icu_utf.cc',
       'base/third_party/nspr/prtime.cc',
       'base/time/clock.cc',
-      'base/time/default_tick_clock.cc',
-      'base/time/tick_clock.cc',
       'base/time/time.cc',
       'base/timer/elapsed_timer.cc',
       'base/value_iterators.cc',
