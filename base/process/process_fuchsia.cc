@@ -78,11 +78,6 @@ Process Process::DeprecatedGetProcessFromHandle(ProcessHandle handle) {
 }
 
 // static
-bool Process::CanBackgroundProcesses() {
-  return false;
-}
-
-// static
 void Process::TerminateCurrentProcessImmediately(int exit_code) {
   _exit(exit_code);
 }
@@ -203,18 +198,6 @@ bool Process::WaitForExitWithTimeout(TimeDelta timeout, int* exit_code) const {
 }
 
 void Process::Exited(int exit_code) const {}
-
-bool Process::IsProcessBackgrounded() const {
-  // See SetProcessBackgrounded().
-  DCHECK(IsValid());
-  return false;
-}
-
-bool Process::SetProcessBackgrounded(bool value) {
-  // No process priorities on Fuchsia. TODO(fuchsia): See MG-783, and update
-  // this later if priorities are implemented.
-  return false;
-}
 
 int Process::GetPriority() const {
   DCHECK(IsValid());
