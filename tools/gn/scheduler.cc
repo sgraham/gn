@@ -11,10 +11,6 @@
 #include "tools/gn/standard_out.h"
 #include "tools/gn/target.h"
 
-namespace {
-
-}  // namespace
-
 Scheduler* g_scheduler = nullptr;
 
 Scheduler::Scheduler()

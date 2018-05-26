@@ -9,7 +9,6 @@
 namespace {
 
 thread_local MsgLoop* g_current;
-
 }
 
 MsgLoop::MsgLoop() {
