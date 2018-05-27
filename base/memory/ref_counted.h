@@ -14,7 +14,6 @@
 #include "base/logging.h"
 #include "base/macros.h"
 #include "base/memory/scoped_refptr.h"
-#include "base/threading/thread_collision_warner.h"
 #include "build_config.h"
 
 namespace base {
@@ -86,8 +85,6 @@ class RefCountedBase {
 #endif
 
   mutable uint32_t ref_count_ = 0;
-
-  DFAKE_MUTEX(add_release_);
 
   DISALLOW_COPY_AND_ASSIGN(RefCountedBase);
 };
